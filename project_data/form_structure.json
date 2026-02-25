@@ -1,0 +1,246 @@
+{
+    "form_name": "EverMagic — Create Your Magic",
+    "version": "1.0.0",
+    "updated_at": "2026-02-25",
+    "blocks": [
+        {
+            "block": "Contact",
+            "fields": [
+                {
+                    "order": 1,
+                    "name": "email",
+                    "type": "EMAIL",
+                    "label": "Email",
+                    "required": true,
+                    "hint": null
+                }
+            ]
+        },
+        {
+            "block": "Package",
+            "fields": [
+                {
+                    "order": 2,
+                    "name": "package",
+                    "type": "DROPDOWN",
+                    "label": "Package",
+                    "required": true,
+                    "hint": null,
+                    "options": [
+                        "Basic (PDF + printable)",
+                        "Full Bundle (Video + PDF + printable)"
+                    ]
+                }
+            ]
+        },
+        {
+            "block": "Language",
+            "fields": [
+                {
+                    "order": 3,
+                    "name": "language",
+                    "type": "DROPDOWN",
+                    "label": "Language",
+                    "required": true,
+                    "hint": null,
+                    "options": [
+                        "English (EN)",
+                        "Ukrainian (UA) (coming soon)"
+                    ]
+                }
+            ]
+        },
+        {
+            "block": "Child",
+            "fields": [
+                {
+                    "order": 4,
+                    "name": "child_name",
+                    "type": "SHORT_TEXT",
+                    "label": "Child's first name",
+                    "required": true,
+                    "hint": "e.g. Emma"
+                },
+                {
+                    "order": 5,
+                    "name": "age",
+                    "type": "NUMBER",
+                    "label": "Age",
+                    "required": true,
+                    "hint": null
+                },
+                {
+                    "order": 6,
+                    "name": "gender",
+                    "type": "DROPDOWN",
+                    "label": "Gender",
+                    "required": true,
+                    "hint": null,
+                    "options": [
+                        "Boy",
+                        "Girl",
+                        "Prefer not to say"
+                    ]
+                },
+                {
+                    "order": 7,
+                    "name": "glasses",
+                    "type": "YES_NO",
+                    "label": "Do they wear glasses?",
+                    "required": true,
+                    "hint": null,
+                    "options": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                {
+                    "order": 8,
+                    "name": "hair_color",
+                    "type": "DROPDOWN",
+                    "label": "Hair color",
+                    "required": true,
+                    "hint": null,
+                    "options": [
+                        "Black",
+                        "Brown",
+                        "Blonde",
+                        "Red",
+                        "Other"
+                    ]
+                },
+                {
+                    "order": 9,
+                    "name": "skin_tone",
+                    "type": "DROPDOWN",
+                    "label": "Skin tone",
+                    "required": true,
+                    "hint": null,
+                    "options": [
+                        "Light",
+                        "Medium",
+                        "Dark",
+                        "Prefer not to say"
+                    ]
+                }
+            ]
+        },
+        {
+            "block": "Make It Personal",
+            "fields": [
+                {
+                    "order": 10,
+                    "name": "hobby",
+                    "type": "SHORT_TEXT",
+                    "label": "What is the child passionate about?",
+                    "required": true,
+                    "hint": "e.g. dinosaurs, space, horses, football, dancing, Minecraft…"
+                },
+                {
+                    "order": 11,
+                    "name": "hobby_detail",
+                    "type": "LONG_TEXT",
+                    "label": "Tell us more about this passion",
+                    "required": false,
+                    "hint": "How long they've been into it, a favorite character, team, or level they reached…"
+                },
+                {
+                    "order": 12,
+                    "name": "signature_look",
+                    "type": "LONG_TEXT",
+                    "label": "Describe the child's signature look",
+                    "required": true,
+                    "hint": "Favorite shirt, jersey number, haircut style, boots, accessories, a cape they always wear…"
+                },
+                {
+                    "order": 13,
+                    "name": "jersey_number",
+                    "type": "SHORT_TEXT",
+                    "label": "Jersey or lucky number",
+                    "required": false,
+                    "hint": "e.g. 7"
+                },
+                {
+                    "order": 14,
+                    "name": "recent_win",
+                    "type": "LONG_TEXT",
+                    "label": "Share a recent achievement or fun fact",
+                    "required": true,
+                    "hint": "e.g. scored 3 goals last week, finished reading a big book, caught a huge fish…"
+                }
+            ]
+        },
+        {
+            "block": "Story Details",
+            "fields": [
+                {
+                    "order": 15,
+                    "name": "theme",
+                    "type": "DROPDOWN",
+                    "label": "Theme",
+                    "required": true,
+                    "hint": null,
+                    "options": [
+                        "Space Hero Mission"
+                    ]
+                },
+                {
+                    "order": 16,
+                    "name": "hero_trait",
+                    "type": "DROPDOWN",
+                    "label": "Hero trait",
+                    "required": false,
+                    "hint": null,
+                    "options": [
+                        "Brave",
+                        "Kind",
+                        "Smart",
+                        "Creative"
+                    ]
+                },
+                {
+                    "order": 17,
+                    "name": "parent_message",
+                    "type": "LONG_TEXT",
+                    "label": "Message from parent",
+                    "required": false,
+                    "hint": "A personal message to include at the end of the story"
+                }
+            ]
+        },
+        {
+            "block": "Photos",
+            "fields": [
+                {
+                    "order": 18,
+                    "name": "photo_main",
+                    "type": "FILE_UPLOAD",
+                    "label": "Upload 1 clear face photo",
+                    "required": true,
+                    "hint": "Front-facing, well-lit, no sunglasses"
+                },
+                {
+                    "order": 19,
+                    "name": "photo_extra",
+                    "type": "FILE_UPLOAD",
+                    "label": "Upload a second photo (optional)",
+                    "required": false,
+                    "hint": "Another angle or full-body shot"
+                }
+            ]
+        },
+        {
+            "block": "Consent",
+            "fields": [
+                {
+                    "order": 20,
+                    "name": "consent",
+                    "type": "CHECKBOX",
+                    "label": "I confirm I have the right to upload this child's photo and request a personalized digital product",
+                    "required": true,
+                    "hint": null
+                }
+            ]
+        }
+    ]
+}
