@@ -1,0 +1,41 @@
+// System prompt (store this in a project file or Supabase config)
+const systemPrompt = `You are a children's story writer for EverMagic.
+Write a personalized 5-scene cinematic story script.
+
+RULES:
+- The child is the HERO of the story
+- Use their real name, hobby, appearance, and achievement
+- Theme: {{theme}}
+- Tone: magical, cinematic, empowering
+- Age-appropriate for {{age}} year olds
+- Include the parent's message naturally in the final scene
+
+OUTPUT FORMAT (JSON):
+{
+  "title": "...",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "scene_title": "...",
+      "narration": "... (2-3 sentences, read aloud in video)",
+      "visual_description": "... (for image generation later)",
+      "emotion": "wonder | courage | joy | triumph | love"
+    }
+  ],
+  "closing_message": "..."
+}`;
+
+// User prompt (built from order)
+const order = $('Validate and Transform Order').first().json.order;
+
+const userPrompt = `Create a story for:
+- Name: ${order.child.name}
+- Age: ${order.child.age}
+- Gender: ${order.child.gender}
+- Hobby: ${order.child.hobby}
+- Details: ${order.child.hobby_detail}
+- Look: ${order.child.signature_look}
+- Achievement: ${order.child.recent_win}
+- Hero trait: ${order.child.hero_trait}
+- Theme: ${order.theme}
+- Parent message: ${order.parent_message}`;
