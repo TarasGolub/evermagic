@@ -1,35 +1,23 @@
 // n8n Code node — "Build Prompt"
-// Place BEFORE the OpenAI node.
-// Fetches prompt template from GitHub, injects order data, outputs ready prompts.
+// Placed AFTER the "Fetch Prompt" HTTP Request node
+// Combines the system prompt (from GitHub) with order data (from Transform node)
+
+// ─────────────────────────────────────────────────────────────
+// 1. Get system prompt from the HTTP Request node output
+// ─────────────────────────────────────────────────────────────
+
+const systemPrompt = $('Fetch Prompt').first().json.data;
+
+// ─────────────────────────────────────────────────────────────
+// 2. Get order from the Transform node
+// ─────────────────────────────────────────────────────────────
 
 const order = $('Validate and Transform Order').first().json.order;
-
-// ─────────────────────────────────────────────────────────────
-// 1. Fetch system prompt from GitHub (raw)
-// ─────────────────────────────────────────────────────────────
-
-const REPO = 'TarasGolub/evermagic';
-const BRANCH = 'main';  // change to your deploy branch
-
-// Map theme → prompt folder
-const themeMap = {
-    'SPACE_HERO': 'space_hero',
-};
-
-const themePath = themeMap[order.theme] || 'space_hero';
-const promptUrl = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/prompts/${themePath}/system.md`;
-
-const response = await fetch(promptUrl);
-if (!response.ok) {
-    throw new Error(`Failed to fetch prompt from GitHub: ${response.status} ${response.statusText}`);
-}
-const systemPrompt = await response.text();
-
-// ─────────────────────────────────────────────────────────────
-// 2. Build user prompt from order data
-// ─────────────────────────────────────────────────────────────
-
 const child = order.child;
+
+// ─────────────────────────────────────────────────────────────
+// 3. Build user prompt from order data
+// ─────────────────────────────────────────────────────────────
 
 const userPrompt = `Create a personalized story with these details:
 
@@ -57,7 +45,7 @@ const userPrompt = `Create a personalized story with these details:
 ${order.parent_message || 'No message provided.'}`;
 
 // ─────────────────────────────────────────────────────────────
-// 3. Output
+// 4. Output — ready for OpenAI node
 // ─────────────────────────────────────────────────────────────
 
 return [{
