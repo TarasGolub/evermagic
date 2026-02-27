@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 Script Review — {{order_id}}</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#f8f9fa; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f9fa;">
+        <tr>
+            <td align="center" style="padding:32px 16px;">
+                <table role="presentation" width="640" cellpadding="0" cellspacing="0"
+                    style="background:#ffffff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding:28px 32px 16px; border-bottom:1px solid #eee;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td>
+                                        <span
+                                            style="font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#6b7280; font-weight:600;">⚡
+                                            EverMagic Admin</span>
+                                        <h1 style="margin:8px 0 0; font-size:22px; color:#111; font-weight:700;">Script
+                                            Ready for Review</h1>
+                                    </td>
+                                    <td align="right" style="vertical-align:top;">
+                                        <span
+                                            style="display:inline-block; padding:6px 14px; background:#fef3c7; color:#92400e; font-size:12px; font-weight:600; border-radius:20px; text-transform:uppercase; letter-spacing:0.5px;">Needs
+                                            Review</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Order Summary -->
+                    <tr>
+                        <td style="padding:24px 32px 16px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                                style="background:#f9fafb; border-radius:8px; border:1px solid #e5e7eb;">
+                                <tr>
+                                    <td style="padding:16px;">
+                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                                            style="font-size:13px;">
+                                            <tr>
+                                                <td style="color:#6b7280; padding:3px 0;">Order</td>
+                                                <td style="color:#111; font-weight:600; font-family:monospace;">
+                                                    {{order_id}}</td>
+                                                <td style="color:#6b7280; padding:3px 0;">Package</td>
+                                                <td style="color:#111; font-weight:600;">{{package}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color:#6b7280; padding:3px 0;">Hero</td>
+                                                <td style="color:#111; font-weight:600;">{{child_name}} ({{child_age}})
+                                                </td>
+                                                <td style="color:#6b7280; padding:3px 0;">Theme</td>
+                                                <td style="color:#111; font-weight:600;">{{theme}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color:#6b7280; padding:3px 0;">Trait</td>
+                                                <td style="color:#111; font-weight:600;">{{hero_trait}}</td>
+                                                <td style="color:#6b7280; padding:3px 0;">Language</td>
+                                                <td style="color:#111; font-weight:600;">{{language}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Story Title -->
+                    <tr>
+                        <td style="padding:8px 32px 16px;">
+                            <h2 style="margin:0; font-size:20px; color:#111;">📖 {{story_title}}</h2>
+                            <p style="margin:4px 0 0; font-size:14px; color:#6b7280; font-style:italic;">
+                                {{story_tagline}}</p>
+                        </td>
+                    </tr>
+
+                    <!-- Scenes -->
+                    {{scenes_html}}
+
+                    <!-- Parent Message -->
+                    <tr>
+                        <td style="padding:8px 32px 24px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                                style="background:#f0fdf4; border-radius:8px; border:1px solid #bbf7d0;">
+                                <tr>
+                                    <td style="padding:16px;">
+                                        <div
+                                            style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:#16a34a; font-weight:600; margin-bottom:6px;">
+                                            💚 Parent's Message</div>
+                                        <div style="font-size:14px; color:#166534; line-height:1.5;">{{parent_message}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding:20px 32px 28px; border-top:1px solid #eee;">
+                            <p style="margin:0; font-size:12px; color:#9ca3af; text-align:center;">
+                                Reply to this email to request changes or approve the script.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
