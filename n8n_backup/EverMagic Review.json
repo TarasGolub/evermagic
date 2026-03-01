@@ -1,0 +1,592 @@
+{
+  "name": "EverMagic Review",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "evermagic/review",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "29651e66-4231-4b67-bce1-f692cb87b2cf",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1488,
+        272
+      ],
+      "webhookId": "8b0e5849-02a3-4f58-9c54-75cc6ad16d75"
+    },
+    {
+      "parameters": {
+        "jsCode": "const query = $input.first().json.query || {};\n\nconst orderId = query.order_id;\nconst version = parseInt(query.version || '1', 10);\nconst action = (query.action || '').toLowerCase();\n\nif (!orderId) {\n  return [{\n    json: {\n      action: 'error',\n      html: '<html><body style=\"font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;\"><div style=\"text-align:center;\"><h1>❌ Error</h1><p>Missing order_id parameter.</p></div></body></html>'\n    }\n  }];\n}\n\nif (!['approve', 'retry', 'edit'].includes(action)) {\n  return [{\n    json: {\n      action: 'error',\n      html: '<html><body style=\"font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;\"><div style=\"text-align:center;\"><h1>❌ Error</h1><p>Invalid action.</p></div></body></html>'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    action,\n    order_id: orderId,\n    version\n  }\n}];"
+      },
+      "id": "a82b0e9c-b225-46b9-b7df-a985c81f11a7",
+      "name": "Review Router",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1264,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Review Router').first().json.action }}",
+                    "rightValue": "approve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8f53b1bc-6885-4827-93a6-8c36fc10f103"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "approve"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Review Router').first().json.action }}",
+                    "rightValue": "retry",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5cc39803-bfb0-406d-949f-96656f7bc195"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "retry"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Review Router').first().json.action }}",
+                    "rightValue": "edit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "93038f8a-20b8-49e4-9c83-a975e3e85c10"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "edit"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "123ee6f4-893c-4372-9651-9f7aaffb0048",
+      "name": "Switch Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -480,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// APPROVE: Update script status + order status\nconst orderId = $('Review Router').first().json.order_id;\nconst version = $('Review Router').first().json.version;\n\nreturn [{\n  json: {\n    order_id: orderId,\n    version,\n    html: `<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>✅ Approved</title><style>body{font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f0fdf4;margin:0;}.card{text-align:center;background:#fff;padding:48px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}h1{font-size:24px;color:#16a34a;margin-bottom:8px;}p{color:#6b7280;font-size:14px;}</style></head><body><div class=\"card\"><div style=\"font-size:48px;margin-bottom:16px;\">✅</div><h1>Script Approved!</h1><p>Order: <strong>${orderId}</strong> · Version v${version}</p><p style=\"margin-top:16px;\">The order is now ready for the next phase.</p></div></body></html>`\n  }\n}];"
+      },
+      "id": "ff2bd29d-dce6-4fcd-8787-131fd7234a20",
+      "name": "Build Approve Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "scripts",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.order_id }}"
+            },
+            {
+              "keyName": "version",
+              "condition": "eq",
+              "keyValue": "={{ $json.version }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "approved"
+            },
+            {
+              "fieldId": "approved_at",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "1681ac5e-0c47-44d2-96a6-9b665a433c8a",
+      "name": "Approve Script",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.order_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "approved"
+            }
+          ]
+        }
+      },
+      "id": "b30734be-8dd6-493f-9ed9-a1aecdf44352",
+      "name": "Update Order Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Build Approve Response').first().json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "20483b5b-c834-425a-8177-d66dce25f0ff",
+      "name": "Respond Approved",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const orderId = $('Review Router').first().json.order_id;\nconst version = $('Review Router').first().json.version;\nconst WEBHOOK_URL = 'https://evermagic.app.n8n.cloud/webhook/evermagic/review-submit';\n// const WEBHOOK_URL = 'https://evermagic.app.n8n.cloud/webhook-test/evermagic/review-submit';\n\nconst html = `<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0\"><title>🔄 Retry — ${orderId}</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Segoe UI',Roboto,sans-serif;background:#f8f9fa;padding:32px 16px;}.card{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;}.header{padding:24px 32px;border-bottom:1px solid #eee;}.header h1{font-size:20px;color:#111;}.header p{font-size:13px;color:#6b7280;margin-top:4px;}.body{padding:24px 32px;}label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}textarea{width:100%;min-height:160px;padding:14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;line-height:1.6;resize:vertical;font-family:inherit;}textarea:focus{outline:none;border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.15);}.meta{font-size:12px;color:#9ca3af;margin-top:6px;}.actions{padding:16px 32px 28px;display:flex;gap:12px;}.btn{padding:12px 24px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;}.btn-primary{background:#f59e0b;color:#fff;flex:1;}.btn-secondary{background:#e5e7eb;color:#374151;}.btn:hover{opacity:0.9;}</style></head><body><div class=\"card\"><div class=\"header\"><h1>🔄 Edit & Retry — AI Regeneration</h1><p>Order: <strong>${orderId}</strong> · Current version: v${version}</p></div><form action=\"${WEBHOOK_URL}\" method=\"POST\"><input type=\"hidden\" name=\"order_id\" value=\"${orderId}\"><input type=\"hidden\" name=\"version\" value=\"${version}\"><input type=\"hidden\" name=\"action\" value=\"retry_submit\"><div class=\"body\"><label for=\"feedback\">Your feedback for the AI</label><textarea id=\"feedback\" name=\"feedback\" placeholder=\"Tell the AI what to change...\" required></textarea><p class=\"meta\">The AI will regenerate the script and you'll receive a new review email.</p></div><div class=\"actions\"><button type=\"submit\" class=\"btn btn-primary\">🔄 Regenerate Script</button></div></form></div></body></html>`;\n\nreturn [{ json: { html, order_id: orderId, version } }];"
+      },
+      "id": "04189861-67fd-45d3-b89c-815c51afa1e7",
+      "name": "Build Retry Form",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "0244495c-ff6f-4a67-a6ee-a8654c3e2420",
+      "name": "Respond Retry Form",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — \"Build Edit Form\"\n// Input comes from Supabase \"Fetch Current Script\" node\n// which should return the script row with { order_id, version, content, ... }\n\nconst items = $input.all();\nconst scriptRow = items[0].json;\n\n// Get order_id and version — try from the script row first, fall back to query\nconst orderId = scriptRow.order_id || $('Review Router')?.first()?.json?.order_id || 'unknown';\nconst version = scriptRow.version || $('Review Router')?.first()?.json?.version || 1;\n\n// Get script content — handle both string and object\nlet script;\nif (typeof scriptRow.content === 'string') {\n  script = JSON.parse(scriptRow.content);\n} else {\n  script = scriptRow.content || {};\n}\n\nconst scenes = Array.isArray(script.scenes) ? script.scenes : [];\nconst sceneCount = scenes.length;\n\nconst WEBHOOK_URL = 'https://evermagic.app.n8n.cloud/webhook/evermagic/review-submit';\n// const WEBHOOK_URL = 'https://evermagic.app.n8n.cloud/webhook-test/evermagic/review-submit';\n\n\n// Escape HTML helper\nfunction esc(str) {\n  return String(str || '').replace(/&/g, '&amp;').replace(/\"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n}\n\n// Build scene cards\nconst scenesHtml = scenes.map(s => {\n  const num = s.scene_number;\n  const emotions = ['wonder', 'excitement', 'tension', 'courage', 'triumph', 'joy', 'love'];\n  const emotionOptions = emotions.map(e =>\n    '<option value=\"' + e + '\"' + (s.emotion === e ? ' selected' : '') + '>' + e + '</option>'\n  ).join('');\n\n  return '<div class=\"scene-card\">' +\n    '<div class=\"scene-header\">' +\n    '<span class=\"badge\">Scene ' + num + '</span>' +\n    '<select name=\"emotion_' + num + '\" class=\"emo\">' + emotionOptions + '</select>' +\n    '</div>' +\n    '<label>Scene Title</label>' +\n    '<input type=\"text\" name=\"scene_title_' + num + '\" value=\"' + esc(s.scene_title) + '\" class=\"inp\">' +\n    '<label>Narration <span class=\"hint\">(read aloud)</span></label>' +\n    '<textarea name=\"narration_' + num + '\" rows=\"4\" class=\"ta\">' + esc(s.narration) + '</textarea>' +\n    '<label>Visual Description <span class=\"hint\">(for image gen)</span></label>' +\n    '<textarea name=\"visual_' + num + '\" rows=\"3\" class=\"ta vis\">' + esc(s.visual_description) + '</textarea>' +\n    '</div>';\n}).join('\\n');\n\nconst html = '<!DOCTYPE html>' +\n  '<html lang=\"en\"><head><meta charset=\"utf-8\">' +\n  '<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0\">' +\n  '<title>Edit Script - ' + esc(orderId) + '</title>' +\n  '<style>' +\n  '*{box-sizing:border-box;margin:0;padding:0}' +\n  'body{font-family:Segoe UI,Roboto,sans-serif;background:#f8f9fa;padding:24px 16px;color:#111}' +\n  '.card{max-width:720px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden}' +\n  '.hdr{padding:24px 28px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:flex-start}' +\n  '.hdr h1{font-size:20px}.hdr p{font-size:13px;color:#6b7280;margin-top:4px}' +\n  '.vbadge{padding:4px 12px;background:#e0e7ff;color:#3730a3;font-size:11px;font-weight:600;border-radius:12px}' +\n  '.bd{padding:24px 28px}' +\n  'label{display:block;font-size:12px;font-weight:600;color:#374151;margin:14px 0 4px;text-transform:uppercase;letter-spacing:.5px}' +\n  'label .hint{font-weight:400;color:#9ca3af;text-transform:none;letter-spacing:0}' +\n  '.inp{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:15px;font-family:inherit;font-weight:600}' +\n  '.inp:focus,.ta:focus,.tin:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}' +\n  '.ta{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;line-height:1.6;resize:vertical;font-family:inherit}' +\n  '.ta.vis{font-size:13px;color:#6b7280;background:#f9fafb}' +\n  '.scene-card{border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:16px}' +\n  '.scene-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}' +\n  '.badge{font-size:12px;font-weight:700;color:#3730a3;text-transform:uppercase;letter-spacing:1px}' +\n  '.emo{padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;background:#fff}' +\n  '.top{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-bottom:20px}' +\n  '.tin{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:18px;font-weight:700;font-family:inherit}' +\n  '.tag{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-style:italic;font-family:inherit;color:#6b7280}' +\n  '.cls{width:100%;padding:10px 12px;border:1px solid #bbf7d0;border-radius:6px;font-size:14px;font-family:inherit;background:#f0fdf4}' +\n  '.acts{padding:16px 28px 28px;display:flex;gap:12px;border-top:1px solid #eee}' +\n  '.btn{padding:14px 28px;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;text-align:center;flex:1}' +\n  '.btn-ok{background:#16a34a;color:#fff}.btn-no{background:#e5e7eb;color:#374151;flex:.4}' +\n  '.btn:hover{opacity:.9}' +\n  '</style></head><body>' +\n  '<div class=\"card\">' +\n  '<div class=\"hdr\"><div><h1>✏️ Edit Script</h1><p>Order: <strong>' + esc(orderId) + '</strong></p></div>' +\n  '<span class=\"vbadge\">v' + version + '</span></div>' +\n  '<form id=\"ef\" onsubmit=\"return go(event)\">' +\n  '<div class=\"bd\">' +\n  '<div class=\"top\">' +\n  '<label>Title</label>' +\n  '<input type=\"text\" id=\"title\" value=\"' + esc(script.title) + '\" class=\"tin\" required>' +\n  '<label>Tagline</label>' +\n  '<input type=\"text\" id=\"tagline\" value=\"' + esc(script.tagline) + '\" class=\"tag\">' +\n  '</div>' +\n  scenesHtml +\n  '<div class=\"top\" style=\"background:#f0fdf4;border-color:#bbf7d0;margin-top:20px\">' +\n  '<label>💚 Closing Message</label>' +\n  '<input type=\"text\" id=\"closing\" value=\"' + esc(script.closing_message) + '\" class=\"cls\">' +\n  '</div>' +\n  '</div>' +\n  '<div class=\"acts\">' +\n  '<button type=\"submit\" class=\"btn btn-ok\">✅ Save &amp; Approve</button>' +\n  '<button type=\"button\" class=\"btn btn-no\" onclick=\"window.close()\">Cancel</button>' +\n  '</div>' +\n  '</form>' +\n  '</div>' +\n  '<script>' +\n  'function go(e){' +\n  'e.preventDefault();' +\n  'var s={title:document.getElementById(\"title\").value,' +\n  'tagline:document.getElementById(\"tagline\").value,' +\n  'scenes:[],' +\n  'closing_message:document.getElementById(\"closing\").value};' +\n  'for(var i=1;i<=' + sceneCount + ';i++){' +\n  's.scenes.push({' +\n  'scene_number:i,' +\n  'scene_title:document.querySelector(\"[name=scene_title_\"+i+\"]\").value,' +\n  'narration:document.querySelector(\"[name=narration_\"+i+\"]\").value,' +\n  'visual_description:document.querySelector(\"[name=visual_\"+i+\"]\").value,' +\n  'emotion:document.querySelector(\"[name=emotion_\"+i+\"]\").value' +\n  '});' +\n  '}' +\n  'var f=document.createElement(\"form\");' +\n  'f.method=\"POST\";f.action=\"' + WEBHOOK_URL + '\";' +\n  'var d={order_id:\"' + orderId + '\",version:\"' + version + '\",action:\"edit_submit\",script:JSON.stringify(s)};' +\n  'for(var k in d){var inp=document.createElement(\"input\");inp.type=\"hidden\";inp.name=k;inp.value=d[k];f.appendChild(inp);}' +\n  'document.body.appendChild(f);f.submit();' +\n  '}' +\n  '</script></body></html>';\n\nreturn [{\n  json: {\n    html: html,\n    order_id: orderId,\n    version: version\n  }\n}];\n"
+      },
+      "id": "be180ef7-1761-46f7-bc4b-06eb989b5148",
+      "name": "Build Edit Form",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "10f73491-d08b-4fc1-8747-8108b7448926",
+      "name": "Respond Edit Form",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "86ab0d09-ffda-4705-b94d-4ff76db14f65",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "696653be-1e86-4a05-942f-1aacbdabe998",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "approved",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -848,
+        272
+      ],
+      "id": "f1f62ae6-af4b-4806-b077-ec1a3a7db5fb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html><html><head><meta charset=\"utf-8\">\n<title>Already Approved</title>\n<style>body{font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f8f9fa;margin:0;}\n.card{text-align:center;background:#fff;padding:48px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}\nh1{font-size:24px;color:#6b7280;margin-bottom:8px;}p{color:#9ca3af;font-size:14px;}</style></head>\n<body><div class=\"card\">\n<div style=\"font-size:48px;margin-bottom:16px;\">✅</div>\n<h1>Already Approved</h1>\n<p>This script version was already approved. No action needed.</p>\n</div></body></html>\n",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "2705c625-c61f-499e-b671-6508201ea2c3",
+      "name": "Respond Error Already Approved",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "scripts",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.order_id }}"
+            },
+            {
+              "keyName": "version",
+              "condition": "eq",
+              "keyValue": "={{ $json.version }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        272
+      ],
+      "id": "aecee7c4-3702-4f5e-99d4-dbbcfe13bcc2",
+      "name": "Fetch Script Version",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Review Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review Router": {
+      "main": [
+        [
+          {
+            "node": "Fetch Script Version",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Action": {
+      "main": [
+        [
+          {
+            "node": "Build Approve Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Retry Form",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Edit Form",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Approve Response": {
+      "main": [
+        [
+          {
+            "node": "Approve Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve Script": {
+      "main": [
+        [
+          {
+            "node": "Update Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Order Status": {
+      "main": [
+        [
+          {
+            "node": "Respond Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Retry Form": {
+      "main": [
+        [
+          {
+            "node": "Respond Retry Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Edit Form": {
+      "main": [
+        [
+          {
+            "node": "Respond Edit Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch Action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error Already Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Script Version": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9fa9abc5-8d9c-4a9b-a486-7807a102e946",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ff6ac216908333ff4d020c1b631281d0de78b9818d2577a99ecce9f9d860dfe4"
+  },
+  "id": "6g62k80v9xljSzY8",
+  "tags": []
+}

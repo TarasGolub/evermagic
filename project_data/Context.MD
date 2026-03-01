@@ -132,12 +132,18 @@ We built a clean order object:
 2. Parse & canonicalize
 3. Insert into Supabase `orders`
 4. Insert raw into `order_payloads`
-5. Call OpenAI
-6. Save script into `assets`
-7. Update order status → `script_generated`
-8. Send confirmation email
+5. Fetch prompt from GitHub, build grounded prompt
+6. Call OpenAI → generate script
+7. Save script into `assets` (with versioning)
+8. Update order status → `script_generated`
+9. Send customer confirmation email
+10. Send admin review email (with Approve / Retry / Edit buttons)
+11. Admin review loop:
+    - **Approve** → status → `approved` (Phase 1 done, Phase 2 cron picks up)
+    - **Edit & Retry** → re-run AI with admin feedback → new version → new review email
+    - **Manual Edit** → admin edits script via form → save → status → `approved`
 
-> Once this works: You have your first real AI automation pipeline.
+> Once this works: You have your first real AI automation pipeline with human-in-the-loop quality control.
 
 ---
 
@@ -209,10 +215,12 @@ When all required assets exist:
 ## 📊 STATE MACHINE (PLANNED)
 
 ```
-created → validated → script_generated → audio_generated → images_generated → video_rendered → pdf_generated → delivered
-                                                                                                                  ↘ needs_review
-                                                                                                                  ↘ failed
+created → validated → script_generated → script_review → approved → audio_generated → images_generated → video_rendered → pdf_generated → delivered
+                                              ↺ retry                                                                                     ↘ needs_review
+                                                                                                                                           ↘ failed
 ```
+
+> Phase 2 cron job picks up all orders with status `approved` and begins audio generation.
 
 ---
 
