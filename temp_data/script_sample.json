@@ -1,0 +1,100 @@
+[
+    {
+        "order_id": "EM-20260228-HD2W",
+        "script": {
+            "title": "Charlie and the Starlight T-Rex",
+            "tagline": "A brave boy, a lost star fossil, and a rocket ride to a dinosaur constellation.",
+            "scenes": [
+                {
+                    "scene_number": 1,
+                    "scene_title": "The Night That Blinked",
+                    "narration": "Charlie sits beneath the backyard sky, brown hair under a backwards cap, light skin glowing in moonlight, wearing his red hoodie with a dinosaur patch and blue sneakers. He studies a T‑Rex toy and the stars seem to answer, sending a tiny starlight fossil drifting down. The world hushes; an unexpected invitation to adventure shivers in the air.",
+                    "visual_description": "Wide shot of a cozy backyard at night, soft moonlight and twinkling stars. Charlie (brown hair, light skin) wears a red hoodie with a dinosaur patch, blue sneakers, and a backwards cap, sitting on a blanket among toy dinosaurs. The starlight fossil glows nearby. Lighting: cool moon blues with a warm glow around the fossil. Mood: wonder. Framing: low-angle, slightly wide to show sky and Charlie.",
+                    "emotion": "wonder"
+                },
+                {
+                    "scene_number": 2,
+                    "scene_title": "Rocket of Red and Roar",
+                    "narration": "His treehouse folds into a comet-ship stamped with a lucky 7, and Charlie climbs in, heartbeat quick with excitement. He tucks his T‑Rex plush beside the controls, remembers scoring three goals last Saturday and the team’s cheers bolstering him. The engine hums like a friendly drum and the backyard explodes into a curtain of silver as they launch toward the stars.",
+                    "visual_description": "Medium shot as a treehouse transforms into a comet-shaped rocket marked with a '7' patch. Charlie (brown hair, light skin) in his red hoodie with a dinosaur patch, blue sneakers, and backwards cap straps into the cockpit holding a small T‑Rex plush. Lighting: warm cockpit glows and streaking starlight. Mood: excitement. Framing: over-the-shoulder into the starfield ahead.",
+                    "emotion": "excitement"
+                },
+                {
+                    "scene_number": 3,
+                    "scene_title": "The Fossil Field",
+                    "narration": "An asteroid garden of glowing bone-tiles drifts before them, a gentle puzzle of shapes and echoes. Charlie’s brave heart steadies him; he remembers every T‑Rex bone name and steps onto wobbling fossil bridges to realign them. Each correct match hums with light, and when a gap threatens to close he leaps with calm courage, solving the puzzle with dinosaur knowledge and steady feet.",
+                    "visual_description": "Wide, cinematic view of a calm asteroid field made of glowing fossil fragments and floating bone-tiles. Charlie (brown hair, light skin) in his red hoodie with a dinosaur patch, blue sneakers, and backwards cap carefully steps across luminous bone bridges, hands out for balance. Lighting: soft bioluminescent glows from the fossils, cool space backdrop. Mood: tension mixed with resolve. Framing: tracking shot following his steps.",
+                    "emotion": "tension"
+                },
+                {
+                    "scene_number": 4,
+                    "scene_title": "The Constellation Roar",
+                    "narration": "With the last bone set, the asteroids weave together into a towering star-dinosaur. Lights cascade and a gentle cosmic T‑Rex unfurls, playful and grateful, its roar a ribbon of chiming stars. Charlie leads the new constellation home, steering by starlight and bravery, as the galaxy applauds in shimmering auroras and the comet-ship trails a victorious ribbon of light across the sky.",
+                    "visual_description": "Epic wide shot of a glowing T‑Rex constellation forming from reassembled fossils, the cosmic creature towering but kind. Charlie (brown hair, light skin) in his red hoodie with a dinosaur patch, blue sneakers, and backwards cap stands on the comet-ship deck, silhouetted against the roaring constellation. Lighting: radiant starbursts and colorful auroras. Mood: triumph and wonder. Framing: panoramic, emphasizing scale and victory.",
+                    "emotion": "triumph"
+                },
+                {
+                    "scene_number": 5,
+                    "scene_title": "Home, With a Message",
+                    "narration": "Dawn spills over the backyard as the comet-ship settles into the treehouse. Charlie climbs down, still smelling stars, and the ship’s console pings softly. A warm hologram unfolds above the controls and reads, \"Stay curious and brave, Charlie! The universe is yours to explore. Love, Mom & Dad 🚀\" He grins, heart full, knowing the next adventure already waits.",
+                    "visual_description": "Close, warm morning shot of the backyard at sunrise. Charlie (brown hair, light skin) in his red hoodie with a dinosaur patch, blue sneakers, and backwards cap steps from the comet-ship into soft golden light. A small holographic projection hovers from the ship’s console showing the parents' message. Lighting: golden hour, gentle. Mood: love and homecoming. Framing: intimate close-up on Charlie and the hologram.",
+                    "emotion": "love"
+                }
+            ],
+            "closing_message": "Stay curious and brave, Charlie! The universe is yours to explore. Love, Mom & Dad 🚀"
+        },
+        "script_raw": "{\n  \"title\": \"Charlie and the Starlight T-Rex\",\n  \"tagline\": \"A brave boy, a lost star fossil, and a rocket ride to a dinosaur constellation.\",\n  \"scenes\": [\n    {\n      \"scene_number\": 1,\n      \"scene_title\": \"The Night That Blinked\",\n      \"narration\": \"Charlie sits beneath the backyard sky, brown hair under a backwards cap, light skin glowing in moonlight, wearing his red hoodie with a dinosaur patch and blue sneakers. He studies a T‑Rex toy and the stars seem to answer, sending a tiny starlight fossil drifting down. The world hushes; an unexpected invitation to adventure shivers in the air.\",\n      \"visual_description\": \"Wide shot of a cozy backyard at night, soft moonlight and twinkling stars. Charlie (brown hair, light skin) wears a red hoodie with a dinosaur patch, blue sneakers, and a backwards cap, sitting on a blanket among toy dinosaurs. The starlight fossil glows nearby. Lighting: cool moon blues with a warm glow around the fossil. Mood: wonder. Framing: low-angle, slightly wide to show sky and Charlie.\",\n      \"emotion\": \"wonder\"\n    },\n    {\n      \"scene_number\": 2,\n      \"scene_title\": \"Rocket of Red and Roar\",\n      \"narration\": \"His treehouse folds into a comet-ship stamped with a lucky 7, and Charlie climbs in, heartbeat quick with excitement. He tucks his T‑Rex plush beside the controls, remembers scoring three goals last Saturday and the team’s cheers bolstering him. The engine hums like a friendly drum and the backyard explodes into a curtain of silver as they launch toward the stars.\",\n      \"visual_description\": \"Medium shot as a treehouse transforms into a comet-shaped rocket marked with a '7' patch. Charlie (brown hair, light skin) in his red hoodie with a dinosaur patch, blue sneakers, and backwards cap straps into the cockpit holding a small T‑Rex plush. Lighting: warm cockpit glows and streaking starlight. Mood: excitement. Framing: over-the-shoulder into the starfield ahead.\",\n      \"emotion\": \"excitement\"\n    },\n    {\n      \"scene_number\": 3,\n      \"scene_title\": \"The Fossil Field\",\n      \"narration\": \"An asteroid garden of glowing bone-tiles drifts before them, a gentle puzzle of shapes and echoes. Charlie’s brave heart steadies him; he remembers every T‑Rex bone name and steps onto wobbling fossil bridges to realign them. Each correct match hums with light, and when a gap threatens to close he leaps with calm courage, solving the puzzle with dinosaur knowledge and steady feet.\",\n      \"visual_description\": \"Wide, cinematic view of a calm asteroid field made of glowing fossil fragments and floating bone-tiles. Charlie (brown hair, light skin) in his red hoodie with a dinosaur patch, blue sneakers, and backwards cap carefully steps across luminous bone bridges, hands out for balance. Lighting: soft bioluminescent glows from the fossils, cool space backdrop. Mood: tension mixed with resolve. Framing: tracking shot following his steps.\",\n      \"emotion\": \"tension\"\n    },\n    {\n      \"scene_number\": 4,\n      \"scene_title\": \"The Constellation Roar\",\n      \"narration\": \"With the last bone set, the asteroids weave together into a towering star-dinosaur. Lights cascade and a gentle cosmic T‑Rex unfurls, playful and grateful, its roar a ribbon of chiming stars. Charlie leads the new constellation home, steering by starlight and bravery, as the galaxy applauds in shimmering auroras and the comet-ship trails a victorious ribbon of light across the sky.\",\n      \"visual_description\": \"Epic wide shot of a glowing T‑Rex constellation forming from reassembled fossils, the cosmic creature towering but kind. Charlie (brown hair, light skin) in his red hoodie with a dinosaur patch, blue sneakers, and backwards cap stands on the comet-ship deck, silhouetted against the roaring constellation. Lighting: radiant starbursts and colorful auroras. Mood: triumph and wonder. Framing: panoramic, emphasizing scale and victory.\",\n      \"emotion\": \"triumph\"\n    },\n    {\n      \"scene_number\": 5,\n      \"scene_title\": \"Home, With a Message\",\n      \"narration\": \"Dawn spills over the backyard as the comet-ship settles into the treehouse. Charlie climbs down, still smelling stars, and the ship’s console pings softly. A warm hologram unfolds above the controls and reads, \\\"Stay curious and brave, Charlie! The universe is yours to explore. Love, Mom & Dad 🚀\\\" He grins, heart full, knowing the next adventure already waits.\",\n      \"visual_description\": \"Close, warm morning shot of the backyard at sunrise. Charlie (brown hair, light skin) in his red hoodie with a dinosaur patch, blue sneakers, and backwards cap steps from the comet-ship into soft golden light. A small holographic projection hovers from the ship’s console showing the parents' message. Lighting: golden hour, gentle. Mood: love and homecoming. Framing: intimate close-up on Charlie and the hologram.\",\n      \"emotion\": \"love\"\n    }\n  ],\n  \"closing_message\": \"Stay curious and brave, Charlie! The universe is yours to explore. Love, Mom & Dad 🚀\"\n}",
+        "order": {
+            "order_id": "EM-20260228-HD2W",
+            "package": "FULL",
+            "language": "EN",
+            "theme": "SPACE_HERO",
+            "delivery": {
+                "email": "test@evermagic.com"
+            },
+            "child": {
+                "name": "Charlie",
+                "age": 7,
+                "gender": "boy",
+                "glasses": false,
+                "hair_color": "brown",
+                "skin_tone": "light",
+                "hobby": "Dinosaurs and space exploration",
+                "hobby_detail": "Charlie has been obsessed with T-Rex since age 3. Knows every dinosaur by name and dreams of becoming a paleontologist-astronaut.",
+                "signature_look": "Always wears his red hoodie with a dinosaur patch, blue sneakers, and a backwards cap.",
+                "jersey_number": "7",
+                "recent_win": "Scored 3 goals in last Saturday's football match and the whole team celebrated!",
+                "hero_trait": "brave"
+            },
+            "parent_message": "Stay curious and brave, Charlie! The universe is yours to explore. Love, Mom & Dad 🚀",
+            "photos": [
+                {
+                    "id": "NRaxkG",
+                    "name": "nazar_holub.jpg",
+                    "url": "https://storage.tally.so/private/nazar_holub.jpg?id=NRaxkG&accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik5SYXhrRyIsImZvcm1JZCI6InJqNmdNWCIsImlhdCI6MTc3MjI1MDk3Mn0.f6NPdyl_1bLB2-rFUAhXyxg83Ra9SVwAGe1J0cULcnU&signature=93e98922b6fa9a4115a9900a50ab1dd212ac06f90b724f6352b9bdd7e78fdc97",
+                    "mime": "image/jpeg",
+                    "size": 172254,
+                    "type": "photo_main"
+                }
+            ],
+            "consent": {
+                "accepted": true
+            },
+            "meta": {
+                "event_id": "8c97a41f-fbfd-4aac-907d-61f79f5e96b4",
+                "event_type": "FORM_RESPONSE",
+                "created_at": "2026-02-28T03:56:12.275Z",
+                "response_id": "2EM8J0A",
+                "submission_id": "2EM8J0A",
+                "respondent_id": "WO0O9zN",
+                "form_id": "rj6gMX",
+                "form_name": "EverMagic - Create Your Magic ",
+                "form_created_at": "2026-02-28T03:56:12.000Z",
+                "user_agent": "Tally Webhooks",
+                "ip_country": "BE",
+                "cf_ray": "9d4cfda12d75ef07-LHR",
+                "received_at": "2026-02-28T03:56:12.275Z"
+            }
+        }
+    }
+]
