@@ -55,37 +55,35 @@ It is:
 
 ---
 
-## ⚙️ TECH STACK (CURRENT, Open to add more effective tools if beneficial)
+## ⚙️ TECH STACK
 
-| Layer | Tool |
-|-------|------|
-| Frontend | Tally (form + file upload) |
-| Payments | Stripe (next step integration) |
-| Backend Automation | n8n Cloud (core orchestration) |
-| Database | Supabase |
-| AI | OpenAI (script generation) |
-| Voice | ElevenLabs (next phase) |
-| Image generation | (later phase) |
-| Video rendering | (later phase) |
-| Delivery | Email via n8n |
+| Layer | Tool | Status |
+|-------|------|--------|
+| Frontend | Tally (form + file upload) | ✅ Active |
+| Payments | Stripe (next step integration) | 📋 Planned |
+| Backend Automation | n8n Cloud (core orchestration) | ✅ Active |
+| Database | Supabase (orders, scripts, images) | ✅ Active |
+| Storage | Supabase Storage (images, PDFs) | 📋 Phase 2 |
+| AI — Script | OpenAI GPT-4o | ✅ Active |
+| AI — Images | Flux 1.1 Pro via Replicate | 📋 Phase 2 |
+| PDF Generation | PDFShift API | 📋 Phase 2 |
+| Voice | ElevenLabs | 📋 Phase 3 |
+| Video rendering | TBD (Remotion / FFmpeg / Creatomate) | 📋 Phase 3 |
+| Delivery | Email via n8n | ✅ Active |
 
 ---
 
-## 🏗 CURRENT PIPELINE (WORKING, open to extend with other tools if beneficial)
+## 🏗 CURRENT PIPELINE (Phase 1 — Complete ✅)
 
 ```
-Tally → n8n Webhook → Function (parse & canonicalize) → Supabase (next) → OpenAI (next)
+Tally → n8n Webhook → Parse & Canonicalize → Save to Supabase → Build Prompt → OpenAI → Parse Script → Save Script → Send Emails → Admin Review (Approve / Retry / Edit)
 ```
 
-**Webhook secured via:**
-- Header Auth
-- `X-EverMagic-Token`
+**Webhook secured via:** Header Auth (`X-EverMagic-Token`)
 
 ---
 
 ## 📦 ORDER DATA STRUCTURE
-
-We built a clean order object:
 
 ```json
 {
@@ -95,18 +93,11 @@ We built a clean order object:
   "theme": "SPACE_HERO",
   "delivery": { "email": "..." },
   "child": {
-    "name": "...",
-    "age": 7,
-    "gender": "...",
-    "glasses": false,
-    "hair_color": "...",
-    "skin_tone": "...",
-    "hobby": "...",
-    "hobby_detail": "...",
-    "signature_look": "...",
-    "jersey_number": "...",
-    "recent_win": "...",
-    "hero_trait": "brave"
+    "name": "...", "age": 7, "gender": "...",
+    "glasses": false, "hair_color": "...", "skin_tone": "...",
+    "hobby": "...", "hobby_detail": "...",
+    "signature_look": "...", "jersey_number": "...",
+    "recent_win": "...", "hero_trait": "brave"
   },
   "parent_message": "...",
   "photos": ["..."],
@@ -115,88 +106,108 @@ We built a clean order object:
 }
 ```
 
-**We decided:**
-- ✅ Only pass order object forward in workflow
-- ✅ Store raw payload in Supabase separately for debugging
+**Principles:**
+- ✅ Only pass canonical order object forward in workflow
+- ✅ Store raw Tally payload separately for debugging
+
+---
+
+## 🛒 CHANNEL STRATEGY
+
+| Channel | Product | Price | Status |
+|---------|---------|-------|--------|
+| **Etsy / Amazon** | PDF bundle (storybook + certificate + coloring) | $9–15 CAD | 📋 Phase 2 |
+| **KidsTukan / Direct** | Premium bundle (video + PDF + printable) | $35–49 CAD | 📋 Phase 3 |
+
+Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 ---
 
 ## 🗺 FULL FACTORY ROADMAP
 
-### PHASE 1 — Intake & Script Automation 
+### PHASE 1 — Intake & Script Automation ✅ COMPLETE
 
-**Goal:** Fully automated script generation pipeline.
+**Tag:** `v1.1.0` · **Branch:** `feature/EVRM-003`
+
+**What works:**
+1. Tally webhook → parse & canonicalize → save order to Supabase
+2. Fetch prompt from GitHub → OpenAI → generate script
+3. Save script to `scripts` table (with versioning: draft / approved / superseded)
+4. Send customer confirmation email + admin review email
+5. Admin review: Approve / Edit & Retry (AI regeneration) / Manual Edit
+6. Guard: prevents double-approval of already-approved scripts
+
+**Database tables:** `orders`, `order_payloads`, `scripts`
+
+---
+
+### PHASE 2 — PDF Storybook Engine (CURRENT)
+
+**Goal:** Generate illustrated PDF storybook as first sellable product for Etsy.
+
+**Strategy:** Validate before automating.
+1. Test image quality manually (Replicate playground)
+2. Build 1–2 sample PDFs by hand
+3. List on Etsy → get first sale
+4. Then automate the pipeline
+
+**Pipeline (once validated):**
+```
+Approved Script → Generate Images (Flux/Replicate) → Build HTML → Convert PDF (PDFShift) → Store (Supabase Storage) → Deliver
+```
+
+**Deliverables (3 separate PDFs):**
+1. **Storybook** — cover + 5 illustrated scenes + parent message
+2. **Certificate** — personalized achievement certificate
+3. **Coloring page** — black & white line art version of hero
+
+**Tools:**
+- **Flux 1.1 Pro** (via Replicate API) — image generation
+- **PDFShift** (API) — HTML → PDF conversion
+- **Supabase Storage** — file storage
+- **Visual style:** Pixar/3D CGI, Boss Baby proportions (big head, big eyes)
+
+**Status:** `approved` → `images_generating` → `images_generated` → `pdf_generating` → `pdf_generated` → `delivered`
+
+**Database tables (new):** `images`
+
+**Key risk:** Character consistency across 5 scenes. Must validate before building pipeline.
+
+---
+
+### PHASE 3 — Video Bundle (Premium Product)
+
+**Goal:** Add voice narration + video for KidsTukan premium bundle.
 
 **Steps:**
-1. Webhook secured
-2. Parse & canonicalize
-3. Insert into Supabase `orders`
-4. Insert raw into `order_payloads`
-5. Fetch prompt from GitHub, build grounded prompt
-6. Call OpenAI → generate script
-7. Save script into `assets` (with versioning)
-8. Update order status → `script_generated`
-9. Send customer confirmation email
-10. Send admin review email (with Approve / Retry / Edit buttons)
-11. Admin review loop:
-    - **Approve** → status → `approved` (Phase 1 done, Phase 2 cron picks up)
-    - **Edit & Retry** → re-run AI with admin feedback → new version → new review email
-    - **Manual Edit** → admin edits script via form → save → status → `approved`
+1. ElevenLabs API → generate voice narration (5 scenes)
+2. Assemble video: images + voice + transitions + background music
+3. Export MP4
+4. Combined delivery: video + PDF + printable
 
-> Once this works: You have your first real AI automation pipeline with human-in-the-loop quality control.
+**Tools (planned):**
+- **ElevenLabs** — voice generation
+- **Remotion / FFmpeg / Creatomate** — video assembly (TBD)
+
+**Status chain:** `approved` → `audio_generating` → `video_assembling` → `video_rendered` → `delivered`
 
 ---
 
-### PHASE 2 — Voice Automation
+### PHASE 4 — Stripe Integration & Storefront
 
-- ElevenLabs API call
-- Save mp3 to storage
-- Insert asset record
-- Update status → `audio_generated`
-
----
-
-### PHASE 3 — Image Generation
-
-- Character generation based on canonical
-- 3–5 scene images
-- Store to R2/S3
-- Insert asset records
+- Stripe checkout flow
+- Direct orders without manual Etsy process
+- Automated payment → pipeline trigger
 
 ---
 
-### PHASE 4 — Video Assembly
+### PHASE 5 — Scale & Optimize
 
-**Option A:** FFmpeg pipeline
-**Option B:** Remotion-based coded video rendering
-
-**Process:**
-1. Combine scenes
-2. Add voice
-3. Add music
-4. Export mp4
-5. Upload to storage
-6. Insert asset
-7. Update status → `video_rendered`
-
----
-
-### PHASE 5 — PDF Generation
-
-1. HTML template
-2. Inject canonical data
-3. Generate PDF
-4. Store
-5. Insert asset
-
----
-
-### PHASE 6 — Delivery Automation
-
-When all required assets exist:
-1. Generate email with links
-2. Send final delivery email
-3. Update status → `delivered`
+- Additional themes beyond Space Hero
+- Multi-language support (Ukrainian)
+- Batch processing
+- Quality monitoring dashboard
+- Customer reviews integration
 
 ---
 
@@ -207,46 +218,58 @@ When all required assets exist:
 - Clear state machine
 - Idempotent steps
 - Each step saves its output
-- Retry-friendly
-- Debuggable
+- Retry-friendly and debuggable
+- Validate before automating
 
 ---
 
-## 📊 STATE MACHINE (PLANNED)
+## 📊 STATE MACHINE
 
 ```
-created → validated → script_generated → script_review → approved → audio_generated → images_generated → video_rendered → pdf_generated → delivered
-                                              ↺ retry                                                                                     ↘ needs_review
-                                                                                                                                           ↘ failed
+Phase 1: created → validated → script_generated → script_review → approved
+                                                      ↺ retry
+
+Phase 2: approved → images_generating → images_generated → pdf_generating → pdf_generated → delivered
+
+Phase 3: approved → audio_generating → audio_generated → video_assembling → video_rendered → delivered
 ```
 
-> Phase 2 cron job picks up all orders with status `approved` and begins audio generation.
+---
+
+## 💰 COST STRUCTURE (per order)
+
+| Step | Tool | Cost |
+|------|------|------|
+| Script | OpenAI GPT-4o | ~$0.03 |
+| Images (7) | Flux/Replicate | ~$0.21 |
+| PDF conversion | PDFShift | Free (250/mo) |
+| Voice (Phase 3) | ElevenLabs | ~$0.15 |
+| Video (Phase 3) | TBD | ~$0.00–0.50 |
+| **PDF bundle total** | | **~$0.25/order** |
+| **Full bundle total** | | **~$0.90/order** |
 
 ---
 
 ## 🚀 STRATEGIC GOAL
 
-EverMagic is not a project.
+EverMagic is an **AI content production engine.**
 
-It is:
-> An AI content production engine.
-
-**If fully automated:**
-- 5 orders per day = 150/month
-- At $49 = **$7,350/month**
-- With near-zero marginal cost.
+| Target | PDF Bundle (Etsy) | Full Bundle (Premium) |
+|--------|-------------------|----------------------|
+| Price | $9–15 CAD | $35–49 CAD |
+| Cost | ~$0.25 | ~$0.90 |
+| Margin | ~97% | ~97% |
+| Volume | 5/day = 150/mo | 2/day = 60/mo |
+| Revenue | **$1,500–2,250/mo** | **$2,100–2,940/mo** |
 
 ---
 
 ## 📌 WHEN YOU NEED TO RESTORE CONTEXT
 
-Paste this into new chat:
-
-> "Continuing EverMagic AI Factory. We are in Phase X. Here is our architecture summary."
+> "Continuing EverMagic AI Factory. We are in Phase 2 (PDF Storybook). Here is our architecture summary."
 
 ## OPTIMIZATION IDEAS
 
-- feel free to suggest improvements to the architecture or implementation
-- we are open to new tools and techniques if they can improve the pipeline
-- we are open to new ideas for features and functionality
-- we are open to new ideas for optimization and improvement
+- Open to new tools if they improve the pipeline
+- Open to new ideas for features, optimization, and efficiency
+- Always validate before automating
