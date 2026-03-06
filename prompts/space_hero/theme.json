@@ -1,0 +1,44 @@
+{
+    "theme_id": "SPACE_HERO",
+    "theme_name": "Space Hero Mission",
+    "version": "1.0.0",
+    "stylePrefix": "3D animated character, Pixar-style render, cinematic lighting, warm rim light",
+    "coverBackground": "Cosmic space background with nebula and stars",
+    "coverPose": "Standing in a confident hero pose with hands on hips",
+    "sceneStyle": {
+        "1": {
+            "lighting": "Warm moonlight with cool blue ambient and soft golden accents",
+            "camera": "Wide establishing shot, low angle"
+        },
+        "2": {
+            "lighting": "Dynamic warm lighting with streak lights and silver reflections",
+            "camera": "Over-shoulder or low heroic angle"
+        },
+        "3": {
+            "lighting": "Dramatic side lighting with teal and amber tones",
+            "camera": "Medium tracking shot"
+        },
+        "4": {
+            "lighting": "Radiant burst lighting with gold and cosmic colors",
+            "camera": "Epic wide panoramic angle"
+        },
+        "5": {
+            "lighting": "Golden hour sunrise with warm gold and soft pink",
+            "camera": "Intimate close-up shot"
+        }
+    },
+    "coloring": {
+        "backgroundElements": "stars, planets, a small rocket",
+        "pose": "a confident hero pose"
+    },
+    "pulid": {
+        "width": 1024,
+        "height": 1024,
+        "id_weight": 1.0,
+        "start_step": 1,
+        "guidance_scale": 3.5,
+        "num_steps": 20,
+        "output_quality": 90,
+        "negative_prompt": "bad quality, worst quality, text, signature, watermark, extra limbs, realistic photo, photograph"
+    }
+}
