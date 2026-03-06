@@ -1,0 +1,16 @@
+{
+    "width": 1024,
+    "height": 1024,
+    "prompt": "3D animated character, Pixar-style render, cinematic lighting, warm rim light. a 7-year-old boy with brown hair and light skin, Always wears his red hoodie with a dinosaur patch, blue sneakers, and a backwards cap., with the number 7 on the sleeve. Standing in a confident hero pose with hands on hips. Cosmic space background with nebula and stars.",
+    "true_cfg": 1,
+    "id_weight": 1.0,
+    "num_steps": 20,
+    "start_step": 1,
+    "num_outputs": 1,
+    "output_format": "webp",
+    "guidance_scale": 3.5,
+    "output_quality": 90,
+    "main_face_image": "https://storage.tally.so/private/zakhar_holub.jpg?id=DZLrNN&accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRaTHJOTiIsImZvcm1JZCI6InJqNmdNWCIsImlhdCI6MTc3MjM0MjE2N30.TaqSgpNlpkgmmX9sYaQpTSnQjHgTFemvCg7j-Ww50_w&signature=8d6877070a9777e2f827d97105327638a63dcf51e11d3c5812802ffea0588bfb",
+    "negative_prompt": "bad quality, worst quality, text, signature, watermark, extra limbs, realistic photo, photograph",
+    "max_sequence_length": 128
+}
