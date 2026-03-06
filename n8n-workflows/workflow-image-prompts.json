@@ -44,20 +44,6 @@
     },
     {
       "parameters": {
-        "batchSize": 1,
-        "options": {}
-      },
-      "id": "a1b2c3d4-0001-4000-8000-000000000003",
-      "name": "Loop Scripts",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        680,
-        300
-      ]
-    },
-    {
-      "parameters": {
         "operation": "getAll",
         "tableId": "order_payloads",
         "matchType": "allFilters",
@@ -76,7 +62,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        900,
+        680,
         300
       ],
       "credentials": {
@@ -88,16 +74,76 @@
     },
     {
       "parameters": {
-        "jsCode": "// ─────────────────────────────────────────────────────────────\n// Parse payload + script → Build all 7 image prompts\n// ─────────────────────────────────────────────────────────────\n\nconst payloadRow = $input.first().json;\nconst scriptRow = $('Loop Scripts').first().json;\n\n// --- Parse order from double-escaped payload_json ---\nlet order;\ntry {\n  let raw = payloadRow.payload_json;\n  if (typeof raw === 'string') raw = JSON.parse(raw);\n  if (typeof raw === 'string') raw = JSON.parse(raw);\n  order = raw;\n} catch (e) {\n  throw new Error('Failed to parse payload_json: ' + e.message);\n}\n\nif (!order.child) {\n  throw new Error('Parsed order has no child field.');\n}\n\n// --- Parse script content ---\nlet scriptData;\ntry {\n  let content = scriptRow.content;\n  if (typeof content === 'string') content = JSON.parse(content);\n  scriptData = content;\n} catch (e) {\n  throw new Error('Failed to parse script content: ' + e.message);\n}\n\nif (!scriptData || !scriptData.scenes || scriptData.scenes.length !== 5) {\n  throw new Error('Script must have exactly 5 scenes.');\n}\n\n// --- Build character description ---\nconst child = order.child;\nconst genderWord = child.gender === 'girl' ? 'girl' : 'boy';\nconst age = child.age || 7;\nconst glasses = child.glasses ? ', wearing glasses' : '';\nconst characterDesc = [\n  `A ${age}-year-old ${genderWord}`,\n  `with ${child.hair_color || 'brown'} hair`,\n  `and ${child.skin_tone || 'light'} skin`,\n  glasses,\n  child.signature_look ? `, ${child.signature_look}` : '',\n].filter(Boolean).join(' ').replace(/ ,/g, ',');\n\n// --- Style prefix ---\nconst stylePrefix = 'Pixar-style 3D CGI animated character render, Boss Baby proportions with oversized head and large expressive eyes, high-quality cinematic lighting, soft subsurface scattering, shallow depth of field';\n\n// --- Scene lighting/camera ---\nconst sceneStyle = {\n  1: { lighting: 'Warm moonlight with cool blue ambient and soft golden accents', camera: 'Wide establishing shot, low angle' },\n  2: { lighting: 'Dynamic warm lighting with streak lights and silver reflections', camera: 'Over-shoulder or low heroic angle' },\n  3: { lighting: 'Dramatic side lighting with teal and amber tones', camera: 'Medium tracking shot' },\n  4: { lighting: 'Radiant burst lighting with gold and cosmic colors', camera: 'Epic wide panoramic angle' },\n  5: { lighting: 'Golden hour sunrise with warm gold and soft pink', camera: 'Intimate close-up shot' },\n};\n\n// --- Build 7 prompts ---\nconst tasks = [];\n\ntasks.push({\n  order_id: order.order_id,\n  child_name: child.name,\n  story_title: scriptData.title,\n  image_type: 'cover',\n  prompt: `${stylePrefix}. ${characterDesc}. Standing in a powerful confident hero pose with hands on hips, looking slightly upward with a bright smile. Background: cosmic space setting with vibrant nebula colors, swirling galaxies, and twinkling stars. Dramatic rim light from behind creating a golden halo effect, warm key light on face. Centered composition, slightly low angle to make character look heroic and epic. Movie poster framing.`,\n});\n\nfor (const scene of scriptData.scenes) {\n  const num = scene.scene_number;\n  const style = sceneStyle[num] || sceneStyle[1];\n  tasks.push({\n    order_id: order.order_id,\n    child_name: child.name,\n    story_title: scriptData.title,\n    image_type: `scene_${num}`,\n    scene_title: scene.scene_title,\n    prompt: `${stylePrefix}. ${characterDesc}. ${scene.visual_description}. ${style.lighting}. ${style.camera}, cinematic depth of field.`,\n  });\n}\n\ntasks.push({\n  order_id: order.order_id,\n  child_name: child.name,\n  story_title: scriptData.title,\n  image_type: 'coloring',\n  prompt: `Clean black line art coloring page for children, white background, no shading, no fills. ${characterDesc} in a confident hero pose. Simple fun space-themed background elements as outlines: stars, planets, a small rocket. Thick clear outlines suitable for children to color in. Simple shapes, no complex textures.`,\n});\n\nconsole.log(`Built ${tasks.length} prompts for ${order.order_id} - ${child.name}`);\nconsole.log(`Story: \"${scriptData.title}\"`);\nconsole.log(`Character: ${characterDesc}`);\n\nreturn tasks.map(t => ({ json: t }));"
+        "jsCode": "// Paste contents of utils/n8n-build-image-prompts.js here\n// See the file for the full theme-agnostic prompt builder"
       },
       "id": "a1b2c3d4-0001-4000-8000-000000000005",
       "name": "Parse + Build Prompts",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1120,
+        900,
         300
       ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "tableId": "images",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "order_id",
+              "fieldValue": "={{ $json.order_id }}"
+            },
+            {
+              "fieldName": "image_type",
+              "fieldValue": "={{ $json.image_type }}"
+            },
+            {
+              "fieldName": "prompt",
+              "fieldValue": "={{ $json.prompt }}"
+            },
+            {
+              "fieldName": "theme",
+              "fieldValue": "={{ $json.theme }}"
+            },
+            {
+              "fieldName": "scene_title",
+              "fieldValue": "={{ $json.scene_title }}"
+            },
+            {
+              "fieldName": "face_photo_url",
+              "fieldValue": "={{ $json.face_photo_url }}"
+            },
+            {
+              "fieldName": "generation_params",
+              "fieldValue": "={{ JSON.stringify($json.generation_params) }}"
+            },
+            {
+              "fieldName": "model",
+              "fieldValue": "={{ $json.model }}"
+            },
+            {
+              "fieldName": "status",
+              "fieldValue": "={{ $json.status }}"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000007",
+      "name": "Save to DB",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        300
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     },
     {
       "parameters": {},
@@ -128,18 +174,6 @@
       "main": [
         [
           {
-            "node": "Loop Scripts",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Scripts": {
-      "main": [
-        null,
-        [
-          {
             "node": "Fetch Order Payload",
             "type": "main",
             "index": 0
@@ -159,6 +193,17 @@
       ]
     },
     "Parse + Build Prompts": {
+      "main": [
+        [
+          {
+            "node": "Save to DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to DB": {
       "main": [
         [
           {

@@ -68,6 +68,8 @@ These descriptions will be used for AI image generation and must be clear and co
 - Do NOT include fear-based threats, violence, destruction, death, or loss.
 - Do NOT include scary villains.
 - The conflict should feel adventurous and exciting — never frightening.
+- Do NOT assume family structure. Never write "Mom and Dad", "Mommy and Daddy", or assume two parents. Use neutral terms: "family", "loved ones", "warm arms", "home". If a parent message mentions specific people, only then mirror that.
+- Do NOT include any written text, signs, letters, or readable words in `visual_description` — image generators render text poorly.
 
 ## Output Format
 

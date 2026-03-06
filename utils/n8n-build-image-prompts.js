@@ -5,7 +5,7 @@
 // Input:  payload rows from "Fetch Order Payload"
 // Script: from $('Fetch Approved Scripts') — matched by order_id
 //
-// Output: 1 item per order, grouped with all 7 prompts + PuLID params nested inside
+// Output: 1 item per prompt (flat rows), matching images table schema
 // ─────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────
@@ -28,12 +28,17 @@ const THEMES = {
       backgroundElements: 'stars, planets, a small rocket',
       pose: 'a confident hero pose',
     },
-    pulid: {
-      width: 1024, height: 1024,
-      id_weight: 1.0, start_step: 1,
-      guidance_scale: 3.5, num_steps: 20,
-      output_quality: 90,
-      negative_prompt: 'bad quality, worst quality, text, signature, watermark, extra limbs, realistic photo, photograph',
+    model: {
+      name: 'openai/gpt-image-1.5',
+      quality: 'high',
+      coloringQuality: 'low',
+      background: 'auto',
+      moderation: 'auto',
+      aspect_ratio: '1:1',
+      output_format: 'webp',
+      input_fidelity: 'low',
+      number_of_images: 1,
+      output_compression: 90,
     },
   },
   // ─── Add new themes below ───
@@ -111,49 +116,78 @@ for (const payloadItem of allPayloads) {
   if (child.jersey_number) outfitParts.push(`with the number ${child.jersey_number} on the sleeve`);
   const outfitDesc = outfitParts.length > 0 ? ', ' + outfitParts.join(', ') : '';
 
-  // Photo URL for PuLID face reference
-  const facePhoto = (order.photos && order.photos.length > 0) ? order.photos[0].url : null;
+  // Photo URLs for face reference (main + extra if available)
+  const photos = order.photos || [];
+  const mainPhoto = photos.find(p => p.type === 'photo_main') || photos[0] || null;
+  const extraPhoto = photos.find(p => p.type === 'photo_extra') || null;
+  const facePhotoUrl = mainPhoto ? mainPhoto.url : null;
+  const extraPhotoUrl = extraPhoto ? extraPhoto.url : null;
 
   // ─────────────────────────────────────────────────────────────
-  // Build prompts — theme-driven
+  // Build prompts — flat rows matching images table schema
   // ─────────────────────────────────────────────────────────────
-  const prompts = {};
 
-  // Cover
-  prompts.cover = {
-    scene_title: scriptData.title,
-    prompt: `${theme.stylePrefix}. ${characterDesc}${outfitDesc}. ${theme.coverPose}. ${theme.coverBackground}.`,
+  // Build generation params with face photos included
+  const genParams = {
+    ...theme.model,
+    face_photos: [facePhotoUrl, extraPhotoUrl].filter(Boolean),
   };
 
-  // 5 Scenes
+  // Shared fields for all prompts in this order
+  const shared = {
+    order_id: order.order_id,
+    theme: themeKey,
+    face_photo_url: facePhotoUrl,
+    extra_photo_url: extraPhotoUrl,
+    generation_params: genParams,
+    model: theme.model.name,
+    status: 'pending',
+  };
+
+  // Cover
+  results.push({
+    ...shared,
+    image_type: 'cover',
+    scene_title: scriptData.title,
+    prompt: `${theme.stylePrefix}. ${characterDesc}${outfitDesc}. ${theme.coverPose}. ${theme.coverBackground}.`,
+  });
+
+  // 5 Scenes + 5 Scene Coloring Pages
   for (const scene of scriptData.scenes) {
     const num = scene.scene_number;
     const style = theme.sceneStyle[num] || theme.sceneStyle[1];
-    prompts[`scene_${num}`] = {
+
+    // Scene image (high quality)
+    results.push({
+      ...shared,
+      image_type: `scene_${num}`,
       scene_title: scene.scene_title,
       prompt: `${theme.stylePrefix}. ${characterDesc}${outfitDesc}. ${scene.visual_description}. ${style.lighting}. ${style.camera}.`,
-    };
+    });
+
+    // Scene coloring page (low quality to save cost)
+    results.push({
+      ...shared,
+      image_type: `coloring_${num}`,
+      scene_title: `Coloring: ${scene.scene_title}`,
+      generation_params: { ...genParams, quality: theme.model.coloringQuality || 'low' },
+      prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc}. ${scene.visual_description}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+    });
   }
 
-  // Coloring page
-  prompts.coloring = {
-    scene_title: 'Coloring Page',
-    prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc} in ${theme.coloring.pose}. Simple background: outline ${theme.coloring.backgroundElements}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
-  };
-
+  // Generic coloring page (low quality)
   results.push({
-    order_id: order.order_id,
-    child_name: child.name,
-    theme: themeKey,
-    story_title: scriptData.title,
-    face_photo: facePhoto,
-    pulid_params: theme.pulid,
-    prompts,
+    ...shared,
+    image_type: 'coloring',
+    scene_title: 'Coloring Page',
+    generation_params: { ...genParams, quality: 'low' },
+    prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc} in ${theme.coloring.pose}. Simple background: outline ${theme.coloring.backgroundElements}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
   });
 
   console.log(`✅ ${order.order_id} — ${child.name} — theme:${themeKey} — "${scriptData.title}"`);
 }
 
-console.log(`Total: ${results.length} orders, ${results.length * 7} prompts`);
+console.log(`Total: ${results.length} prompts for ${allPayloads.length} orders`);
 
 return results.map(r => ({ json: r }));
+

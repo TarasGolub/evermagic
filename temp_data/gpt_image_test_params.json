@@ -1,0 +1,194 @@
+[
+    {
+        "image_type": "cover",
+        "scene_title": "Charlie and the Starlight T-Rex",
+        "output_path": "temp/images/gpt/cover.webp",
+        "params": {
+            "prompt": "3D animated character, Pixar-style render, cinematic lighting, warm rim light. a 7-year-old boy with brown hair and light skin, Always wears his red hoodie with a dinosaur patch, blue sneakers, and a backwards cap, with the number 7 on the sleeve. Standing in a confident hero pose with hands on hips. Cosmic space background with nebula and stars.",
+            "image": "https://storage.tally.so/private/zakhar_holub.jpg?id=DZLrNN&accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRaTHJOTiIsImZvcm1JZCI6InJqNmdNWCIsImlhdCI6MTc3MjM0MjE2N30.TaqSgpNlpkgmmX9sYaQpTSnQjHgTFemvCg7j-Ww50_w&signature=8d6877070a9777e2f827d97105327638a63dcf51e11d3c5812802ffea0588bfb",
+            "input_fidelity": "low",
+            "quality": "high",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "scene_1",
+        "scene_title": "The Call of the Stars",
+        "output_path": "temp/images/gpt/scene_1.webp",
+        "params": {
+            "prompt": "3D animated character, Pixar-style render, cinematic lighting, warm rim light. a 7-year-old boy with brown hair and light skin, Always wears his red hoodie with a dinosaur patch, blue sneakers, and a backwards cap, with the number 7 on the sleeve. In a sunlit child's room, the boy stands before a desk where a glowing space-map blooms. Dinosaurs and stars adorn the walls; a soft dawn glow bathes him as the camera tilts up, capturing his wide-eyed wonder and hopeful pose. Warm moonlight with cool blue ambient and soft golden accents. Wide establishing shot, low angle.",
+            "image": "https://storage.tally.so/private/zakhar_holub.jpg?id=DZLrNN&accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRaTHJOTiIsImZvcm1JZCI6InJqNmdNWCIsImlhdCI6MTc3MjM0MjE2N30.TaqSgpNlpkgmmX9sYaQpTSnQjHgTFemvCg7j-Ww50_w&signature=8d6877070a9777e2f827d97105327638a63dcf51e11d3c5812802ffea0588bfb",
+            "input_fidelity": "low",
+            "quality": "high",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "coloring_1",
+        "scene_title": "Coloring: The Call of the Stars",
+        "output_path": "temp/images/gpt/coloring_1.webp",
+        "params": {
+            "prompt": "Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. a 7-year-old boy. In a sunlit child's room, the boy stands before a desk where a glowing space-map blooms. Dinosaurs and stars adorn the walls. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.",
+            "quality": "low",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "scene_2",
+        "scene_title": "The Launch",
+        "output_path": "temp/images/gpt/scene_2.webp",
+        "params": {
+            "prompt": "3D animated character, Pixar-style render, cinematic lighting, warm rim light. a 7-year-old boy with brown hair and light skin, Always wears his red hoodie with a dinosaur patch, blue sneakers, and a backwards cap, with the number 7 on the sleeve. In golden late-afternoon light, the boy's backyard becomes a glowing spaceport. He stands tall next to a cardboard rocket that glows with a soft blue flame; trees blur into star-field silhouettes; the shot is from a slightly low angle, capturing his brave ready smile. Dynamic warm lighting with streak lights and silver reflections. Over-shoulder or low heroic angle.",
+            "image": "https://storage.tally.so/private/zakhar_holub.jpg?id=DZLrNN&accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRaTHJOTiIsImZvcm1JZCI6InJqNmdNWCIsImlhdCI6MTc3MjM0MjE2N30.TaqSgpNlpkgmmX9sYaQpTSnQjHgTFemvCg7j-Ww50_w&signature=8d6877070a9777e2f827d97105327638a63dcf51e11d3c5812802ffea0588bfb",
+            "input_fidelity": "low",
+            "quality": "high",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "coloring_2",
+        "scene_title": "Coloring: The Launch",
+        "output_path": "temp/images/gpt/coloring_2.webp",
+        "params": {
+            "prompt": "Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. a 7-year-old boy. In the boy's backyard spaceport, he stands next to a cardboard rocket. Trees and star-field silhouettes in background. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.",
+            "quality": "low",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "scene_3",
+        "scene_title": "The Challenge",
+        "output_path": "temp/images/gpt/scene_3.webp",
+        "params": {
+            "prompt": "3D animated character, Pixar-style render, cinematic lighting, warm rim light. a 7-year-old boy with brown hair and light skin, Always wears his red hoodie with a dinosaur patch, blue sneakers, and a backwards cap, with the number 7 on the sleeve. A cosmic corridor glitters with purple-blue light as the boy's rocket coasts past friendly asteroids. A holographic map glows, showing a tail-shaped path that he follows with a determined gaze. Dramatic side lighting with teal and amber tones. Medium tracking shot.",
+            "image": "https://storage.tally.so/private/zakhar_holub.jpg?id=DZLrNN&accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRaTHJOTiIsImZvcm1JZCI6InJqNmdNWCIsImlhdCI6MTc3MjM0MjE2N30.TaqSgpNlpkgmmX9sYaQpTSnQjHgTFemvCg7j-Ww50_w&signature=8d6877070a9777e2f827d97105327638a63dcf51e11d3c5812802ffea0588bfb",
+            "input_fidelity": "low",
+            "quality": "high",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "coloring_3",
+        "scene_title": "Coloring: The Challenge",
+        "output_path": "temp/images/gpt/coloring_3.webp",
+        "params": {
+            "prompt": "Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. a 7-year-old boy. A cosmic corridor with the boy's rocket coasting past friendly asteroids. A holographic map glows nearby. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.",
+            "quality": "low",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "scene_4",
+        "scene_title": "The Triumph",
+        "output_path": "temp/images/gpt/scene_4.webp",
+        "params": {
+            "prompt": "3D animated character, Pixar-style render, cinematic lighting, warm rim light. a 7-year-old boy with brown hair and light skin, Always wears his red hoodie with a dinosaur patch, blue sneakers, and a backwards cap, with the number 7 on the sleeve. The boy stands on crystal dust on an alien planet, the sky a radiant halo of lavender and gold. The camera circles him as tiny comets celebrate, and the planet hums with a friendly roar. Radiant burst lighting with gold and cosmic colors. Epic wide panoramic angle.",
+            "image": "https://storage.tally.so/private/zakhar_holub.jpg?id=DZLrNN&accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRaTHJOTiIsImZvcm1JZCI6InJqNmdNWCIsImlhdCI6MTc3MjM0MjE2N30.TaqSgpNlpkgmmX9sYaQpTSnQjHgTFemvCg7j-Ww50_w&signature=8d6877070a9777e2f827d97105327638a63dcf51e11d3c5812802ffea0588bfb",
+            "input_fidelity": "low",
+            "quality": "high",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "coloring_4",
+        "scene_title": "Coloring: The Triumph",
+        "output_path": "temp/images/gpt/coloring_4.webp",
+        "params": {
+            "prompt": "Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. a 7-year-old boy. The boy stands on an alien planet with comets in the sky and crystal dust on the ground. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.",
+            "quality": "low",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "scene_5",
+        "scene_title": "The Return",
+        "output_path": "temp/images/gpt/scene_5.webp",
+        "params": {
+            "prompt": "3D animated character, Pixar-style render, cinematic lighting, warm rim light. a 7-year-old boy with brown hair and light skin, Always wears his red hoodie with a dinosaur patch, blue sneakers, and a backwards cap, with the number 7 on the sleeve. A warm kitchen glow surrounds the boy as he steps through the doorway. Family welcomes him with open arms in a warm embrace. Golden hour sunrise with warm gold and soft pink. Intimate close-up shot.",
+            "image": "https://storage.tally.so/private/zakhar_holub.jpg?id=DZLrNN&accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRaTHJOTiIsImZvcm1JZCI6InJqNmdNWCIsImlhdCI6MTc3MjM0MjE2N30.TaqSgpNlpkgmmX9sYaQpTSnQjHgTFemvCg7j-Ww50_w&signature=8d6877070a9777e2f827d97105327638a63dcf51e11d3c5812802ffea0588bfb",
+            "input_fidelity": "low",
+            "quality": "high",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "coloring_5",
+        "scene_title": "Coloring: The Return",
+        "output_path": "temp/images/gpt/coloring_5.webp",
+        "params": {
+            "prompt": "Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. a 7-year-old boy. The boy steps through a doorway into a warm kitchen, family welcomes him with open arms. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.",
+            "quality": "low",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    },
+    {
+        "image_type": "coloring",
+        "scene_title": "Coloring Page",
+        "output_path": "temp/images/gpt/coloring.webp",
+        "params": {
+            "prompt": "Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. A 7-year-old boy in a confident hero pose wearing a backwards cap, hoodie, and sneakers. Simple space-themed background: outline stars, outline planets, outline rocket. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.",
+            "quality": "low",
+            "background": "auto",
+            "moderation": "auto",
+            "aspect_ratio": "1:1",
+            "output_format": "webp",
+            "number_of_images": 1,
+            "output_compression": 90
+        }
+    }
+]
