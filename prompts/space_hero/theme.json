@@ -31,14 +31,16 @@
         "backgroundElements": "stars, planets, a small rocket",
         "pose": "a confident hero pose"
     },
-    "pulid": {
-        "width": 1024,
-        "height": 1024,
-        "id_weight": 1.0,
-        "start_step": 1,
-        "guidance_scale": 3.5,
-        "num_steps": 20,
-        "output_quality": 90,
-        "negative_prompt": "bad quality, worst quality, text, signature, watermark, extra limbs, realistic photo, photograph"
+    "model": {
+        "name": "openai/gpt-image-1.5",
+        "quality": "high",
+        "coloringQuality": "low",
+        "background": "auto",
+        "moderation": "auto",
+        "aspect_ratio": "1:1",
+        "output_format": "webp",
+        "input_fidelity": "low",
+        "number_of_images": 1,
+        "output_compression": 90
     }
 }
