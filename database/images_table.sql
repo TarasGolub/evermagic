@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS images (
   generation_params JSONB,                   -- PuLID API params snapshot for debugging
   file_path         TEXT,                    -- path in Supabase Storage
   file_url          TEXT,                    -- public/signed URL of generated image
-  model             TEXT DEFAULT 'openai/gpt-image-1.5', -- model used
+  model             TEXT DEFAULT 'gpt-image-1', -- model used
   status            TEXT DEFAULT 'pending',  -- pending, generating, completed, failed, needs_revision
   error_message     TEXT,                    -- error details if status = 'failed'
   created_at        TIMESTAMPTZ DEFAULT now(),

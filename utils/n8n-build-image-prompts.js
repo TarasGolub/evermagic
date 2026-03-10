@@ -30,7 +30,7 @@ const THEMES = {
     },
     model: {
       name: 'openai/gpt-image-1.5',
-      quality: 'high',
+      quality: 'medium',
       coloringQuality: 'low',
       background: 'auto',
       moderation: 'auto',
@@ -50,7 +50,7 @@ const THEMES = {
 // Process all orders
 // ─────────────────────────────────────────────────────────────
 const allScripts = $('Fetch Approved Scripts').all();
-const allPayloads = $input.all();
+const allPayloads = $('Fetch Order Payload').all();
 const results = [];
 
 for (const payloadItem of allPayloads) {
@@ -187,7 +187,73 @@ for (const payloadItem of allPayloads) {
   console.log(`✅ ${order.order_id} — ${child.name} — theme:${themeKey} — "${scriptData.title}"`);
 }
 
+// ─────────────────────────────────────────────────────────────
+// Reconcile with existing images in DB
+// ─────────────────────────────────────────────────────────────
+// Input: $('Fetch Existing Images') — Supabase GET ALL where order_id = X
+// If the node doesn't exist or returns nothing, treat all as new.
+
+let existingByType = {};
+try {
+  const existingRows = $('Fetch Existing Images').all();
+  for (const row of existingRows) {
+    existingByType[row.json.image_type] = row.json;
+  }
+} catch (e) {
+  // No "Fetch Existing Images" node — treat all as new
+  console.log('No existing images found — all items are new');
+}
+
+const finalResults = [];
+const stats = { skipped: 0, reused: 0, overwrite: 0, new_items: 0 };
+
+for (const prompt of results) {
+  const imageType = prompt.image_type;
+  const existing = existingByType[imageType];
+
+  if (existing) {
+    if (existing.status === 'completed') {
+      // ✅ Already done — skip
+      stats.skipped++;
+      continue;
+    }
+
+    if (existing.status === 'pending') {
+      // ⏳ Already in DB — reuse, just proceed to generation
+      stats.reused++;
+      finalResults.push({
+        json: { ...existing, db_action: 'none' },
+      });
+      continue;
+    }
+
+    if (existing.status === 'failed') {
+      // ❌ Failed — overwrite with fresh prompt
+      stats.overwrite++;
+      finalResults.push({
+        json: {
+          ...existing,
+          prompt: prompt.prompt,       // refresh prompt
+          status: 'pending',
+          error_message: null,
+          db_action: 'update',
+        },
+      });
+      continue;
+    }
+  }
+
+  // 🆕 New — needs insert
+  stats.new_items++;
+  finalResults.push({
+    json: { ...prompt, db_action: 'insert' },
+  });
+}
+
+console.log(
+  `Reconciled: ${stats.skipped} skipped, ${stats.reused} reused, ` +
+  `${stats.overwrite} overwrite, ${stats.new_items} new → ${finalResults.length} to generate`
+);
 console.log(`Total: ${results.length} prompts for ${allPayloads.length} orders`);
 
-return results.map(r => ({ json: r }));
-
+return finalResults;

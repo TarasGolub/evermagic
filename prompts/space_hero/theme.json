@@ -32,15 +32,10 @@
         "pose": "a confident hero pose"
     },
     "model": {
-        "name": "openai/gpt-image-1.5",
+        "name": "gpt-image-1",
         "quality": "high",
         "coloringQuality": "low",
-        "background": "auto",
-        "moderation": "auto",
-        "aspect_ratio": "1:1",
         "output_format": "webp",
-        "input_fidelity": "low",
-        "number_of_images": 1,
         "output_compression": 90
     }
 }

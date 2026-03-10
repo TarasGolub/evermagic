@@ -248,7 +248,7 @@
     },
     {
       "parameters": {
-        "fromEmail": "orders@evermagic.com",
+        "fromEmail": "taras.evermagic@gmail.com",
         "toEmail": "={{ $json.to }}",
         "subject": "={{ $json.subject }}",
         "html": "={{ $json.html }}",
@@ -324,6 +324,25 @@
       ],
       "id": "fa329891-0188-4bf4-9888-e39c65cba4a3",
       "name": "Build Emails"
+    },
+    {
+      "parameters": {
+        "resource": "__CUSTOM_API_CALL__"
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2592,
+        720
+      ],
+      "id": "5e3678d0-2fd5-438d-a60b-878ef1fa9006",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -454,7 +473,7 @@
   "settings": {
     "availableInMCP": false
   },
-  "versionId": "4d88c883-2148-4332-b794-c67db4220a6c",
+  "versionId": "31e9e0fd-e513-496e-bdd3-f2db9cdeb6f4",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "ff6ac216908333ff4d020c1b631281d0de78b9818d2577a99ecce9f9d860dfe4"
