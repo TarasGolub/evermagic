@@ -525,7 +525,7 @@
     },
     {
       "parameters": {
-        "fromEmail": "orders@evermagic.com",
+        "fromEmail": "taras.evermagic@gmail.com",
         "toEmail": "={{ $json.to }}",
         "subject": "={{ $json.subject }}",
         "html": "={{ $json.html }}",
@@ -774,7 +774,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "5a2b3aa7-53ab-4efa-a57c-1fdbbdf84811",
+  "versionId": "a5e6cb3e-bf6d-49aa-8dac-e5e38f1499e4",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "ff6ac216908333ff4d020c1b631281d0de78b9818d2577a99ecce9f9d860dfe4"
