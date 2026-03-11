@@ -2,7 +2,7 @@
 // Fills all fields with dummy data. Submit manually after reviewing.
 
 (async () => {
-    const DELAY = 500;
+    const DELAY = 50;
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
     // ── Set value on React-controlled input/textarea ──────────
@@ -32,7 +32,7 @@
 
         // Scroll into view and open dropdown
         el.scrollIntoView({ block: 'center' });
-        await wait(200);
+
 
         // Simulate real mouse events to trigger Tally's React handlers
         el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
@@ -75,7 +75,7 @@
         }
 
         if (!found) console.warn('⚠ option not found:', optionText);
-        await wait(300);
+
     }
 
     function tickCheckbox(id) {
@@ -98,7 +98,7 @@
 
     // ── Contact ───────────────────────────────────────────────
     fillText('182476de-ca22-407f-ab9e-ca91bf400f76', 'test@evermagic.com');
-    await wait(300);
+
 
     // ── Package & Language (dropdowns) ────────────────────────
     // Actual option text from your form:
@@ -116,7 +116,7 @@
 
     // Glasses → No
     tickCheckbox('checkbox_bf165698-f4fb-470b-9137-1fb717395afb');
-    await wait(200);
+
 
     // Hair color & Skin tone (dropdowns)
     await pickOption('d7cc4e55-9628-41d6-b49b-f5e7ba91b5b2', 'Brown');
