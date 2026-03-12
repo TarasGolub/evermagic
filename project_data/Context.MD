@@ -62,24 +62,45 @@ It is:
 | Frontend | Tally (form + file upload) | ✅ Active |
 | Payments | Stripe (next step integration) | 📋 Planned |
 | Backend Automation | n8n Cloud (core orchestration) | ✅ Active |
-| Database | Supabase (orders, scripts, images) | ✅ Active |
-| Storage | Supabase Storage (images, PDFs) | 📋 Phase 2 |
+| Database | Supabase (orders, scripts, images, envs) | ✅ Active |
+| Storage | Supabase Storage (images, PDFs) | ✅ Active |
 | AI — Script | OpenAI GPT-4o | ✅ Active |
-| AI — Images | Flux 1.1 Pro via Replicate | 📋 Phase 2 |
-| PDF Generation | PDFShift API | 📋 Phase 2 |
-| Voice | ElevenLabs | 📋 Phase 3 |
-| Video rendering | TBD (Remotion / FFmpeg / Creatomate) | 📋 Phase 3 |
+| AI — Images | OpenAI gpt-image-1 / DALL·E | ✅ Active |
+| AI — Scenario Expansion | OpenAI GPT-4o | 📋 Phase 3 |
+| PDF Generation | PDFShift API | 📋 Phase 3 |
+| Audio | ElevenLabs (audiobook exploration) | 📋 Phase 3 |
+| Voice | ElevenLabs | 📋 Phase 4 |
+| Video rendering | TBD (Remotion / FFmpeg / Creatomate) | 📋 Phase 4 |
 | Delivery | Email via n8n | ✅ Active |
+| Config / Env Vars | Supabase `envs` table (key/value) | ✅ Active |
 
 ---
 
-## 🏗 CURRENT PIPELINE (Phase 1 — Complete ✅)
+## 🏗 CURRENT PIPELINE (Phase 1 + 2 — Complete ✅)
 
 ```
-Tally → n8n Webhook → Parse & Canonicalize → Save to Supabase → Build Prompt → OpenAI → Parse Script → Save Script → Send Emails → Admin Review (Approve / Retry / Edit)
+Tally → n8n Webhook → Parse & Canonicalize → Save to Supabase → Build Prompt → OpenAI → Parse Script → Save Script → Send Emails → Admin Review (Approve / Retry / Edit) → Generate Images → Save Images to Supabase Storage
 ```
 
 **Webhook secured via:** Header Auth (`X-EverMagic-Token`)
+
+---
+
+## 🔧 ENV VARS SYSTEM
+
+Global configuration is stored in the Supabase `envs` table (key/value rows).
+Loaded at the top of each n8n workflow via one Supabase node + one Code node.
+
+| Key | Values | Purpose |
+|-----|--------|---------|
+| `mode` | `test` / `live` | Controls webhook routing and safety guards |
+| `script_approval_required` | `true` / `false` | If false, scripts are auto-approved and images start immediately |
+
+**Usage in n8n:**
+```js
+const env = $('Envs').first().json.env;
+// env.mode, env.script_approval_required
+```
 
 ---
 
@@ -116,8 +137,8 @@ Tally → n8n Webhook → Parse & Canonicalize → Save to Supabase → Build Pr
 
 | Channel | Product | Price | Status |
 |---------|---------|-------|--------|
-| **Etsy / Amazon** | PDF bundle (storybook + certificate + coloring) | $9–15 CAD | 📋 Phase 2 |
-| **KidsTukan / Direct** | Premium bundle (video + PDF + printable) | $35–49 CAD | 📋 Phase 3 |
+| **Etsy / Amazon** | PDF bundle (storybook + certificate + coloring) | $9–15 CAD | 📋 Phase 3 |
+| **KidsTukan / Direct** | Premium bundle (video + PDF + printable) | $35–49 CAD | 📋 Phase 4 |
 
 Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
@@ -126,8 +147,6 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 ## 🗺 FULL FACTORY ROADMAP
 
 ### PHASE 1 — Intake & Script Automation ✅ COMPLETE
-
-**Tag:** `v1.1.0` · **Branch:** `feature/EVRM-003`
 
 **What works:**
 1. Tally webhook → parse & canonicalize → save order to Supabase
@@ -141,41 +160,80 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 ---
 
-### PHASE 2 — PDF Storybook Engine (CURRENT)
+### PHASE 2 — Image Generation ✅ COMPLETE
+
+**What works:**
+1. Approved script → trigger image generation workflow
+2. Generate images per scene using OpenAI image API (gpt-image-1 / DALL·E)
+3. Upload generated images to Supabase Storage
+4. Save image paths + metadata to `images` table
+5. Update order status: `approved` → `images_generating` → `images_generated`
+6. `script_approval_required` env flag: if `false`, images start automatically without admin action
+7. Env vars system via Supabase `envs` table (replaces global variables unavailable on basic n8n plan)
+
+**Database tables (added):** `images`, `envs`
+
+---
+
+### PHASE 3 — PDF Storybook Engine (CURRENT 🔄)
 
 **Goal:** Generate illustrated PDF storybook as first sellable product for Etsy.
 
+**Deliverables (3 separate PDFs):**
+1. **Storybook PDF** — cover + 5 illustrated scenes + detailed narrative
+2. **Coloring Book PDF** — black & white line art pages assembled together
+3. **Certificate PDF** — personalized printable achievement certificate
+
+**Pipeline steps:**
+
+#### Step 3.1 — Scenario Expansion
+- Take approved script (5 scenes with narration + visual descriptions)
+- Use GPT-4o to expand each scene into a **detailed child-facing narrative**:
+  - Full dialogs between characters
+  - Rich scene descriptions (what the child sees, hears, feels)
+  - Character descriptions the child/parent will read aloud
+- Output: structured expanded scenario JSON saved to Supabase
+
+#### Step 3.2 — PDF Layout Design
+- Design HTML/CSS templates for:
+  - Storybook pages (cover + scene pages)
+  - Coloring book pages (B&W image placeholders)
+  - Certificate layout
+- Validate layouts manually with sample content before automating
+
+#### Step 3.3 — PDF Assembly
+- Inject expanded scenario text + generated images into HTML templates
+- Convert HTML → PDF using **PDFShift API**
+- Store PDFs in Supabase Storage
+- Update order status: `images_generated` → `pdf_generating` → `pdf_generated`
+
+#### Step 3.4 — Audiobook Exploration (Research)
+- Evaluate feasibility of generating an audiobook from the expanded scenario
+- Candidate tool: **ElevenLabs** text-to-speech
+- Questions to answer:
+  - Quality of narration for children's content?
+  - Cost per order?
+  - Format: single MP3 or per-scene chapters?
+  - Legal/licensing considerations for distribution?
+- Decision: include in Phase 3 or defer to Phase 4?
+
+**Tools:**
+- **OpenAI GPT-4o** — scenario expansion
+- **PDFShift API** — HTML → PDF conversion
+- **Supabase Storage** — PDF file storage
+- **ElevenLabs** (research) — audiobook
+
+**Status chain:** `images_generated` → `scenario_expanding` → `scenario_expanded` → `pdf_generating` → `pdf_generated` → `delivered`
+
 **Strategy:** Validate before automating.
-1. Test image quality manually (Replicate playground)
+1. Write and review one expanded scenario manually
 2. Build 1–2 sample PDFs by hand
 3. List on Etsy → get first sale
 4. Then automate the pipeline
 
-**Pipeline (once validated):**
-```
-Approved Script → Generate Images (Flux/Replicate) → Build HTML → Convert PDF (PDFShift) → Store (Supabase Storage) → Deliver
-```
-
-**Deliverables (3 separate PDFs):**
-1. **Storybook** — cover + 5 illustrated scenes + parent message
-2. **Certificate** — personalized achievement certificate
-3. **Coloring page** — black & white line art version of hero
-
-**Tools:**
-- **Flux 1.1 Pro** (via Replicate API) — image generation
-- **PDFShift** (API) — HTML → PDF conversion
-- **Supabase Storage** — file storage
-- **Visual style:** Pixar/3D CGI, Boss Baby proportions (big head, big eyes)
-
-**Status:** `approved` → `images_generating` → `images_generated` → `pdf_generating` → `pdf_generated` → `delivered`
-
-**Database tables (new):** `images`
-
-**Key risk:** Character consistency across 5 scenes. Must validate before building pipeline.
-
 ---
 
-### PHASE 3 — Video Bundle (Premium Product)
+### PHASE 4 — Video Bundle (Premium Product)
 
 **Goal:** Add voice narration + video for KidsTukan premium bundle.
 
@@ -193,7 +251,7 @@ Approved Script → Generate Images (Flux/Replicate) → Build HTML → Convert 
 
 ---
 
-### PHASE 4 — Stripe Integration & Storefront
+### PHASE 5 — Stripe Integration & Storefront
 
 - Stripe checkout flow
 - Direct orders without manual Etsy process
@@ -201,7 +259,7 @@ Approved Script → Generate Images (Flux/Replicate) → Build HTML → Convert 
 
 ---
 
-### PHASE 5 — Scale & Optimize
+### PHASE 6 — Scale & Optimize
 
 - Additional themes beyond Space Hero
 - Multi-language support (Ukrainian)
@@ -229,9 +287,11 @@ Approved Script → Generate Images (Flux/Replicate) → Build HTML → Convert 
 Phase 1: created → validated → script_generated → script_review → approved
                                                       ↺ retry
 
-Phase 2: approved → images_generating → images_generated → pdf_generating → pdf_generated → delivered
+Phase 2: approved → images_generating → images_generated
 
-Phase 3: approved → audio_generating → audio_generated → video_assembling → video_rendered → delivered
+Phase 3: images_generated → scenario_expanding → scenario_expanded → pdf_generating → pdf_generated → delivered
+
+Phase 4: approved → audio_generating → audio_generated → video_assembling → video_rendered → delivered
 ```
 
 ---
@@ -241,12 +301,14 @@ Phase 3: approved → audio_generating → audio_generated → video_assembling 
 | Step | Tool | Cost |
 |------|------|------|
 | Script | OpenAI GPT-4o | ~$0.03 |
-| Images (7) | Flux/Replicate | ~$0.21 |
-| PDF conversion | PDFShift | Free (250/mo) |
-| Voice (Phase 3) | ElevenLabs | ~$0.15 |
-| Video (Phase 3) | TBD | ~$0.00–0.50 |
-| **PDF bundle total** | | **~$0.25/order** |
-| **Full bundle total** | | **~$0.90/order** |
+| Images (7) | OpenAI image API | ~$0.28 |
+| Scenario expansion | OpenAI GPT-4o | ~$0.04 |
+| PDF conversion (3 PDFs) | PDFShift | Free (250/mo) |
+| Audiobook (TBD) | ElevenLabs | ~$0.10–0.20 |
+| Voice (Phase 4) | ElevenLabs | ~$0.15 |
+| Video (Phase 4) | TBD | ~$0.00–0.50 |
+| **PDF bundle total** | | **~$0.35/order** |
+| **Full bundle total** | | **~$1.00/order** |
 
 ---
 
@@ -257,7 +319,7 @@ EverMagic is an **AI content production engine.**
 | Target | PDF Bundle (Etsy) | Full Bundle (Premium) |
 |--------|-------------------|----------------------|
 | Price | $9–15 CAD | $35–49 CAD |
-| Cost | ~$0.25 | ~$0.90 |
+| Cost | ~$0.35 | ~$1.00 |
 | Margin | ~97% | ~97% |
 | Volume | 5/day = 150/mo | 2/day = 60/mo |
 | Revenue | **$1,500–2,250/mo** | **$2,100–2,940/mo** |
@@ -266,7 +328,7 @@ EverMagic is an **AI content production engine.**
 
 ## 📌 WHEN YOU NEED TO RESTORE CONTEXT
 
-> "Continuing EverMagic AI Factory. We are in Phase 2 (PDF Storybook). Here is our architecture summary."
+> "Continuing EverMagic AI Factory. We are in Phase 3 (PDF Storybook). Here is our architecture summary."
 
 ## OPTIMIZATION IDEAS
 
