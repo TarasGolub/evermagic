@@ -5,19 +5,27 @@
 
 const order = $('Validate and Transform Order').first().json.order;
 const script = $('Parse Script').first().json.script;
+const scriptVersion = $('Parse Script').first().json.version || 1;
+
+// ─────────────────────────────────────────────────────────────
+// Env flags
+// ─────────────────────────────────────────────────────────────
+const env = $('Envs').first().json.env;
+const approvalRequired = env.script_approval_required === true || env.script_approval_required === 'true';
+const REVIEW_BASE = `https://evermagic.app.n8n.cloud/webhook${env.is_live ? '' : '-test'}/evermagic/review`;
 
 // ─────────────────────────────────────────────────────────────
 // 1. Customer Confirmation Email
 // ─────────────────────────────────────────────────────────────
 
 const packageLabels = {
-    'BASIC': 'Basic (PDF + printable)',
-    'FULL': 'Full Bundle (Video + PDF + printable)',
-    'PARTY': 'Party Pack',
+  'BASIC': 'Basic (PDF + printable)',
+  'FULL': 'Full Bundle (Video + PDF + printable)',
+  'PARTY': 'Party Pack',
 };
 
 const themeLabels = {
-    'SPACE_HERO': 'Space Hero Mission',
+  'SPACE_HERO': 'Space Hero Mission',
 };
 
 const customerHtml = `
@@ -113,10 +121,13 @@ const adminHtml = `
       <tr>
         <td>
           <span style="font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280;font-weight:600;">⚡ EverMagic Admin</span>
-          <h1 style="margin:8px 0 0;font-size:22px;color:#111;font-weight:700;">Script Ready for Review</h1>
+          <h1 style="margin:8px 0 0;font-size:22px;color:#111;font-weight:700;">${approvalRequired ? 'Script Ready for Review' : 'Script Auto-Approved'}</h1>
         </td>
         <td align="right" style="vertical-align:top;">
-          <span style="display:inline-block;padding:6px 14px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;">Needs Review</span>
+          ${approvalRequired
+    ? `<span style="display:inline-block;padding:6px 14px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;">Needs Review</span>`
+    : `<span style="display:inline-block;padding:6px 14px;background:#d1fae5;color:#065f46;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;">Auto-Approved ✅</span>`
+  }
         </td>
       </tr>
     </table>
@@ -150,6 +161,7 @@ const adminHtml = `
   <tr><td style="padding:8px 32px 16px;">
     <h2 style="margin:0;font-size:20px;color:#111;">📖 ${script.title}</h2>
     <p style="margin:4px 0 0;font-size:14px;color:#6b7280;font-style:italic;">${script.tagline}</p>
+    <span style="display:inline-block;margin-top:8px;padding:3px 10px;background:#e0e7ff;color:#3730a3;font-size:11px;font-weight:600;border-radius:12px;">v${scriptVersion}</span>
   </td></tr>
   ${scenesHtml}
   <tr><td style="padding:8px 32px 24px;">
@@ -160,9 +172,47 @@ const adminHtml = `
       </td></tr>
     </table>
   </td></tr>
-  <tr><td style="padding:20px 32px 28px;border-top:1px solid #eee;">
-    <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">Reply to this email to request changes or approve the script.</p>
+  <!-- ACTION BUTTONS (conditional on script_approval_required) -->
+  ${approvalRequired ? `
+  <tr><td style="padding:16px 32px 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center" width="33%" style="padding:0 4px;">
+          <a href="${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=approve"
+             style="display:block;padding:14px 8px;background:#16a34a;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">
+            ✅ Approve
+          </a>
+        </td>
+        <td align="center" width="33%" style="padding:0 4px;">
+          <a href="${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=retry"
+             style="display:block;padding:14px 8px;background:#f59e0b;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">
+            🔄 Edit &amp; Retry
+          </a>
+        </td>
+        <td align="center" width="33%" style="padding:0 4px;">
+          <a href="${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=edit"
+             style="display:block;padding:14px 8px;background:#3b82f6;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">
+            ✏️ Manual Edit
+          </a>
+        </td>
+      </tr>
+    </table>
   </td></tr>
+  <tr><td style="padding:12px 32px 28px;border-top:1px solid #eee;">
+    <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">Click an action above to approve, retry with AI, or manually edit this script.</p>
+  </td></tr>` : `
+  <tr><td style="padding:16px 32px 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;">
+      <tr><td style="padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:8px;">🤖</div>
+        <div style="font-size:14px;font-weight:700;color:#065f46;margin-bottom:4px;">Script was auto-approved</div>
+        <div style="font-size:13px;color:#6b7280;">Image generation has already started. No action needed.</div>
+      </td></tr>
+    </table>
+  </td></tr>
+  <tr><td style="padding:12px 32px 28px;border-top:1px solid #eee;">
+    <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">This is an FYI notification. Script approval is currently disabled.</p>
+  </td></tr>`}
 </table>
 </td></tr>
 </table>
@@ -173,22 +223,22 @@ const adminHtml = `
 // ─────────────────────────────────────────────────────────────
 
 return [
-    {
-        json: {
-            email_type: 'customer_confirmation',
-            to: order.delivery.email,
-            subject: `✨ Your magic is being created, ${order.child.name}!`,
-            html: customerHtml,
-            order_id: order.order_id
-        }
-    },
-    {
-        json: {
-            email_type: 'admin_review',
-            to: 'taras.evermagic@gmail.com',
-            subject: `📋 Script Review — ${order.order_id} — ${order.child.name}`,
-            html: adminHtml,
-            order_id: order.order_id
-        }
+  {
+    json: {
+      email_type: 'customer_confirmation',
+      to: order.delivery.email,
+      subject: `✨ Your magic is being created, ${order.child.name}!`,
+      html: customerHtml,
+      order_id: order.order_id
     }
+  },
+  {
+    json: {
+      email_type: 'admin_review',
+      to: 'taras.evermagic@gmail.com',
+      subject: `📋 Script Review — ${order.order_id} — ${order.child.name}`,
+      html: adminHtml,
+      order_id: order.order_id
+    }
+  }
 ];
