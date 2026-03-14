@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificate of Bravery — {{child.name}}</title>
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&family=Nunito:ital,wght@0,400;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @page { size: 11in 8.5in; margin: 0; }
+
+    body { background: #fff; }
+
+    .page {
+      width: 11in;
+      height: 8.5in;
+      background: #FDFAF4;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* ─── BORDER ─── */
+    .border-outer {
+      position: absolute;
+      inset: 0.3in;
+      border: 2.5px solid #1C2D5A;
+    }
+    .border-inner {
+      position: absolute;
+      inset: 0.42in;
+      border: 0.8px solid #1C2D5A;
+    }
+
+    /* Corner flourishes */
+    .corner {
+      position: absolute;
+      width: 0.55in;
+      height: 0.55in;
+    }
+    .corner.tl { top: 0.18in; left: 0.18in; border-top: 2px solid #9A7D3A; border-left: 2px solid #9A7D3A; }
+    .corner.tr { top: 0.18in; right: 0.18in; border-top: 2px solid #9A7D3A; border-right: 2px solid #9A7D3A; }
+    .corner.bl { bottom: 0.18in; left: 0.18in; border-bottom: 2px solid #9A7D3A; border-left: 2px solid #9A7D3A; }
+    .corner.br { bottom: 0.18in; right: 0.18in; border-bottom: 2px solid #9A7D3A; border-right: 2px solid #9A7D3A; }
+
+    /* ─── CONTENT ─── */
+    .content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 1.1in;
+      width: 100%;
+    }
+
+    .cert-type {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #9A7D3A;
+      margin-bottom: 0.1in;
+    }
+
+    .cert-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #1C2D5A;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      margin-bottom: 0.2in;
+    }
+
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 0.15in;
+      margin-bottom: 0.2in;
+      width: 4.5in;
+    }
+    .ornament-line { flex: 1; height: 1px; background: #9A7D3A; }
+    .ornament-symbol { font-size: 0.65rem; color: #9A7D3A; flex-shrink: 0; }
+
+    .awarded-to {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.92rem;
+      color: #444;
+      margin-bottom: 0.1in;
+    }
+
+    .child-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.8rem;
+      color: #1C2D5A;
+      line-height: 1.05;
+      margin-bottom: 0.16in;
+    }
+
+    .citation {
+      font-family: 'IM Fell English', serif;
+      font-size: 0.88rem;
+      color: #333;
+      line-height: 1.7;
+      max-width: 7.2in;
+      margin-bottom: 0.1in;
+    }
+
+    .story-ref {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.78rem;
+      color: #888;
+      margin-bottom: 0.26in;
+    }
+
+    .ornament-bottom {
+      display: flex;
+      align-items: center;
+      gap: 0.15in;
+      margin-bottom: 0.26in;
+      width: 4.5in;
+    }
+    .ornament-bottom .ornament-line { flex: 1; height: 1px; background: #9A7D3A; }
+    .ornament-bottom .ornament-symbol { font-size: 0.65rem; color: #9A7D3A; }
+
+    /* Footer */
+    .footer-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      width: 8.8in;
+    }
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.07in;
+      width: 2in;
+    }
+    .sig-line {
+      width: 1.8in;
+      height: 1px;
+      background: #1C2D5A;
+    }
+    .sig-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.38rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    .seal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.05in;
+    }
+    .seal-ring {
+      width: 0.65in;
+      height: 0.65in;
+      border-radius: 50%;
+      border: 1.5px solid #9A7D3A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.04in;
+    }
+    .seal-inner {
+      width: 0.5in;
+      height: 0.5in;
+      border-radius: 50%;
+      border: 0.5px solid #9A7D3A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .seal-em {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      color: #9A7D3A;
+      letter-spacing: 0.05em;
+    }
+    .seal-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.32rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #aaa;
+    }
+
+    /* ─────────────────────────────────────────────
+       QR CODE PLACEHOLDER
+       To activate: remove display:none, set src to your QR image URL
+    ───────────────────────────────────────────── */
+    .qr-code {
+      display: none; /* TODO: set to block when landing page is ready */
+      position: absolute;
+      bottom: 0.48in;
+      right: 0.55in;
+      width: 0.5in;
+      height: 0.5in;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="border-outer"></div>
+    <div class="border-inner"></div>
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="content">
+
+      <div class="cert-type">Certificate of</div>
+      <div class="cert-title">Bravery</div>
+
+      <div class="ornament">
+        <div class="ornament-line"></div>
+        <div class="ornament-symbol">✦</div>
+        <div class="ornament-line"></div>
+      </div>
+
+      <div class="awarded-to">This certificate is proudly presented to</div>
+      <div class="child-name">Charlie</div>
+
+      <p class="citation">
+        In recognition of extraordinary bravery, curiosity of mind, and strength of heart —
+        demonstrated throughout the Space Hero Mission, where Charlie used knowledge,
+        courage, and the remarkable power of knowing every dinosaur by name
+        to save an entire constellation and bring light back to the universe.
+      </p>
+
+      <div class="story-ref">Charlie and the Starlight T-Rex</div>
+
+      <div class="ornament-bottom">
+        <div class="ornament-line"></div>
+        <div class="ornament-symbol">✦</div>
+        <div class="ornament-line"></div>
+      </div>
+
+      <div class="footer-row">
+        <div class="footer-col">
+          <div class="sig-line"></div>
+          <div class="sig-label">With love</div>
+        </div>
+
+        <div class="seal">
+          <div class="seal-ring">
+            <div class="seal-inner">
+              <div class="seal-em">EM</div>
+            </div>
+          </div>
+          <div class="seal-text">EverMagic</div>
+        </div>
+
+        <div class="footer-col">
+          <div class="sig-line"></div>
+          <div class="sig-label">Date awarded</div>
+        </div>
+      </div>
+
+    </div>
+    <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
+    <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
+  </div>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{story.title}} — EverMagic Storybook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @page { size: 7in 7in; margin: 0; }
+
+    body { font-family: 'Nunito', sans-serif; background: #0B1628; }
+
+    /* ─────────────────────────────────────────────
+       BASE PAGE
+    ───────────────────────────────────────────── */
+    .page {
+      width: 7in;
+      height: 7in;
+      position: relative;
+      overflow: hidden;
+      background: #0B1628;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: avoid; }
+
+    /* ─────────────────────────────────────────────
+       SHARED ELEMENTS
+    ───────────────────────────────────────────── */
+    .scene-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.2;
+      margin-bottom: 0.1in;
+    }
+    .gold-rule {
+      width: 0.45in;
+      height: 1.5px;
+      background: #F5A623;
+      margin-bottom: 0.12in;
+    }
+    .narration {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #D4CDCA;
+    }
+    .page-branding {
+      position: absolute;
+      bottom: 0.12in;
+      right: 0.2in;
+      font-size: 0.38rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ─────────────────────────────────────────────
+       QR CODE PLACEHOLDER
+       To activate: remove display:none, set src to your QR image URL
+       Size: 0.5in × 0.5in — bottom-right corner of each page
+    ───────────────────────────────────────────── */
+    .qr-code {
+      display: none; /* TODO: set to block when landing page is ready */
+      position: absolute;
+      bottom: 0.15in;
+      right: 0.15in;
+      width: 0.5in;
+      height: 0.5in;
+      opacity: 0.6;
+    }
+
+    /* ─────────────────────────────────────────────
+       COVER
+    ───────────────────────────────────────────── */
+    .cover .bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cover .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(11, 22, 40, 0.96) 0%,
+        rgba(11, 22, 40, 0.55) 42%,
+        transparent 68%
+      );
+    }
+    .cover .content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 0.5in 0.42in;
+      text-align: center;
+    }
+    .cover .for-label {
+      font-size: 0.52rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #F5A623;
+      margin-bottom: 0.14in;
+    }
+    .cover .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.12;
+      margin-bottom: 0.12in;
+    }
+    .cover .tagline {
+      font-size: 0.68rem;
+      font-style: italic;
+      color: #C5B8A0;
+      line-height: 1.5;
+      margin-bottom: 0.22in;
+    }
+    .cover .divider {
+      width: 1.8in;
+      height: 1px;
+      margin: 0 auto 0.2in;
+      background: linear-gradient(to right, transparent, #F5A623, transparent);
+    }
+    .cover .branding {
+      font-size: 0.48rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* ─────────────────────────────────────────────
+       LAYOUT A1 — image top, text bottom
+    ───────────────────────────────────────────── */
+    .scene-a1 { display: flex; flex-direction: column; }
+    .scene-a1 .scene-img {
+      width: 100%;
+      height: 3.85in;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .scene-a1 .scene-text {
+      flex: 1;
+      padding: 0.22in 0.48in 0.18in;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* ─────────────────────────────────────────────
+       LAYOUT A2 — text top, image bottom
+    ───────────────────────────────────────────── */
+    .scene-a2 { display: flex; flex-direction: column; }
+    .scene-a2 .scene-text {
+      padding: 0.28in 0.48in 0.18in;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .scene-a2 .scene-img {
+      flex: 1;
+      width: 100%;
+      object-fit: cover;
+      min-height: 0;
+    }
+
+    /* ─────────────────────────────────────────────
+       CLOSING PAGE
+    ───────────────────────────────────────────── */
+    .closing {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0.65in 0.7in;
+    }
+    .closing::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(245, 166, 35, 0.07) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .closing .star { font-size: 1.4rem; color: #F5A623; margin-bottom: 0.28in; }
+    .closing .from-label {
+      font-size: 0.48rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #F5A623;
+      margin-bottom: 0.2in;
+    }
+    .closing .message {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: #FFFFFF;
+      line-height: 1.75;
+      margin-bottom: 0.35in;
+      max-width: 5.4in;
+    }
+    .closing .divider {
+      width: 1.8in;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #F5A623, transparent);
+      margin-bottom: 0.28in;
+    }
+    .closing .the-end {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-style: italic;
+      color: #F5A623;
+      margin-bottom: 0.22in;
+    }
+    .closing .closing-branding {
+      font-size: 0.42rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════ COVER -->
+  <div class="page cover">
+    <img class="bg" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/cover.webp" alt="">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="for-label">A personalized story for Charlie</div>
+      <h1 class="title">Charlie and the<br>Starlight T-Rex</h1>
+      <p class="tagline">A brave boy, a lost star fossil, and a rocket ride<br>to a dinosaur constellation.</p>
+      <div class="divider"></div>
+      <div class="branding">✦ &nbsp; EverMagic &nbsp; ✦</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 1 — image top -->
+  <div class="page scene-a1">
+    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_1.webp" alt="Scene 1">
+    <div class="scene-text">
+<h2 class="scene-title">The Night That Blinked</h2>
+      <div class="gold-rule"></div>
+      <p class="narration">Charlie sits beneath the backyard sky, brown hair tucked under a backwards cap, light skin glowing in the moonlight. He studies his favourite T‑Rex toy when the stars seem to answer — a tiny starlight fossil drifts gently down to his feet. The world grows wonderfully quiet. An invitation to adventure shivers in the cool night air.</p>
+    </div>
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 2 — text top -->
+  <div class="page scene-a2">
+    <div class="scene-text">
+      <h2 class="scene-title">Rocket of Red and Roar</h2>
+      <div class="gold-rule"></div>
+      <p class="narration">His treehouse folds itself into a comet-ship and Charlie climbs aboard, heartbeat quick with excitement. He tucks his T‑Rex plush beside the controls and remembers scoring three goals last Saturday — and the whole team cheering his name. The engine hums like a friendly drum. With a flash of silver light, they launch toward the stars.</p>
+    </div>
+    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_2.webp" alt="Scene 2">
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 3 — image top -->
+  <div class="page scene-a1">
+    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_3.webp" alt="Scene 3">
+    <div class="scene-text">
+      <h2 class="scene-title">The Fossil Field</h2>
+      <div class="gold-rule"></div>
+      <p class="narration">An asteroid garden of glowing bone-tiles drifts before them — a gentle puzzle only a true dinosaur expert could solve. Charlie's brave heart steadies him. He remembers every T‑Rex bone by name, steps carefully across the wobbling fossil bridges, and realigns each piece. Every correct match hums with warm light.</p>
+    </div>
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 4 — text top -->
+  <div class="page scene-a2">
+    <div class="scene-text">
+      <h2 class="scene-title">The Constellation Roar</h2>
+      <div class="gold-rule"></div>
+      <p class="narration">With the last bone set in place, the asteroids weave together into something magnificent — a towering star-dinosaur. A gentle cosmic T‑Rex unfurls across the sky, playful and grateful, its roar a ribbon of chiming stars. Charlie steers the comet-ship home through shimmering auroras as the galaxy applauds.</p>
+    </div>
+    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_4.webp" alt="Scene 4">
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 5 — image top -->
+  <div class="page scene-a1">
+    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_5.webp" alt="Scene 5">
+    <div class="scene-text">
+      <h2 class="scene-title">Home, With a Message</h2>
+      <div class="gold-rule"></div>
+      <p class="narration">Dawn spills golden over the backyard as the comet-ship settles softly back into the treehouse. Charlie climbs down, still smelling like starlight. The ship's console pings once — and a warm hologram blooms above the controls, glowing just for him. He grins, heart full, already dreaming of the next adventure.</p>
+    </div>
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ CLOSING -->
+  <div class="page closing">
+    <div class="star">✦</div>
+    <div class="from-label">A message from those who love you most</div>
+    <p class="message">"Stay curious and brave, Charlie!<br>The universe is yours to explore.<br><br>Love, Mom &amp; Dad 🚀"</p>
+    <div class="divider"></div>
+    <div class="the-end">The End</div>
+    <div class="closing-branding">Created with love &nbsp;·&nbsp; EverMagic &nbsp;·&nbsp; evermagic.com</div>
+    <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
+    <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
+  </div>
+
+</body>
+</html>

@@ -43,12 +43,18 @@ A {age}-year-old {gender} with {hair_color} hair and {skin_tone} skin, {signatur
 ## Coloring Page Prompt
 
 ```
-Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. A {age}-year-old {gender} in a confident hero pose wearing a backwards cap, hoodie, and sneakers. Simple space-themed background: outline stars, outline planets, outline rocket. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.
+Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. A {age}-year-old {gender} in a confident hero pose wearing a backwards cap, hoodie, and sneakers. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Simple space-themed background: outline stars, outline planets, outline rocket. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.
 ```
 
 ---
 
 ## Version History
+
+### v1.1.0 (2026-03-14)
+- Coloring page: add full-body framing instructions — hat/feet were being cropped
+- Image style: removed Pixar/Boss Baby brand references, replaced with descriptive terms
+- Removed jersey number from outfit description — text rendering unreliable
+- Safety: no adult figures in any visual_description
 
 ### v1.0.0 (2026-03-04)
 - Initial prompts

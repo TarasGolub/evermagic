@@ -170,7 +170,7 @@ for (const payloadItem of allPayloads) {
       image_type: `coloring_${num}`,
       scene_title: `Coloring: ${scene.scene_title}`,
       generation_params: { ...genParams, quality: theme.model.coloringQuality || 'low' },
-      prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc}. ${scene.visual_description}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+      prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc}. ${scene.visual_description}. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
     });
   }
 
@@ -180,7 +180,7 @@ for (const payloadItem of allPayloads) {
     image_type: 'coloring',
     scene_title: 'Coloring Page',
     generation_params: { ...genParams, quality: 'low' },
-    prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc} in ${theme.coloring.pose}. Simple background: outline ${theme.coloring.backgroundElements}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+    prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc} in ${theme.coloring.pose}. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Simple background: outline ${theme.coloring.backgroundElements}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
   });
 
   console.log(`✅ ${order.order_id} — ${child.name} — theme:${themeKey} — "${scriptData.title}"`);
