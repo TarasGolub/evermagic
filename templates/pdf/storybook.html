@@ -229,12 +229,12 @@
 
   <!-- ══════════════════════════════════════════════════════ COVER -->
   <div class="page cover">
-    <img class="bg" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/cover.webp" alt="">
+    <img class="bg" src="{{cover.image_url}}" alt="">
     <div class="overlay"></div>
     <div class="content">
-      <div class="for-label">A personalized story for Charlie</div>
-      <h1 class="title">Charlie and the<br>Starlight T-Rex</h1>
-      <p class="tagline">A brave boy, a lost star fossil, and a rocket ride<br>to a dinosaur constellation.</p>
+      <div class="for-label">A personalized story for {{child.name}}</div>
+      <h1 class="title">{{story.title}}</h1>
+      <p class="tagline">{{story.tagline}}</p>
       <div class="divider"></div>
       <div class="branding">✦ &nbsp; EverMagic &nbsp; ✦</div>
     </div>
@@ -242,11 +242,11 @@
 
   <!-- ══════════════════════════════════════════════════════ SCENE 1 — image top -->
   <div class="page scene-a1">
-    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_1.webp" alt="Scene 1">
+    <img class="scene-img" src="{{scene_1.image_url}}" alt="Scene 1">
     <div class="scene-text">
-<h2 class="scene-title">The Night That Blinked</h2>
+      <h2 class="scene-title">{{scene_1.title}}</h2>
       <div class="gold-rule"></div>
-      <p class="narration">Charlie sits beneath the backyard sky, brown hair tucked under a backwards cap, light skin glowing in the moonlight. He studies his favourite T‑Rex toy when the stars seem to answer — a tiny starlight fossil drifts gently down to his feet. The world grows wonderfully quiet. An invitation to adventure shivers in the cool night air.</p>
+      <p class="narration">{{scene_1.narration}}</p>
     </div>
     <div class="page-branding">EverMagic</div>
   </div>
@@ -254,21 +254,21 @@
   <!-- ══════════════════════════════════════════════════════ SCENE 2 — text top -->
   <div class="page scene-a2">
     <div class="scene-text">
-      <h2 class="scene-title">Rocket of Red and Roar</h2>
+      <h2 class="scene-title">{{scene_2.title}}</h2>
       <div class="gold-rule"></div>
-      <p class="narration">His treehouse folds itself into a comet-ship and Charlie climbs aboard, heartbeat quick with excitement. He tucks his T‑Rex plush beside the controls and remembers scoring three goals last Saturday — and the whole team cheering his name. The engine hums like a friendly drum. With a flash of silver light, they launch toward the stars.</p>
+      <p class="narration">{{scene_2.narration}}</p>
     </div>
-    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_2.webp" alt="Scene 2">
+    <img class="scene-img" src="{{scene_2.image_url}}" alt="Scene 2">
     <div class="page-branding">EverMagic</div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════ SCENE 3 — image top -->
   <div class="page scene-a1">
-    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_3.webp" alt="Scene 3">
+    <img class="scene-img" src="{{scene_3.image_url}}" alt="Scene 3">
     <div class="scene-text">
-      <h2 class="scene-title">The Fossil Field</h2>
+      <h2 class="scene-title">{{scene_3.title}}</h2>
       <div class="gold-rule"></div>
-      <p class="narration">An asteroid garden of glowing bone-tiles drifts before them — a gentle puzzle only a true dinosaur expert could solve. Charlie's brave heart steadies him. He remembers every T‑Rex bone by name, steps carefully across the wobbling fossil bridges, and realigns each piece. Every correct match hums with warm light.</p>
+      <p class="narration">{{scene_3.narration}}</p>
     </div>
     <div class="page-branding">EverMagic</div>
   </div>
@@ -276,21 +276,21 @@
   <!-- ══════════════════════════════════════════════════════ SCENE 4 — text top -->
   <div class="page scene-a2">
     <div class="scene-text">
-      <h2 class="scene-title">The Constellation Roar</h2>
+      <h2 class="scene-title">{{scene_4.title}}</h2>
       <div class="gold-rule"></div>
-      <p class="narration">With the last bone set in place, the asteroids weave together into something magnificent — a towering star-dinosaur. A gentle cosmic T‑Rex unfurls across the sky, playful and grateful, its roar a ribbon of chiming stars. Charlie steers the comet-ship home through shimmering auroras as the galaxy applauds.</p>
+      <p class="narration">{{scene_4.narration}}</p>
     </div>
-    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_4.webp" alt="Scene 4">
+    <img class="scene-img" src="{{scene_4.image_url}}" alt="Scene 4">
     <div class="page-branding">EverMagic</div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════ SCENE 5 — image top -->
   <div class="page scene-a1">
-    <img class="scene-img" src="file:///Users/tholub/Documents/Evermagic/temp/EM-20260313-T7T8/scene_5.webp" alt="Scene 5">
+    <img class="scene-img" src="{{scene_5.image_url}}" alt="Scene 5">
     <div class="scene-text">
-      <h2 class="scene-title">Home, With a Message</h2>
+      <h2 class="scene-title">{{scene_5.title}}</h2>
       <div class="gold-rule"></div>
-      <p class="narration">Dawn spills golden over the backyard as the comet-ship settles softly back into the treehouse. Charlie climbs down, still smelling like starlight. The ship's console pings once — and a warm hologram blooms above the controls, glowing just for him. He grins, heart full, already dreaming of the next adventure.</p>
+      <p class="narration">{{scene_5.narration}}</p>
     </div>
     <div class="page-branding">EverMagic</div>
   </div>
@@ -299,7 +299,7 @@
   <div class="page closing">
     <div class="star">✦</div>
     <div class="from-label">A message from those who love you most</div>
-    <p class="message">"Stay curious and brave, Charlie!<br>The universe is yours to explore.<br><br>Love, Mom &amp; Dad 🚀"</p>
+    <p class="message">{{closing_message}}</p>
     <div class="divider"></div>
     <div class="the-end">The End</div>
     <div class="closing-branding">Created with love &nbsp;·&nbsp; EverMagic &nbsp;·&nbsp; evermagic.com</div>

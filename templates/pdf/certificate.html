@@ -224,7 +224,7 @@
     <div class="content">
 
       <div class="cert-type">Certificate of</div>
-      <div class="cert-title">Bravery</div>
+      <div class="cert-title">{{cert.hero_trait_title}}</div>
 
       <div class="ornament">
         <div class="ornament-line"></div>
@@ -233,16 +233,11 @@
       </div>
 
       <div class="awarded-to">This certificate is proudly presented to</div>
-      <div class="child-name">Charlie</div>
+      <div class="child-name">{{child.name}}</div>
 
-      <p class="citation">
-        In recognition of extraordinary bravery, curiosity of mind, and strength of heart —
-        demonstrated throughout the Space Hero Mission, where Charlie used knowledge,
-        courage, and the remarkable power of knowing every dinosaur by name
-        to save an entire constellation and bring light back to the universe.
-      </p>
+      <p class="citation">{{cert.citation}}</p>
 
-      <div class="story-ref">Charlie and the Starlight T-Rex</div>
+      <div class="story-ref">{{story.title}}</div>
 
       <div class="ornament-bottom">
         <div class="ornament-line"></div>
@@ -267,7 +262,7 @@
 
         <div class="footer-col">
           <div class="sig-line"></div>
-          <div class="sig-label">Date awarded</div>
+          <div class="sig-label">{{cert.date}}</div>
         </div>
       </div>
 
