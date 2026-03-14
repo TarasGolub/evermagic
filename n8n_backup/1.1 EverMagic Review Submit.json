@@ -1,5 +1,10 @@
 {
-  "name": "EverMagic Review Submit",
+  "updatedAt": "2026-03-13T23:26:19.139Z",
+  "createdAt": "2026-02-28T04:04:42.792Z",
+  "id": "5tdiaL3r2CwU3D2T",
+  "name": "1.1 EverMagic Review Submit",
+  "active": false,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -13,7 +18,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1072,
+        -1408,
         208
       ],
       "webhookId": "b0478527-1df8-4d4c-b58d-35b210d79232"
@@ -283,7 +288,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        864,
+        1168,
         400
       ]
     },
@@ -590,7 +595,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,       \n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',  \n};\n\nreturn [{ json: { env } }];\n"
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,       \n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true', \n  evrm_token: raw.evrm_token\n};\n\nreturn [{ json: { env } }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -600,15 +605,58 @@
       ],
       "id": "3b674e09-5a1e-4193-bb65-d9138fa5b867",
       "name": "Envs"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evermagic.app.n8n.cloud/webhook{{ $('Envs').item.json.env.is_live ? '' : '-test' }}/orders/images/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-EverMagic-Token",
+              "value": "={{ $('Envs').item.json.env.evrm_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        896,
+        400
+      ],
+      "id": "2dba4cbb-2c7e-4dea-9716-753d6ad2acc0",
+      "name": "Image Generation Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "envs"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        208
+      ],
+      "id": "2c7ff4ab-9cfd-4d7d-b8e6-d821ee970428",
+      "name": "Load Envs",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
-  "pinData": {},
   "connections": {
     "Webhook": {
       "main": [
         [
           {
-            "node": "Envs",
+            "node": "Load Envs",
             "type": "main",
             "index": 0
           }
@@ -715,7 +763,7 @@
       "main": [
         [
           {
-            "node": "Respond Edit Saved",
+            "node": "Image Generation Webhook",
             "type": "main",
             "index": 0
           }
@@ -814,19 +862,52 @@
           }
         ]
       ]
+    },
+    "Image Generation Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond Edit Saved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Envs": {
+      "main": [
+        [
+          {
+            "node": "Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "0940fb3a-aad4-43a4-84b5-9795fb5dadf2",
+  "staticData": null,
   "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "ff6ac216908333ff4d020c1b631281d0de78b9818d2577a99ecce9f9d860dfe4"
+    "templateCredsSetupCompleted": true
   },
-  "id": "5tdiaL3r2CwU3D2T",
+  "pinData": {},
+  "versionId": "aad41e18-ee4b-4cdd-9883-2852afaabda0",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-28T04:04:42.793Z",
+      "createdAt": "2026-02-28T04:04:42.793Z",
+      "role": "workflow:owner",
+      "workflowId": "5tdiaL3r2CwU3D2T",
+      "projectId": "Ez9yaDRraIYPeCTc"
+    }
+  ],
+  "activeVersion": null,
   "tags": []
 }
