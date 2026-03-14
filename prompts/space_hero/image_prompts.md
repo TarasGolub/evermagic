@@ -9,7 +9,7 @@
 ## Style Prefix (every image)
 
 ```
-Pixar-style 3D CGI animated character render, Boss Baby proportions with oversized head and large expressive eyes, high-quality cinematic lighting, soft subsurface scattering, shallow depth of field
+3D CGI animated character render, oversized expressive cartoon head with large round eyes, smooth rounded features, high-quality cinematic lighting, soft subsurface scattering, shallow depth of field
 ```
 
 ## Character Description Template

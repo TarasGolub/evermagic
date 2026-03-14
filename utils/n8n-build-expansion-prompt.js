@@ -13,7 +13,7 @@ const expansionPrompt = $('Fetch Expansion Prompt').first().json.data;
 // ─────────────────────────────────────────────────────────────
 
 const script = $('Fetch Approved Script').first().json;
-const order = $('Fetch Order Payload').first().json.payload_json;
+const order = JSON.parse($('Fetch Order Payload').first().json.payload_json);
 const child = order.child;
 
 // ─────────────────────────────────────────────────────────────

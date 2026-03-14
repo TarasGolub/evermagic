@@ -43,7 +43,7 @@ Every story has **one companion** — a character who accompanies the child hero
 
 ## Tone
 
-Magical. Cinematic. Warm. Like a Pixar short film narrated by a kind storyteller.
+Magical. Cinematic. Warm. Like a beautifully animated short film narrated by a kind storyteller.
 
 No sarcasm. No parody. No irony.
 
@@ -89,6 +89,7 @@ These descriptions will be used for AI image generation and must be clear and co
 - The conflict should feel adventurous and exciting — never frightening.
 - Do NOT assume family structure. Never write "Mom and Dad", "Mommy and Daddy", or assume two parents. Use neutral terms: "family", "loved ones", "warm arms", "home". If a parent message mentions specific people, only then mirror that.
 - Do NOT include any written text, signs, letters, or readable words in `visual_description` — image generators render text poorly.
+- In `visual_description`, never depict adult figures, parents, or family members — even generically. Scene 5 must show only the child: a close-up on their face, or at home surrounded by warm light and familiar objects. No other people in any `visual_description`.
 
 ## Output Format
 

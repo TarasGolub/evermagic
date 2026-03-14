@@ -14,7 +14,7 @@
 // ─────────────────────────────────────────────────────────────
 const THEMES = {
   SPACE_HERO: {
-    stylePrefix: '3D animated character, Pixar-style render, cinematic lighting, warm rim light',
+    stylePrefix: '3D CGI animated character, oversized expressive cartoon head with large round eyes, smooth rounded features, cinematic lighting, warm rim light',
     coverBackground: 'Cosmic space background with nebula and stars',
     coverPose: 'Standing in a confident hero pose with hands on hips',
     sceneStyle: {
@@ -113,7 +113,6 @@ for (const payloadItem of allPayloads) {
 
   const outfitParts = [];
   if (child.signature_look) outfitParts.push(child.signature_look);
-  if (child.jersey_number) outfitParts.push(`with the number ${child.jersey_number} on the sleeve`);
   const outfitDesc = outfitParts.length > 0 ? ', ' + outfitParts.join(', ') : '';
 
   // Photo URLs for face reference (main + extra if available)
