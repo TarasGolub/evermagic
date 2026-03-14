@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{child.name}}'s Space Hero Coloring Book — EverMagic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;0,800;0,900;1,400&family=Fredoka+One&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @page { size: 8.5in 11in; margin: 0; }
+
+    body { font-family: 'Nunito', sans-serif; background: #ffffff; }
+
+    .page {
+      width: 8.5in;
+      height: 11in;
+      position: relative;
+      overflow: hidden;
+      background: #ffffff;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: avoid; }
+
+    /* ─────────────────────────────────────────────
+       COVER
+    ───────────────────────────────────────────── */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.45in 0.5in 0.35in;
+    }
+    .cover .top-label {
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 0.12in;
+    }
+    .cover .title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2.4rem;
+      color: #1a1a2e;
+      line-height: 1.1;
+      text-align: center;
+      margin-bottom: 0.06in;
+    }
+    .cover .subtitle {
+      font-size: 0.85rem;
+      color: #555;
+      font-style: italic;
+      margin-bottom: 0.3in;
+    }
+    .cover .cover-img {
+      width: 7.1in;
+      height: 7.1in;
+      object-fit: contain;
+    }
+    .cover .footer {
+      margin-top: auto;
+      padding-top: 0.2in;
+      font-size: 0.42rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #bbb;
+    }
+
+    /* ─────────────────────────────────────────────
+       SCENE COLORING PAGE
+    ───────────────────────────────────────────── */
+    .scene-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.35in 0.35in 0;
+    }
+    .scene-page .scene-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.3rem;
+      color: #1a1a2e;
+      margin-bottom: 0.18in;
+      text-align: center;
+    }
+    .scene-page .coloring-img {
+      width: 7.8in;
+      height: 7.8in;
+      object-fit: contain;
+    }
+    .scene-page .footer-area {
+      width: 100%;
+      padding: 0.18in 0.5in 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .scene-page .colored-by {
+      font-size: 0.72rem;
+      color: #333;
+    }
+    .scene-page .name-line {
+      display: inline-block;
+      width: 1.8in;
+      border-bottom: 1.5px solid #333;
+      margin-left: 0.08in;
+      vertical-align: bottom;
+    }
+    .scene-page .page-branding {
+      font-size: 0.38rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #ccc;
+    }
+
+    /* ─────────────────────────────────────────────
+       QR CODE PLACEHOLDER
+       To activate: remove display:none, set src to your QR image URL
+    ───────────────────────────────────────────── */
+    .qr-code {
+      display: none; /* TODO: set to block when landing page is ready */
+      position: absolute;
+      bottom: 0.15in;
+      right: 0.15in;
+      width: 0.5in;
+      height: 0.5in;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════ COVER -->
+  <div class="page cover">
+    <div class="top-label">A personalized coloring book for</div>
+    <div class="title">{{child.name}}'s<br>Space Hero<br>Adventure</div>
+    <div class="subtitle">Color your own story!</div>
+    <img class="cover-img" src="{{coloring.image_url}}" alt="Cover">
+    <div class="footer">✦ &nbsp; EverMagic &nbsp; ✦</div>
+    <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
+    <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 1 -->
+  <div class="page scene-page">
+    <div class="scene-title">{{scene_1.title}}</div>
+    <img class="coloring-img" src="{{coloring_1.image_url}}" alt="Scene 1">
+    <div class="footer-area">
+      <div class="colored-by">Colored by:<span class="name-line"></span></div>
+      <div class="page-branding">EverMagic</div>
+    </div>
+    <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
+    <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 2 -->
+  <div class="page scene-page">
+    <div class="scene-title">{{scene_2.title}}</div>
+    <img class="coloring-img" src="{{coloring_2.image_url}}" alt="Scene 2">
+    <div class="footer-area">
+      <div class="colored-by">Colored by:<span class="name-line"></span></div>
+      <div class="page-branding">EverMagic</div>
+    </div>
+    <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
+    <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 3 -->
+  <div class="page scene-page">
+    <div class="scene-title">{{scene_3.title}}</div>
+    <img class="coloring-img" src="{{coloring_3.image_url}}" alt="Scene 3">
+    <div class="footer-area">
+      <div class="colored-by">Colored by:<span class="name-line"></span></div>
+      <div class="page-branding">EverMagic</div>
+    </div>
+    <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
+    <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 4 -->
+  <div class="page scene-page">
+    <div class="scene-title">{{scene_4.title}}</div>
+    <img class="coloring-img" src="{{coloring_4.image_url}}" alt="Scene 4">
+    <div class="footer-area">
+      <div class="colored-by">Colored by:<span class="name-line"></span></div>
+      <div class="page-branding">EverMagic</div>
+    </div>
+    <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
+    <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 5 -->
+  <div class="page scene-page">
+    <div class="scene-title">{{scene_5.title}}</div>
+    <img class="coloring-img" src="{{coloring_5.image_url}}" alt="Scene 5">
+    <div class="footer-area">
+      <div class="colored-by">Colored by:<span class="name-line"></span></div>
+      <div class="page-branding">EverMagic</div>
+    </div>
+    <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
+    <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
+  </div>
+
+</body>
+</html>
