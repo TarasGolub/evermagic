@@ -237,8 +237,8 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "Authorization",
-              "value": "={{ $json.pdfshift_auth }}"
+              "name": "X-API-Key",
+              "value": "={{ $('Envs').first().json.env.pdfshift_api_key }}"
             },
             {
               "name": "Content-Type",

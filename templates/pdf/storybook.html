@@ -25,44 +25,25 @@
     .page:last-child { page-break-after: avoid; }
 
     /* ─────────────────────────────────────────────
-       SHARED ELEMENTS
+       SHARED
     ───────────────────────────────────────────── */
-    .scene-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      line-height: 1.2;
-      margin-bottom: 0.1in;
-    }
     .gold-rule {
       width: 0.45in;
       height: 1.5px;
       background: #F5A623;
-      margin-bottom: 0.12in;
-    }
-    .narration {
-      font-size: 0.9rem;
-      line-height: 1.7;
-      color: #D4CDCA;
+      margin-bottom: 0.18in;
     }
     .page-branding {
       position: absolute;
-      bottom: 0.12in;
-      right: 0.2in;
+      bottom: 0.14in;
+      right: 0.22in;
       font-size: 0.38rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.2);
     }
-
-    /* ─────────────────────────────────────────────
-       QR CODE PLACEHOLDER
-       To activate: remove display:none, set src to your QR image URL
-       Size: 0.5in × 0.5in — bottom-right corner of each page
-    ───────────────────────────────────────────── */
     .qr-code {
-      display: none; /* TODO: set to block when landing page is ready */
+      display: none;
       position: absolute;
       bottom: 0.15in;
       right: 0.15in;
@@ -96,15 +77,15 @@
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 0 0.5in 0.42in;
+      padding: 0 0.5in 0.48in;
       text-align: center;
     }
     .cover .for-label {
-      font-size: 0.52rem;
+      font-size: 0.6rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #F5A623;
-      margin-bottom: 0.14in;
+      margin-bottom: 0.16in;
     }
     .cover .title {
       font-family: 'Playfair Display', serif;
@@ -112,19 +93,19 @@
       font-weight: 700;
       color: #FFFFFF;
       line-height: 1.12;
-      margin-bottom: 0.12in;
+      margin-bottom: 0.14in;
     }
     .cover .tagline {
-      font-size: 0.68rem;
+      font-size: 0.78rem;
       font-style: italic;
       color: #C5B8A0;
       line-height: 1.5;
-      margin-bottom: 0.22in;
+      margin-bottom: 0.24in;
     }
     .cover .divider {
       width: 1.8in;
       height: 1px;
-      margin: 0 auto 0.2in;
+      margin: 0 auto 0.22in;
       background: linear-gradient(to right, transparent, #F5A623, transparent);
     }
     .cover .branding {
@@ -135,38 +116,62 @@
     }
 
     /* ─────────────────────────────────────────────
-       LAYOUT A1 — image top, text bottom
+       SCENE IMAGE PAGE — full-bleed + title overlay
     ───────────────────────────────────────────── */
-    .scene-a1 { display: flex; flex-direction: column; }
-    .scene-a1 .scene-img {
+    .scene-image .bg {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      height: 3.85in;
+      height: 100%;
       object-fit: cover;
-      flex-shrink: 0;
     }
-    .scene-a1 .scene-text {
-      flex: 1;
-      padding: 0.22in 0.48in 0.18in;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    .scene-image .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(11, 22, 40, 0.88) 0%,
+        rgba(11, 22, 40, 0.2) 40%,
+        transparent 65%
+      );
+    }
+    .scene-image .title-badge {
+      position: absolute;
+      bottom: 0.42in;
+      left: 0;
+      right: 0;
+      text-align: center;
+      padding: 0 0.5in;
+    }
+    .scene-image .scene-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.2;
     }
 
     /* ─────────────────────────────────────────────
-       LAYOUT A2 — text top, image bottom
+       SCENE TEXT PAGE — full page story text
     ───────────────────────────────────────────── */
-    .scene-a2 { display: flex; flex-direction: column; }
-    .scene-a2 .scene-text {
-      padding: 0.28in 0.48in 0.18in;
+    .scene-text-page {
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: center;
+      padding: 0.55in 0.6in 0.5in;
     }
-    .scene-a2 .scene-img {
-      flex: 1;
-      width: 100%;
-      object-fit: cover;
-      min-height: 0;
+    .scene-text-page .scene-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.2;
+      margin-bottom: 0.16in;
+    }
+    .scene-text-page .narration {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: #D4CDCA;
     }
 
     /* ─────────────────────────────────────────────
@@ -189,11 +194,11 @@
     }
     .closing .star { font-size: 1.4rem; color: #F5A623; margin-bottom: 0.28in; }
     .closing .from-label {
-      font-size: 0.48rem;
+      font-size: 0.5rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: #F5A623;
-      margin-bottom: 0.2in;
+      margin-bottom: 0.22in;
     }
     .closing .message {
       font-family: 'Playfair Display', serif;
@@ -201,21 +206,21 @@
       font-style: italic;
       color: #FFFFFF;
       line-height: 1.75;
-      margin-bottom: 0.35in;
+      margin-bottom: 0.38in;
       max-width: 5.4in;
     }
     .closing .divider {
       width: 1.8in;
       height: 1px;
       background: linear-gradient(to right, transparent, #F5A623, transparent);
-      margin-bottom: 0.28in;
+      margin-bottom: 0.3in;
     }
     .closing .the-end {
       font-family: 'Playfair Display', serif;
       font-size: 1.3rem;
       font-style: italic;
       color: #F5A623;
-      margin-bottom: 0.22in;
+      margin-bottom: 0.24in;
     }
     .closing .closing-branding {
       font-size: 0.42rem;
@@ -240,58 +245,93 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════ SCENE 1 — image top -->
-  <div class="page scene-a1">
-    <img class="scene-img" src="{{scene_1.image_url}}" alt="Scene 1">
-    <div class="scene-text">
-      <h2 class="scene-title">{{scene_1.title}}</h2>
-      <div class="gold-rule"></div>
-      <p class="narration">{{scene_1.narration}}</p>
+  <!-- ══════════════════════════════════════════════════════ SCENE 1 — image -->
+  <div class="page scene-image">
+    <img class="bg" src="{{scene_1.image_url}}" alt="Scene 1">
+    <div class="overlay"></div>
+    <div class="title-badge">
+      <div class="scene-title">{{scene_1.title}}</div>
     </div>
     <div class="page-branding">EverMagic</div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════ SCENE 2 — text top -->
-  <div class="page scene-a2">
-    <div class="scene-text">
-      <h2 class="scene-title">{{scene_2.title}}</h2>
-      <div class="gold-rule"></div>
-      <p class="narration">{{scene_2.narration}}</p>
-    </div>
-    <img class="scene-img" src="{{scene_2.image_url}}" alt="Scene 2">
+  <!-- ══════════════════════════════════════════════════════ SCENE 1 — text -->
+  <div class="page scene-text-page">
+    <h2 class="scene-title">{{scene_1.title}}</h2>
+    <div class="gold-rule"></div>
+    <p class="narration">{{scene_1.narration}}</p>
     <div class="page-branding">EverMagic</div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════ SCENE 3 — image top -->
-  <div class="page scene-a1">
-    <img class="scene-img" src="{{scene_3.image_url}}" alt="Scene 3">
-    <div class="scene-text">
-      <h2 class="scene-title">{{scene_3.title}}</h2>
-      <div class="gold-rule"></div>
-      <p class="narration">{{scene_3.narration}}</p>
+  <!-- ══════════════════════════════════════════════════════ SCENE 2 — image -->
+  <div class="page scene-image">
+    <img class="bg" src="{{scene_2.image_url}}" alt="Scene 2">
+    <div class="overlay"></div>
+    <div class="title-badge">
+      <div class="scene-title">{{scene_2.title}}</div>
     </div>
     <div class="page-branding">EverMagic</div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════ SCENE 4 — text top -->
-  <div class="page scene-a2">
-    <div class="scene-text">
-      <h2 class="scene-title">{{scene_4.title}}</h2>
-      <div class="gold-rule"></div>
-      <p class="narration">{{scene_4.narration}}</p>
-    </div>
-    <img class="scene-img" src="{{scene_4.image_url}}" alt="Scene 4">
+  <!-- ══════════════════════════════════════════════════════ SCENE 2 — text -->
+  <div class="page scene-text-page">
+    <h2 class="scene-title">{{scene_2.title}}</h2>
+    <div class="gold-rule"></div>
+    <p class="narration">{{scene_2.narration}}</p>
     <div class="page-branding">EverMagic</div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════ SCENE 5 — image top -->
-  <div class="page scene-a1">
-    <img class="scene-img" src="{{scene_5.image_url}}" alt="Scene 5">
-    <div class="scene-text">
-      <h2 class="scene-title">{{scene_5.title}}</h2>
-      <div class="gold-rule"></div>
-      <p class="narration">{{scene_5.narration}}</p>
+  <!-- ══════════════════════════════════════════════════════ SCENE 3 — image -->
+  <div class="page scene-image">
+    <img class="bg" src="{{scene_3.image_url}}" alt="Scene 3">
+    <div class="overlay"></div>
+    <div class="title-badge">
+      <div class="scene-title">{{scene_3.title}}</div>
     </div>
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 3 — text -->
+  <div class="page scene-text-page">
+    <h2 class="scene-title">{{scene_3.title}}</h2>
+    <div class="gold-rule"></div>
+    <p class="narration">{{scene_3.narration}}</p>
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 4 — image -->
+  <div class="page scene-image">
+    <img class="bg" src="{{scene_4.image_url}}" alt="Scene 4">
+    <div class="overlay"></div>
+    <div class="title-badge">
+      <div class="scene-title">{{scene_4.title}}</div>
+    </div>
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 4 — text -->
+  <div class="page scene-text-page">
+    <h2 class="scene-title">{{scene_4.title}}</h2>
+    <div class="gold-rule"></div>
+    <p class="narration">{{scene_4.narration}}</p>
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 5 — image -->
+  <div class="page scene-image">
+    <img class="bg" src="{{scene_5.image_url}}" alt="Scene 5">
+    <div class="overlay"></div>
+    <div class="title-badge">
+      <div class="scene-title">{{scene_5.title}}</div>
+    </div>
+    <div class="page-branding">EverMagic</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ SCENE 5 — text -->
+  <div class="page scene-text-page">
+    <h2 class="scene-title">{{scene_5.title}}</h2>
+    <div class="gold-rule"></div>
+    <p class="narration">{{scene_5.narration}}</p>
     <div class="page-branding">EverMagic</div>
   </div>
 
