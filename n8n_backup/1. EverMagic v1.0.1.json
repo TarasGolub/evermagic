@@ -1,5 +1,10 @@
 {
-  "name": "EverMagic v1.0.1",
+  "updatedAt": "2026-03-13T23:24:46.247Z",
+  "createdAt": "2026-02-22T01:53:38.170Z",
+  "id": "BqU3JEiy7Y1LGWgi",
+  "name": "1. EverMagic v1.0.1",
+  "active": false,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -287,7 +292,7 @@
     },
     {
       "parameters": {
-        "url": "https://raw.githubusercontent.com/TarasGolub/evermagic/main/prompts/space_hero/system.md",
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').item.json.env.is_live ? 'main' : 'develop' }}/prompts/space_hero/system.md",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -347,7 +352,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,       \n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',  \n};\n\nreturn [{ json: { env } }];\n"
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,       \n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true', \n  evrm_token: raw.evrm_token\n};\n\nreturn [{ json: { env } }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -357,9 +362,67 @@
       ],
       "id": "43c96187-9019-4f4a-8006-8c8d70ade12f",
       "name": "Envs"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4340baf0-232b-4a99-920e-9948a7b6026a",
+              "leftValue": "={{ $('Envs').item.json.env.script_approval_required }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2848,
+        160
+      ],
+      "id": "156c42ce-0d6e-428d-8c5c-a6e5266dd1fc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evermagic.app.n8n.cloud/webhook{{ $('Envs').item.json.env.is_live ? '' : '-test' }}/orders/images/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-EverMagic-Token",
+              "value": "={{ $('Envs').item.json.env.evrm_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3136,
+        48
+      ],
+      "id": "1fd03d25-674f-413a-b560-3b2dfd94dbad",
+      "name": "Image Generation Webhook"
     }
   ],
-  "pinData": {},
   "connections": {
     "Save Order to Database": {
       "main": [
@@ -421,6 +484,11 @@
         [
           {
             "node": "Build Emails",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -503,17 +571,39 @@
           }
         ]
       ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Image Generation Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
   "settings": {
     "availableInMCP": false
   },
-  "versionId": "cd7f7366-0116-4d51-908b-db805a64acd0",
+  "staticData": null,
   "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "ff6ac216908333ff4d020c1b631281d0de78b9818d2577a99ecce9f9d860dfe4"
+    "templateCredsSetupCompleted": true
   },
-  "id": "BqU3JEiy7Y1LGWgi",
+  "pinData": {},
+  "versionId": "3750209f-bf27-4d94-94f6-879a21e2fa68",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-22T01:53:38.173Z",
+      "createdAt": "2026-02-22T01:53:38.173Z",
+      "role": "workflow:owner",
+      "workflowId": "BqU3JEiy7Y1LGWgi",
+      "projectId": "Ez9yaDRraIYPeCTc"
+    }
+  ],
+  "activeVersion": null,
   "tags": []
 }
