@@ -137,7 +137,7 @@ const PDF_TYPES = [
     {
         type: 'storybook',
         template_node: 'Fetch Storybook Template',
-        pdfshift_options: { width: '7in', height: '7in', landscape: false },
+        pdfshift_options: { format: '7inx7in' },
     },
     {
         type: 'coloring_book',
@@ -157,13 +157,14 @@ for (const pdfType of PDF_TYPES) {
     const rawHtml = $(`${pdfType.template_node}`).first().json.data;
     const populatedHtml = injectVars(rawHtml, vars);
 
+    const pdfshiftBody = Object.assign({ source: populatedHtml }, pdfType.pdfshift_options);
+
     results.push({
         json: {
-            order_id:         order.order_id,
-            pdf_type:         pdfType.type,
-            html:             populatedHtml,
-            pdfshift_options: pdfType.pdfshift_options,
-            file_path:        `pdfs/${order.order_id}/${pdfType.type}.pdf`,
+            order_id:      order.order_id,
+            pdf_type:      pdfType.type,
+            pdfshift_body: pdfshiftBody,
+            file_path:     `pdfs/${order.order_id}/${pdfType.type}.pdf`,
         }
     });
 }
