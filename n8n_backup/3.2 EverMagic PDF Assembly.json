@@ -1,0 +1,466 @@
+{
+  "name": "3.2 EverMagic PDF Assembly",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "orders/pdf/generate",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Generate PDFs",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "webhookId": "a1b2c3d4-0001-4000-8000-000000000099",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Pc4RF1BUmq9cRkHn",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "envs"
+      },
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Load Envs",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [240, 0],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_service_key: raw.supabase_service_key || ''\n};\n\nreturn [{ json: { env } }];\n"
+      },
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Envs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "order_payloads",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.body.order_id }}"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "name": "Fetch Order Payload",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [720, 0],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "scripts",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.order_id }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "approved"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0005-4000-8000-000000000005",
+      "name": "Fetch Script",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [960, 0],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "images",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "completed"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0006-4000-8000-000000000006",
+      "name": "Fetch Images",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1200, 0],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "pdf_generating"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0007-4000-8000-000000000007",
+      "name": "Update Status: pdf_generating",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1440, 0],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/storybook.html",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0008-4000-8000-000000000008",
+      "name": "Fetch Storybook Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1680, 0]
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/coloring-book.html",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0009-4000-8000-000000000009",
+      "name": "Fetch Coloring Book Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1920, 0]
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/certificate.html",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0010-4000-8000-000000000010",
+      "name": "Fetch Certificate Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2160, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string' ? JSON.parse(scriptRow.content) : scriptRow.content;\nconst expandedContent = scriptRow.expanded_content\n  ? (typeof scriptRow.expanded_content === 'string' ? JSON.parse(scriptRow.expanded_content) : scriptRow.expanded_content)\n  : null;\n\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) { images[row.json.image_type] = row.json.file_url; }\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\n\nfunction sceneText(n) {\n  if (expandedContent && expandedContent.scenes) {\n    const ex = expandedContent.scenes.find(s => s.scene_number === n);\n    if (ex && ex.expanded_narrative) return ex.expanded_narrative;\n  }\n  const s = scriptContent.scenes.find(s => s.scene_number === n);\n  return s ? s.narration : '';\n}\nfunction sceneTitle(n) {\n  const s = scriptContent.scenes.find(s => s.scene_number === n);\n  return s ? s.scene_title : '';\n}\n\nconst heroTraitTitle = child.hero_trait\n  ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n  : 'Courage';\n\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n  'story.title': scriptContent.title || '',\n  'story.tagline': scriptContent.tagline || '',\n  'closing_message': scriptContent.closing_message || '',\n  'parent_message': order.parent_message || '',\n  'child.name': child.name,\n  'child.age': String(child.age),\n  'child.hero_trait': child.hero_trait || '',\n  'child.hobby': child.hobby || '',\n  'order.order_id': order.order_id,\n  'qr_code_url': qrCodeUrl,\n  'cover.image_url': images['cover'] || '',\n  'scene_1.image_url': images['scene_1'] || '',\n  'scene_2.image_url': images['scene_2'] || '',\n  'scene_3.image_url': images['scene_3'] || '',\n  'scene_4.image_url': images['scene_4'] || '',\n  'scene_5.image_url': images['scene_5'] || '',\n  'coloring.image_url': images['coloring'] || '',\n  'coloring_1.image_url': images['coloring_1'] || '',\n  'coloring_2.image_url': images['coloring_2'] || '',\n  'coloring_3.image_url': images['coloring_3'] || '',\n  'coloring_4.image_url': images['coloring_4'] || '',\n  'coloring_5.image_url': images['coloring_5'] || '',\n  'scene_1.title': sceneTitle(1), 'scene_2.title': sceneTitle(2),\n  'scene_3.title': sceneTitle(3), 'scene_4.title': sceneTitle(4), 'scene_5.title': sceneTitle(5),\n  'scene_1.narration': sceneText(1), 'scene_2.narration': sceneText(2),\n  'scene_3.narration': sceneText(3), 'scene_4.narration': sceneText(4), 'scene_5.narration': sceneText(5),\n  'cert.hero_trait_title': heroTraitTitle,\n  'cert.citation': citation,\n  'cert.date': awardDate\n};\n\nfunction injectVars(html, variables) {\n  let result = html;\n  for (const [key, value] of Object.entries(variables)) {\n    const regex = new RegExp('\\\\{\\\\{' + key.replace('.', '\\\\.') + '\\\\}\\\\}', 'g');\n    result = result.replace(regex, value);\n  }\n  return result;\n}\n\nconst apiKey = env.pdfshift_api_key || '';\nconst authHeader = 'Basic ' + Buffer.from('api:' + apiKey).toString('base64');\n\nconst PDF_TYPES = [\n  { type: 'storybook',     template_node: 'Fetch Storybook Template',     options: { width: '7in', height: '7in', landscape: false } },\n  { type: 'coloring_book', template_node: 'Fetch Coloring Book Template', options: { format: 'Letter',  landscape: false } },\n  { type: 'certificate',   template_node: 'Fetch Certificate Template',   options: { format: 'Letter',  landscape: true  } }\n];\n\nconst results = [];\nfor (const pdfType of PDF_TYPES) {\n  const rawHtml = $(pdfType.template_node).first().json.data;\n  const html = injectVars(rawHtml, vars);\n  const body = { source: html, landscape: pdfType.options.landscape || false };\n  if (pdfType.options.format) {\n    body.format = pdfType.options.format;\n  } else {\n    body.width = pdfType.options.width;\n    body.height = pdfType.options.height;\n  }\n  results.push({ json: {\n    order_id:       order.order_id,\n    pdf_type:       pdfType.type,\n    pdfshift_body:  body,\n    pdfshift_auth:  authHeader,\n    file_path:      'pdfs/' + order.order_id + '/' + pdfType.type + '.pdf',\n    supabase_url:   env.supabase_url || '',\n    supabase_key:   env.supabase_service_key || ''\n  }});\n}\nreturn results;\n"
+      },
+      "id": "a1b2c3d4-0011-4000-8000-000000000011",
+      "name": "Build PDF HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2400, 0]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "a1b2c3d4-0012-4000-8000-000000000012",
+      "name": "Loop Over PDFs",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [2640, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdfshift.io/v3/convert/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $json.pdfshift_auth }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json.pdfshift_body) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-0013-4000-8000-000000000013",
+      "name": "Call PDFShift",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2880, -120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Loop Over PDFs').item.json.supabase_url }}/storage/v1/object/pdfs/{{ $('Loop Over PDFs').item.json.file_path }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Loop Over PDFs').item.json.supabase_key }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/pdf"
+            },
+            {
+              "name": "x-upsert",
+              "value": "true"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0014-4000-8000-000000000014",
+      "name": "Upload PDF to Storage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [3120, -120]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "tableId": "pdfs",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over PDFs').item.json.order_id }}"
+            },
+            {
+              "keyName": "pdf_type",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over PDFs').item.json.pdf_type }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{ $('Loop Over PDFs').item.json.order_id }}"
+            },
+            {
+              "fieldId": "pdf_type",
+              "fieldValue": "={{ $('Loop Over PDFs').item.json.pdf_type }}"
+            },
+            {
+              "fieldId": "file_path",
+              "fieldValue": "={{ $('Loop Over PDFs').item.json.file_path }}"
+            },
+            {
+              "fieldId": "file_url",
+              "fieldValue": "={{ $('Loop Over PDFs').item.json.supabase_url }}/storage/v1/object/public/pdfs/{{ $('Loop Over PDFs').item.json.file_path }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "completed"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0015-4000-8000-000000000015",
+      "name": "Save PDF Record",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [3360, -120],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "pdf_generated"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0016-4000-8000-000000000016",
+      "name": "Update Order Status: pdf_generated",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [2880, 160],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"ok\", \"order_id\": \"{{ $('Fetch Order Payload').first().json.order_id }}\" }",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0017-4000-8000-000000000017",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [3120, 160]
+    }
+  ],
+  "connections": {
+    "Generate PDFs": {
+      "main": [[{ "node": "Load Envs", "type": "main", "index": 0 }]]
+    },
+    "Load Envs": {
+      "main": [[{ "node": "Envs", "type": "main", "index": 0 }]]
+    },
+    "Envs": {
+      "main": [[{ "node": "Fetch Order Payload", "type": "main", "index": 0 }]]
+    },
+    "Fetch Order Payload": {
+      "main": [[{ "node": "Fetch Script", "type": "main", "index": 0 }]]
+    },
+    "Fetch Script": {
+      "main": [[{ "node": "Fetch Images", "type": "main", "index": 0 }]]
+    },
+    "Fetch Images": {
+      "main": [[{ "node": "Update Status: pdf_generating", "type": "main", "index": 0 }]]
+    },
+    "Update Status: pdf_generating": {
+      "main": [[{ "node": "Fetch Storybook Template", "type": "main", "index": 0 }]]
+    },
+    "Fetch Storybook Template": {
+      "main": [[{ "node": "Fetch Coloring Book Template", "type": "main", "index": 0 }]]
+    },
+    "Fetch Coloring Book Template": {
+      "main": [[{ "node": "Fetch Certificate Template", "type": "main", "index": 0 }]]
+    },
+    "Fetch Certificate Template": {
+      "main": [[{ "node": "Build PDF HTML", "type": "main", "index": 0 }]]
+    },
+    "Build PDF HTML": {
+      "main": [[{ "node": "Loop Over PDFs", "type": "main", "index": 0 }]]
+    },
+    "Loop Over PDFs": {
+      "main": [
+        [{ "node": "Call PDFShift", "type": "main", "index": 0 }],
+        [{ "node": "Update Order Status: pdf_generated", "type": "main", "index": 0 }]
+      ]
+    },
+    "Call PDFShift": {
+      "main": [[{ "node": "Upload PDF to Storage", "type": "main", "index": 0 }]]
+    },
+    "Upload PDF to Storage": {
+      "main": [[{ "node": "Save PDF Record", "type": "main", "index": 0 }]]
+    },
+    "Save PDF Record": {
+      "main": [[{ "node": "Loop Over PDFs", "type": "main", "index": 0 }]]
+    },
+    "Update Order Status: pdf_generated": {
+      "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "tags": []
+}
