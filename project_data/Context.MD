@@ -186,13 +186,13 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 **Pipeline steps:**
 
-#### Step 3.1 — Scenario Expansion
-- Take approved script (5 scenes with narration + visual descriptions)
-- Use GPT-4o to expand each scene into a **detailed child-facing narrative**:
-  - Full dialogs between characters
-  - Rich scene descriptions (what the child sees, hears, feels)
-  - Character descriptions the child/parent will read aloud
-- Output: structured expanded scenario JSON saved to Supabase
+#### Step 3.1 — Scenario Expansion ✅ Foundation built (EVRM-011/012)
+- GPT-4o expansion prompt: `prompts/space_hero/expansion.md`
+- n8n Code nodes: `utils/n8n-build-expansion-prompt.js`, `utils/n8n-parse-expansion-response.js`
+- n8n workflow exported: `n8n_backup/3.1 EverMagic Scenario Expansion.json`
+- DB migration: `database/scenario_expansion.sql` (adds `expanded_content` column to `scripts`)
+- Blueprint: `project_data/phase3_expansion_workflow_blueprint.md`
+- **Next:** Run end-to-end test, validate output quality
 
 #### Step 3.2 — PDF Layout Design
 - Design HTML/CSS templates for:

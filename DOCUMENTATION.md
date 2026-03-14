@@ -1,8 +1,8 @@
 # 📚 EverMagic — Project Documentation
 
-> **Last updated:** March 11, 2026  
-> **Current Phase:** Phase 3 — PDF Storybook Engine (not started yet)  
-> **Completed:** Phases 1 & 2 (Intake + Script Automation + Image Generation)
+> **Last updated:** March 13, 2026
+> **Current Phase:** Phase 3 — PDF Storybook Engine (Step 3.1 foundation built)
+> **Completed:** Phases 1 & 2 (Intake + Script Automation + Image Generation) + Step 3.1 Scenario Expansion foundation
 
 ---
 
@@ -476,12 +476,17 @@ Theme configs are embedded in the Image Generation workflow's `Parse + Build Pro
 
 ```
 SPACE_HERO:
-  Style: "3D animated character, Pixar-style render, cinematic lighting"
+  Style: "3D CGI animated character, oversized expressive cartoon head with large round eyes, cinematic lighting"
   Cover: "Cosmic space background with nebula and stars"
   Per-scene: custom lighting + camera angles
   Coloring: "stars, planets, a small rocket" background elements
   Model: openai/gpt-image-1.5, medium quality, webp output
 ```
+
+Safety rules applied to image prompts (EVRM-012):
+- No adult/parent figures in any `visual_description` (family structure unknown)
+- No brand references (Pixar, Boss Baby) in style prefix — commercial/legal risk
+- Jersey number removed from outfit description — text rendering unreliable in image models
 
 New themes can be added by extending the `THEMES` object in the code node.
 
@@ -516,10 +521,11 @@ evermagic/
 │   ├── phase2_implementation_plan.md  # Phase 2 planning doc
 │   └── test-plan-phase1.md     # Phase 1 test plan
 ├── n8n_backup/
-│   ├── EverMagic v1.0.1.json       # Workflow: Order intake + script generation
-│   ├── EverMagic Review.json        # Workflow: Admin review interface
-│   ├── EverMagic Review Submit.json # Workflow: Process review actions
-│   └── EverMagic Image Generation.json  # Workflow: AI image pipeline
+│   ├── 1. EverMagic v1.0.1.json            # Workflow: Order intake + script generation
+│   ├── 1.1 EverMagic Review Submit.json    # Workflow: Process review actions
+│   ├── 1.2 EverMagic Review.json           # Workflow: Admin review interface
+│   ├── 2. EverMagic Image Generation.json  # Workflow: AI image pipeline
+│   └── 3.1 EverMagic Scenario Expansion.json  # Workflow: Phase 3 scenario expansion
 ├── prompts/
 │   └── space_hero/
 │       ├── system.md           # GPT system prompt for script generation
@@ -531,11 +537,15 @@ evermagic/
 ├── emails/
 │   ├── admin-script-review.html     # Admin review email template
 │   └── customer-confirmation.html   # Customer confirmation email template
+├── scripts/
+│   └── export-n8n-workflows.mjs     # Export all n8n workflows via API → n8n_backup/
 ├── utils/
 │   ├── n8n-tally-parser.js          # Tally webhook → order JSON parser
 │   ├── n8n-build-emails.js          # Email HTML builder
 │   ├── n8n-build-script-prompt.js   # Script prompt builder
 │   ├── n8n-build-image-prompts.js   # Image prompt builder
+│   ├── n8n-build-expansion-prompt.js # Phase 3: builds GPT-4o expansion prompt
+│   ├── n8n-parse-expansion-response.js # Phase 3: parses + validates expansion output
 │   ├── n8n-generate-images.js       # Image generation helper
 │   ├── n8n-process-image-response.js # Image response processor
 │   ├── n8n-reconcile-images.js      # Idempotency reconciliation
@@ -612,7 +622,7 @@ evermagic/
 
 | Step | Description | Status |
 |------|-------------|--------|
-| 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative with dialogs | 📋 Not started |
+| 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative with dialogs | ✅ Foundation built — pending E2E test |
 | 3.2 — PDF Layout Design | HTML/CSS templates for storybook, coloring book, certificate | 📋 Not started |
 | 3.3 — PDF Assembly | Inject content + images into templates → PDFShift → Storage | 📋 Not started |
 | 3.4 — Audiobook Research | Evaluate ElevenLabs for narration quality, cost, format | 📋 Not started |
