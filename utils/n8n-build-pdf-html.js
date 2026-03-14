@@ -102,12 +102,12 @@ const vars = {
     'scene_4.title':        sceneTitle(4),
     'scene_5.title':        sceneTitle(5),
 
-    // Scene narration / expanded text
-    'scene_1.narration':    sceneText(1),
-    'scene_2.narration':    sceneText(2),
-    'scene_3.narration':    sceneText(3),
-    'scene_4.narration':    sceneText(4),
-    'scene_5.narration':    sceneText(5),
+    // Scene narration / expanded text — formatted as <p> chunks
+    'scene_1.narration':    formatNarration(sceneText(1)),
+    'scene_2.narration':    formatNarration(sceneText(2)),
+    'scene_3.narration':    formatNarration(sceneText(3)),
+    'scene_4.narration':    formatNarration(sceneText(4)),
+    'scene_5.narration':    formatNarration(sceneText(5)),
 
     // Certificate
     'cert.hero_trait_title': heroTraitTitle,
@@ -116,13 +116,29 @@ const vars = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// 3. Inject variables into template HTML
+// 3. Format narration into paragraph chunks (2–3 sentences each)
+// ─────────────────────────────────────────────────────────────
+
+function formatNarration(text) {
+    if (!text) return '';
+    // Split into sentences on . ! ? — keep the punctuation
+    const sentences = text.match(/[^.!?]+[.!?]+["']?/g) || [text];
+    const paragraphs = [];
+    for (let i = 0; i < sentences.length; i += 3) {
+        const chunk = sentences.slice(i, i + 3).join(' ').trim();
+        if (chunk) paragraphs.push('<p>' + chunk + '</p>');
+    }
+    return paragraphs.join('\n');
+}
+
+// ─────────────────────────────────────────────────────────────
+// 4. Inject variables into template HTML
 // ─────────────────────────────────────────────────────────────
 
 function injectVars(html, variables) {
     let result = html;
     for (const [key, value] of Object.entries(variables)) {
-        const regex = new RegExp(`\\{\\{${key.replace('.', '\\.')}\\}\\}`, 'g');
+        const regex = new RegExp(`\\{\\{${key.replace(/\./g, '\\.')}\\}\\}`, 'g');
         result = result.replace(regex, value);
     }
     return result;

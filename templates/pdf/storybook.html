@@ -5,22 +5,25 @@
   <title>{{story.title}} — EverMagic Storybook</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
 
     @page { size: 7in 7in; margin: 0; }
 
     body { font-family: 'Nunito', sans-serif; background: #0B1628; }
 
     /* ─────────────────────────────────────────────
-       BASE PAGE
+       BASE PAGE — image pages keep fixed 7×7
     ───────────────────────────────────────────── */
     .page {
       width: 7in;
-      height: 7in;
       position: relative;
       overflow: hidden;
       background: #0B1628;
       page-break-after: always;
+    }
+    .page.fixed-height {
+      height: 7in;
+      overflow: hidden;
     }
     .page:last-child { page-break-after: avoid; }
 
@@ -31,7 +34,8 @@
       width: 0.45in;
       height: 1.5px;
       background: #F5A623;
-      margin-bottom: 0.18in;
+      margin-bottom: 0.22in;
+      flex-shrink: 0;
     }
     .page-branding {
       position: absolute;
@@ -67,7 +71,7 @@
       inset: 0;
       background: linear-gradient(
         to top,
-        rgba(11, 22, 40, 0.96) 0%,
+        rgba(11, 22, 40, 0.97) 0%,
         rgba(11, 22, 40, 0.55) 42%,
         transparent 68%
       );
@@ -81,22 +85,22 @@
       text-align: center;
     }
     .cover .for-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.22em;
+      font-size: 1rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: #F5A623;
-      margin-bottom: 0.16in;
+      margin-bottom: 0.18in;
     }
     .cover .title {
       font-family: 'Playfair Display', serif;
-      font-size: 2.1rem;
+      font-size: 2.5rem;
       font-weight: 700;
       color: #FFFFFF;
-      line-height: 1.12;
-      margin-bottom: 0.14in;
+      line-height: 1.1;
+      margin-bottom: 0.16in;
     }
     .cover .tagline {
-      font-size: 0.78rem;
+      font-size: 1.2rem;
       font-style: italic;
       color: #C5B8A0;
       line-height: 1.5;
@@ -109,7 +113,7 @@
       background: linear-gradient(to right, transparent, #F5A623, transparent);
     }
     .cover .branding {
-      font-size: 0.48rem;
+      font-size: 0.55rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.45);
@@ -145,39 +149,99 @@
     }
     .scene-image .scene-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: #FFFFFF;
       line-height: 1.2;
     }
 
     /* ─────────────────────────────────────────────
-       SCENE TEXT PAGE — full page story text
+       SCENE TEXT PAGE
+       - min-height so overflow flows to next page
+       - space theme starfield background
     ───────────────────────────────────────────── */
     .scene-text-page {
+      min-height: 7in;
+      height: auto;
+      overflow: visible;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding: 0.55in 0.6in 0.5in;
+      padding: 0.6in 0.65in 0.65in;
+
+      /* Space theme: nebula glows + starfield */
+      background-color: #0B1628;
+      background-image:
+        /* Nebula glows */
+        radial-gradient(ellipse 55% 40% at 18% 22%, rgba(63, 94, 251, 0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 55% at 82% 78%, rgba(138, 43, 226, 0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 30% 25% at 65% 35%, rgba(0, 180, 220, 0.06) 0%, transparent 70%),
+        /* Stars — bright */
+        radial-gradient(1.5px 1.5px at 8%  12%, rgba(255,255,255,0.95) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 42% 7%,  rgba(255,255,255,0.90) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 73% 18%, rgba(255,255,255,0.92) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 91% 44%, rgba(255,255,255,0.88) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 25% 63%, rgba(255,255,255,0.90) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 58% 82%, rgba(255,255,255,0.85) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 80% 91%, rgba(255,255,255,0.92) 0%, transparent 100%),
+        /* Stars — medium */
+        radial-gradient(1px 1px at 3%  28%, rgba(255,255,255,0.75) 0%, transparent 100%),
+        radial-gradient(1px 1px at 16% 42%, rgba(255,255,255,0.70) 0%, transparent 100%),
+        radial-gradient(1px 1px at 31% 18%, rgba(255,255,255,0.80) 0%, transparent 100%),
+        radial-gradient(1px 1px at 48% 35%, rgba(255,255,255,0.65) 0%, transparent 100%),
+        radial-gradient(1px 1px at 62% 55%, rgba(255,255,255,0.75) 0%, transparent 100%),
+        radial-gradient(1px 1px at 77% 33%, rgba(255,255,255,0.70) 0%, transparent 100%),
+        radial-gradient(1px 1px at 88% 62%, rgba(255,255,255,0.80) 0%, transparent 100%),
+        radial-gradient(1px 1px at 94% 15%, rgba(255,255,255,0.72) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5%  75%, rgba(255,255,255,0.68) 0%, transparent 100%),
+        radial-gradient(1px 1px at 19% 88%, rgba(255,255,255,0.75) 0%, transparent 100%),
+        radial-gradient(1px 1px at 36% 72%, rgba(255,255,255,0.70) 0%, transparent 100%),
+        radial-gradient(1px 1px at 53% 68%, rgba(255,255,255,0.65) 0%, transparent 100%),
+        radial-gradient(1px 1px at 69% 78%, rgba(255,255,255,0.78) 0%, transparent 100%),
+        radial-gradient(1px 1px at 84% 52%, rgba(255,255,255,0.72) 0%, transparent 100%),
+        /* Stars — dim */
+        radial-gradient(1px 1px at 11% 55%, rgba(255,255,255,0.45) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 32%, rgba(255,255,255,0.50) 0%, transparent 100%),
+        radial-gradient(1px 1px at 38% 48%, rgba(255,255,255,0.40) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 22%, rgba(255,255,255,0.48) 0%, transparent 100%),
+        radial-gradient(1px 1px at 71% 60%, rgba(255,255,255,0.42) 0%, transparent 100%),
+        radial-gradient(1px 1px at 86% 28%, rgba(255,255,255,0.50) 0%, transparent 100%),
+        radial-gradient(1px 1px at 7%  92%, rgba(255,255,255,0.38) 0%, transparent 100%),
+        radial-gradient(1px 1px at 28% 82%, rgba(255,255,255,0.45) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45% 92%, rgba(255,255,255,0.42) 0%, transparent 100%),
+        radial-gradient(1px 1px at 64% 88%, rgba(255,255,255,0.48) 0%, transparent 100%),
+        radial-gradient(1px 1px at 78% 95%, rgba(255,255,255,0.40) 0%, transparent 100%),
+        radial-gradient(1px 1px at 96% 82%, rgba(255,255,255,0.45) 0%, transparent 100%),
+        radial-gradient(1px 1px at 14% 8%,  rgba(255,255,255,0.50) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 12%, rgba(255,255,255,0.42) 0%, transparent 100%),
+        radial-gradient(1px 1px at 97% 5%,  rgba(255,255,255,0.48) 0%, transparent 100%);
     }
+
     .scene-text-page .scene-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.15rem;
+      font-size: 2rem;
       font-weight: 700;
       color: #FFFFFF;
       line-height: 1.2;
-      margin-bottom: 0.16in;
+      margin-bottom: 0.18in;
+      flex-shrink: 0;
     }
-    .scene-text-page .narration {
-      font-size: 1.05rem;
-      line-height: 1.85;
+    .scene-text-page .narration p {
+      font-size: 1.4rem;
+      line-height: 1.8;
       color: #D4CDCA;
+      margin-bottom: 0.22in;
+    }
+    .scene-text-page .narration p:last-child {
+      margin-bottom: 0;
     }
 
     /* ─────────────────────────────────────────────
        CLOSING PAGE
     ───────────────────────────────────────────── */
     .closing {
+      min-height: 7in;
+      height: auto;
+      overflow: visible;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -192,38 +256,38 @@
       background: radial-gradient(ellipse at center, rgba(245, 166, 35, 0.07) 0%, transparent 68%);
       pointer-events: none;
     }
-    .closing .star { font-size: 1.4rem; color: #F5A623; margin-bottom: 0.28in; }
+    .closing .star { font-size: 1.6rem; color: #F5A623; margin-bottom: 0.3in; }
     .closing .from-label {
-      font-size: 0.5rem;
+      font-size: 0.7rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: #F5A623;
-      margin-bottom: 0.22in;
+      margin-bottom: 0.25in;
     }
     .closing .message {
       font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
+      font-size: 1.2rem;
       font-style: italic;
       color: #FFFFFF;
       line-height: 1.75;
-      margin-bottom: 0.38in;
+      margin-bottom: 0.4in;
       max-width: 5.4in;
     }
     .closing .divider {
       width: 1.8in;
       height: 1px;
       background: linear-gradient(to right, transparent, #F5A623, transparent);
-      margin-bottom: 0.3in;
+      margin-bottom: 0.32in;
     }
     .closing .the-end {
       font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       font-style: italic;
       color: #F5A623;
-      margin-bottom: 0.24in;
+      margin-bottom: 0.26in;
     }
     .closing .closing-branding {
-      font-size: 0.42rem;
+      font-size: 0.48rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.35);
@@ -233,7 +297,7 @@
 <body>
 
   <!-- ══════════════════════════════════════════════════════ COVER -->
-  <div class="page cover">
+  <div class="page fixed-height cover">
     <img class="bg" src="{{cover.image_url}}" alt="">
     <div class="overlay"></div>
     <div class="content">
@@ -246,12 +310,10 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════════ SCENE 1 — image -->
-  <div class="page scene-image">
+  <div class="page fixed-height scene-image">
     <img class="bg" src="{{scene_1.image_url}}" alt="Scene 1">
     <div class="overlay"></div>
-    <div class="title-badge">
-      <div class="scene-title">{{scene_1.title}}</div>
-    </div>
+    <div class="title-badge"><div class="scene-title">{{scene_1.title}}</div></div>
     <div class="page-branding">EverMagic</div>
   </div>
 
@@ -259,17 +321,15 @@
   <div class="page scene-text-page">
     <h2 class="scene-title">{{scene_1.title}}</h2>
     <div class="gold-rule"></div>
-    <p class="narration">{{scene_1.narration}}</p>
+    <div class="narration">{{scene_1.narration}}</div>
     <div class="page-branding">EverMagic</div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════ SCENE 2 — image -->
-  <div class="page scene-image">
+  <div class="page fixed-height scene-image">
     <img class="bg" src="{{scene_2.image_url}}" alt="Scene 2">
     <div class="overlay"></div>
-    <div class="title-badge">
-      <div class="scene-title">{{scene_2.title}}</div>
-    </div>
+    <div class="title-badge"><div class="scene-title">{{scene_2.title}}</div></div>
     <div class="page-branding">EverMagic</div>
   </div>
 
@@ -277,17 +337,15 @@
   <div class="page scene-text-page">
     <h2 class="scene-title">{{scene_2.title}}</h2>
     <div class="gold-rule"></div>
-    <p class="narration">{{scene_2.narration}}</p>
+    <div class="narration">{{scene_2.narration}}</div>
     <div class="page-branding">EverMagic</div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════ SCENE 3 — image -->
-  <div class="page scene-image">
+  <div class="page fixed-height scene-image">
     <img class="bg" src="{{scene_3.image_url}}" alt="Scene 3">
     <div class="overlay"></div>
-    <div class="title-badge">
-      <div class="scene-title">{{scene_3.title}}</div>
-    </div>
+    <div class="title-badge"><div class="scene-title">{{scene_3.title}}</div></div>
     <div class="page-branding">EverMagic</div>
   </div>
 
@@ -295,17 +353,15 @@
   <div class="page scene-text-page">
     <h2 class="scene-title">{{scene_3.title}}</h2>
     <div class="gold-rule"></div>
-    <p class="narration">{{scene_3.narration}}</p>
+    <div class="narration">{{scene_3.narration}}</div>
     <div class="page-branding">EverMagic</div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════ SCENE 4 — image -->
-  <div class="page scene-image">
+  <div class="page fixed-height scene-image">
     <img class="bg" src="{{scene_4.image_url}}" alt="Scene 4">
     <div class="overlay"></div>
-    <div class="title-badge">
-      <div class="scene-title">{{scene_4.title}}</div>
-    </div>
+    <div class="title-badge"><div class="scene-title">{{scene_4.title}}</div></div>
     <div class="page-branding">EverMagic</div>
   </div>
 
@@ -313,17 +369,15 @@
   <div class="page scene-text-page">
     <h2 class="scene-title">{{scene_4.title}}</h2>
     <div class="gold-rule"></div>
-    <p class="narration">{{scene_4.narration}}</p>
+    <div class="narration">{{scene_4.narration}}</div>
     <div class="page-branding">EverMagic</div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════ SCENE 5 — image -->
-  <div class="page scene-image">
+  <div class="page fixed-height scene-image">
     <img class="bg" src="{{scene_5.image_url}}" alt="Scene 5">
     <div class="overlay"></div>
-    <div class="title-badge">
-      <div class="scene-title">{{scene_5.title}}</div>
-    </div>
+    <div class="title-badge"><div class="scene-title">{{scene_5.title}}</div></div>
     <div class="page-branding">EverMagic</div>
   </div>
 
@@ -331,7 +385,7 @@
   <div class="page scene-text-page">
     <h2 class="scene-title">{{scene_5.title}}</h2>
     <div class="gold-rule"></div>
-    <p class="narration">{{scene_5.narration}}</p>
+    <div class="narration">{{scene_5.narration}}</div>
     <div class="page-branding">EverMagic</div>
   </div>
 
