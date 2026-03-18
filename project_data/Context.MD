@@ -223,13 +223,50 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 - **Supabase Storage** — PDF file storage
 - **ElevenLabs** (research) — audiobook
 
-**Status chain:** `images_generated` → `scenario_expanding` → `scenario_expanded` → `pdf_generating` → `pdf_generated` → `delivered`
+**Status chain:** `images_generated` → `scenario_expanding` → `scenario_expanded` → `pdf_generating` → `pdf_generated` → `pdf_delivered`
 
 **Strategy:** Validate before automating.
 1. Write and review one expanded scenario manually
 2. Build 1–2 sample PDFs by hand
 3. List on Etsy → get first sale
 4. Then automate the pipeline
+
+#### Step 3.4 — Delivery Flow ✅ Designed (not yet built)
+
+**Decision:** Branded per-order download page hosted in Supabase Storage.
+
+**Flow:**
+```
+PDFs assembled in Supabase Storage
+    ↓
+n8n generates branded HTML landing page (personalized with child name + story title)
+    ↓
+Upload to Supabase Storage: pages/{order_id}/index.html  (public bucket, $0 hosting)
+    ↓
+Send customer email with one link to that page
+    ↓
+Send admin notification: order delivered
+```
+
+**Landing page contains:** child's name + story title + 3 download buttons (storybook, coloring book, certificate) + thank-you message + EverMagic branding.
+
+**Out of scope for now:** page expiry (delete manually if needed), token system.
+
+#### Step 3.5 — Intake Token System ✅ Designed (not yet built)
+
+Prevents duplicate/unauthorized form submissions. Designed for Etsy MVP launch.
+
+**Design:**
+- Pre-generate single-use tokens in Supabase (pool of ~100, top up manually)
+- One static hardcoded "cheat" token for internal testing (unlimited use)
+- When Etsy order comes in → pick a token → send customer:
+  `https://tally.so/r/FORM_ID?source=etsy&orderNo=ORDER_NO&token=TOKEN`
+- Hidden fields pre-fill source/orderNo/token via Tally URL params
+- n8n validates token on submission: unused → mark used + process; used/invalid → reject
+- `source` param enables future multi-channel analytics
+- Future: Stripe coupon system per channel (Etsy = 100% off)
+
+**DB:** Add `intake_tokens` table with `token`, `status` (unused/used), `etsy_order_id`, `used_at`.
 
 ---
 

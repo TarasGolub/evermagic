@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{child_name}}'s Magic is Ready — EverMagic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #0B1628;
+      background-image:
+        radial-gradient(ellipse 60% 40% at 20% 20%, rgba(63, 94, 251, 0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 55% at 80% 75%, rgba(138, 43, 226, 0.08) 0%, transparent 70%),
+        radial-gradient(1.5px 1.5px at 10% 15%, rgba(255,255,255,0.90) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 8%, rgba(255,255,255,0.75) 0%, transparent 100%),
+        radial-gradient(2px 2px at 70% 20%, rgba(255,255,255,0.85) 0%, transparent 100%),
+        radial-gradient(1px 1px at 88% 45%, rgba(255,255,255,0.70) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 22% 65%, rgba(255,255,255,0.80) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 80%, rgba(255,255,255,0.65) 0%, transparent 100%),
+        radial-gradient(1px 1px at 78% 88%, rgba(255,255,255,0.75) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,0.60) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45% 50%, rgba(255,255,255,0.50) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 12%, rgba(255,255,255,0.70) 0%, transparent 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background: linear-gradient(135deg, #111d35 0%, #0d1f3c 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      max-width: 520px;
+      width: 100%;
+      padding: 48px 40px;
+      text-align: center;
+    }
+
+    .star { font-size: 2.4rem; margin-bottom: 20px; }
+
+    .for-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #F5A623;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      font-size: 1rem;
+      font-style: italic;
+      color: #8B9BB4;
+      margin-bottom: 32px;
+    }
+
+    .divider {
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #F5A623, transparent);
+      margin: 0 auto 32px;
+    }
+
+    .message {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #C5B8A0;
+      margin-bottom: 36px;
+    }
+
+    .downloads-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #8B9BB4;
+      margin-bottom: 16px;
+    }
+
+    .downloads {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .download-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .download-btn:hover {
+      background: rgba(245, 166, 35, 0.08);
+      border-color: rgba(245, 166, 35, 0.3);
+    }
+
+    .btn-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-icon { font-size: 1.4rem; }
+
+    .btn-text { text-align: left; }
+
+    .btn-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: block;
+    }
+
+    .btn-subtitle {
+      font-size: 0.75rem;
+      color: #8B9BB4;
+      display: block;
+    }
+
+    .btn-arrow {
+      font-size: 1rem;
+      color: #F5A623;
+    }
+
+    .footer-branding {
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 36px 24px; }
+      .title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="star">✨</div>
+
+    <div class="for-label">A personalized adventure for</div>
+    <h1 class="title">{{child_name}}'s Magic is Ready!</h1>
+    <p class="tagline">{{story_title}}</p>
+
+    <div class="divider"></div>
+
+    <p class="message">{{thank_you_message}}</p>
+
+    <div class="downloads-label">Your downloads</div>
+    <div class="downloads">
+      <a class="download-btn" href="{{storybook_url}}" download>
+        <div class="btn-left">
+          <span class="btn-icon">📖</span>
+          <div class="btn-text">
+            <span class="btn-title">Storybook</span>
+            <span class="btn-subtitle">Personalized illustrated story</span>
+          </div>
+        </div>
+        <span class="btn-arrow">↓</span>
+      </a>
+      <a class="download-btn" href="{{coloring_book_url}}" download>
+        <div class="btn-left">
+          <span class="btn-icon">🎨</span>
+          <div class="btn-text">
+            <span class="btn-title">Coloring Book</span>
+            <span class="btn-subtitle">5 scenes to colour in</span>
+          </div>
+        </div>
+        <span class="btn-arrow">↓</span>
+      </a>
+      <a class="download-btn" href="{{certificate_url}}" download>
+        <div class="btn-left">
+          <span class="btn-icon">🏅</span>
+          <div class="btn-text">
+            <span class="btn-title">Hero Certificate</span>
+            <span class="btn-subtitle">Printable achievement certificate</span>
+          </div>
+        </div>
+        <span class="btn-arrow">↓</span>
+      </a>
+    </div>
+
+    <div class="footer-branding">✦ &nbsp; Created with love &nbsp;·&nbsp; EverMagic &nbsp; ✦</div>
+  </div>
+</body>
+</html>
