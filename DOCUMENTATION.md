@@ -406,7 +406,7 @@ PHASE 2 — IMAGE GENERATION:
   approved → images_generating → images_generated
 
 PHASE 3 — PDF (PLANNED):
-  images_generated → scenario_expanding → scenario_expanded → pdf_generating → pdf_generated → delivered
+  images_generated → scenario_expanding → scenario_expanded → pdf_generating → pdf_generated → pdf_delivered
 
 PHASE 4 — VIDEO (PLANNED):
   approved → audio_generating → audio_generated → video_assembling → video_rendered → delivered
@@ -426,7 +426,7 @@ stateDiagram-v2
     scenario_expanding --> scenario_expanded : Phase 3
     scenario_expanded --> pdf_generating : Phase 3
     pdf_generating --> pdf_generated : Phase 3
-    pdf_generated --> delivered : Phase 3
+    pdf_generated --> pdf_delivered : Phase 3
     note right of images_generated : ← WE ARE HERE
 ```
 
@@ -622,12 +622,39 @@ evermagic/
 
 | Step | Description | Status |
 |------|-------------|--------|
-| 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative with dialogs | ✅ Foundation built — pending E2E test |
-| 3.2 — PDF Layout Design | HTML/CSS templates for storybook, coloring book, certificate | 📋 Not started |
-| 3.3 — PDF Assembly | Inject content + images into templates → PDFShift → Storage | 📋 Not started |
-| 3.4 — Audiobook Research | Evaluate ElevenLabs for narration quality, cost, format | 📋 Not started |
+| 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative with dialogs | ✅ Built and tested |
+| 3.2 — PDF Layout Design | HTML/CSS templates for storybook, coloring book, certificate | ✅ Built — design pass done |
+| 3.3 — PDF Assembly | Inject content + images into templates → PDFShift → Storage | ✅ Built — E2E test in progress |
+| 3.4 — Delivery Flow | Branded download page per order hosted in Supabase Storage | ✅ Designed — not yet built |
+| 3.5 — Intake Token System | Single-use tokens to prevent duplicate/unauthorized form submissions | ✅ Designed — not yet built |
+| 3.6 — Audiobook Research | Evaluate ElevenLabs for narration quality, cost, format | 📋 Deferred to Phase 4+ |
+
+**Next to build:** Step 3.4 (delivery flow) — generate branded HTML landing page per order, upload to Supabase Storage, email customer one link, notify admin.
 
 **Strategy:** Validate before automating — manually create 1–2 sample PDFs, list on Etsy, get first sale, then automate.
+
+### Delivery Flow Design (Step 3.4)
+
+**Chosen approach:** Branded per-order download page hosted in Supabase Storage (free, no extra infrastructure).
+
+- n8n generates `pages/{order_id}/index.html` after PDFs are assembled
+- Page contains: child name, story title, 3 download buttons, thank-you message, EverMagic branding
+- Customer receives one email with one link — no attachments, no size limits
+- Admin gets a notification email when order is delivered
+- Page lives until manually deleted (no expiry for now)
+
+### Intake Token System Design (Step 3.5)
+
+Prevents duplicate submissions and link sharing after Etsy order.
+
+| Detail | Decision |
+|--------|----------|
+| Token storage | Supabase `intake_tokens` table |
+| Token lifecycle | Pre-generated pool of ~100; pick one per order; mark used on submit |
+| Cheat token | One hardcoded static token for internal testing (unlimited use) |
+| URL format | `tally.so/r/FORM_ID?source=etsy&orderNo=ORDER_NO&token=TOKEN` |
+| Enforcement | n8n checks token on webhook receipt before processing |
+| Future | `source` param for channel analytics; Stripe coupon system per channel |
 
 ---
 
