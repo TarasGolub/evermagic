@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-03-13T23:24:46.247Z",
+  "updatedAt": "2026-03-19T01:59:39.574Z",
   "createdAt": "2026-02-22T01:53:38.170Z",
   "id": "BqU3JEiy7Y1LGWgi",
   "name": "1. EverMagic v1.0.1",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -306,7 +306,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Extract the story JSON string from OpenAI response\nconst aiOutput = $input.first().json;\n\n// Try multiple paths — n8n OpenAI node output varies by version\nlet rawText;\n\nif (aiOutput.output?.[0]?.content?.[0]?.text) {\n  // Responses API format\n  rawText = aiOutput.output[0].content[0].text;\n} else if (aiOutput.message?.content) {\n  // Chat Completion format\n  rawText = aiOutput.message.content;\n} else if (aiOutput.text) {\n  // Simple text output\n  rawText = aiOutput.text;\n} else if (typeof aiOutput === 'string') {\n  rawText = aiOutput;\n} else {\n  // Debug: output what we actually received\n  throw new Error('Unexpected AI output shape: ' + JSON.stringify(Object.keys(aiOutput)));\n}\n\n// Parse the JSON string into an actual object\nconst script = JSON.parse(rawText);\n\n// Get the order from the earlier node\nconst order = $('Validate and Transform Order').first().json.order;\n\nreturn [{\n  json: {\n    order_id: order.order_id,\n    script: script,\n    script_raw: rawText,\n    version: 1,\n    order: order\n  }\n}];\n"
+        "jsCode": "// Extract the story JSON string from OpenAI response\nconst aiOutput = $input.first().json;\n\n// Try multiple paths — n8n OpenAI node output varies by version\nlet rawText;\n\nif (aiOutput.output?.[0]?.content?.[0]?.text) {\n  // Responses API format\n  rawText = aiOutput.output[0].content[0].text;\n} else if (aiOutput.message?.content) {\n  // Chat Completion format\n  rawText = aiOutput.message.content;\n} else if (aiOutput.text) {\n  // Simple text output\n  rawText = aiOutput.text;\n} else if (typeof aiOutput === 'string') {\n  rawText = aiOutput;\n} else {\n  // Debug: output what we actually received\n  throw new Error('Unexpected AI output shape: ' + JSON.stringify(Object.keys(aiOutput)));\n}\n\nconst cleaned = rawText\n\t.trim()\n\t.replace(/^```json\\s*/i, '')\n\t.replace(/^```\\s*/i, '')\n\t.replace(/\\s*```$/, '')\n\t.trim();\n\n// Parse the JSON string into an actual object\nconst script = JSON.parse(cleaned);\n\n// Get the order from the earlier node\nconst order = $('Validate and Transform Order').first().json.order;\n\nreturn [{\n  json: {\n    order_id: order.order_id,\n    script: script,\n    script_raw: rawText,\n    version: 1,\n    order: order\n  }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -592,8 +592,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "3750209f-bf27-4d94-94f6-879a21e2fa68",
-  "activeVersionId": null,
+  "versionId": "a52952c7-8558-4079-a21d-779db6c58cc0",
+  "activeVersionId": "3750209f-bf27-4d94-94f6-879a21e2fa68",
   "triggerCount": 1,
   "shared": [
     {
@@ -604,6 +604,594 @@
       "projectId": "Ez9yaDRraIYPeCTc"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-03-19T01:05:29.000Z",
+    "createdAt": "2026-03-13T23:24:46.249Z",
+    "versionId": "3750209f-bf27-4d94-94f6-879a21e2fa68",
+    "workflowId": "BqU3JEiy7Y1LGWgi",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "evermagic/intake",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "0cb08c0c-9c4b-4b89-ba8d-bc7f7a84c69c",
+        "name": "Receive Order",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -320,
+          400
+        ],
+        "webhookId": "3400869c-97d1-43b1-bd9e-2ac83351117a",
+        "alwaysOutputData": false,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "Pc4RF1BUmq9cRkHn",
+            "name": "Header Auth account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Function node — Tally webhook → EverMagic order order JSON\n// Input: items[0].json = n8n Webhook payload (as in your sample)\n// Output: items[0].json.order + items[0].json.validation_errors (if any)\n\nconst input = $('Receive Order').first().json;\n\n// ─────────────────────────────────────────────────────────────\n// Locate Tally body + fields safely\n// ─────────────────────────────────────────────────────────────\nconst body = input.body || {};\nconst data = body.data || {};\nconst fields = Array.isArray(data.fields) ? data.fields : [];\n\n// ─────────────────────────────────────────────────────────────\n// Helpers\n// ─────────────────────────────────────────────────────────────\n\nconst getField = (label) => fields.find(f => f?.label === label) || null;\n\n// Dropdown / Radio in Tally: value: [optionId], options: [{id,text}]\nfunction getDropdownText(label) {\n  const field = getField(label);\n  if (!field) return null;\n\n  const selectedId = Array.isArray(field.value) ? field.value[0] : null;\n  if (!selectedId) return null;\n\n  const opt = Array.isArray(field.options) ? field.options.find(o => o.id === selectedId) : null;\n  return opt?.text ?? null;\n}\n\n// Checkbox group (like glasses): Tally sends extra boolean fields with labels \"glasses (Yes)\" etc.\nfunction getYesNoCheckbox(labelBase) {\n  const hit = fields.find(f =>\n    typeof f?.label === 'string' &&\n    f.label.startsWith(`${labelBase} (`) &&\n    f.value === true\n  );\n  if (!hit) return null;\n\n  const m = hit.label.match(/\\((.+)\\)$/);\n  return (m && m[1]) ? m[1].trim() : true;\n}\n\nfunction getValue(label) {\n  const field = getField(label);\n  return field ? field.value : null;\n}\n\nfunction asString(v) {\n  if (v === null || v === undefined) return null;\n  if (typeof v === 'string') return v.trim();\n  return String(v).trim();\n}\n\nfunction asInt(v) {\n  if (v === null || v === undefined || v === '') return null;\n  const n = Number(v);\n  return Number.isFinite(n) ? Math.trunc(n) : null;\n}\n\nfunction normalizePackage(text) {\n  const t = (text || '').toLowerCase();\n  if (t.includes('basic')) return 'BASIC';\n  if (t.includes('full')) return 'FULL';\n  if (t.includes('party')) return 'PARTY';\n  return text ? text.toUpperCase().replace(/\\s+/g, '_') : null;\n}\n\nfunction normalizeLanguage(text) {\n  const t = (text || '').toUpperCase();\n  if (t.includes('(EN') || t.includes('ENGLISH')) return 'EN';\n  if (t.includes('(UA') || t.includes('UKRAIN')) return 'UA';\n  return 'EN';\n}\n\nfunction normalizeTheme(text) {\n  const t = (text || '').toLowerCase();\n  if (t.includes('space')) return 'SPACE_HERO';\n  return text ? text.toUpperCase().replace(/\\s+/g, '_') : 'SPACE_HERO';\n}\n\nfunction normalizeTrait(text) {\n  const t = (text || '').toLowerCase();\n  if (t.includes('brave')) return 'brave';\n  if (t.includes('kind')) return 'kind';\n  if (t.includes('smart')) return 'smart';\n  if (t.includes('creative')) return 'creative';\n  return text ? t : null;\n}\n\nfunction getFiles(label) {\n  const v = getValue(label);\n  if (!v || !Array.isArray(v)) return [];\n  return v\n    .map(f => ({\n      id: f.id || null,\n      name: f.name || null,\n      url: f.url || null,\n      mime: f.mimeType || null,\n      size: f.size || null,\n    }))\n    .filter(x => x.url);\n}\n\nfunction generateOrderId(prefix = 'EM') {\n  const now = new Date();\n  const y = now.getFullYear();\n  const m = String(now.getMonth() + 1).padStart(2, '0');\n  const d = String(now.getDate()).padStart(2, '0');\n  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();\n  return `${prefix}-${y}${m}${d}-${rand}`;\n}\n\n// Consent checkbox: your payload includes label \"consent ()\" with value true\nfunction getConsentAccepted() {\n  const direct = fields.find(f =>\n    (f?.label === 'consent' && Array.isArray(f.value) && f.value.length > 0)\n  );\n  if (direct) return true;\n\n  const boolEntry = fields.find(f =>\n    typeof f?.label === 'string' &&\n    f.label.startsWith('consent') &&\n    f.value === true\n  );\n  return Boolean(boolEntry);\n}\n\n// ─────────────────────────────────────────────────────────────\n// Extract raw values\n// ─────────────────────────────────────────────────────────────\n\nconst email = asString(getValue('email'));\nconst packageText = getDropdownText('package');\nconst languageText = getDropdownText('language');\n\nconst childName = asString(getValue('child_name'));\nconst age = asInt(getValue('age'));\nconst genderText = getDropdownText('gender');\n\nconst glassesYN = getYesNoCheckbox('glasses'); // returns \"Yes\" or \"No\" or null\nconst glasses = glassesYN ? glassesYN.toLowerCase() === 'yes' : null;\n\nconst hairColorText = getDropdownText('hair_color');\nconst skinToneText = getDropdownText('skin_tone');\n\nconst hobby = asString(getValue('hobby'));\nconst hobbyDetail = asString(getValue('hobby_detail'));\nconst signatureLook = asString(getValue('signature_look'));\nconst jerseyNumber = asString(getValue('jersey_number'));\nconst recentWin = asString(getValue('recent_win'));\n\nconst themeText = getDropdownText('theme');\nconst heroTraitText = getDropdownText('hero_trait');\nconst parentMessage = asString(getValue('parent_message'));\n\nconst photoMain = getFiles('photo_main');\nconst photoExtra = getFiles('photo_extra');\n\nconst consentAccepted = getConsentAccepted();\n\n// ─────────────────────────────────────────────────────────────\n// Normalize\n// ─────────────────────────────────────────────────────────────\n\nconst order = {\n  order_id: generateOrderId('EM'),\n\n  package: normalizePackage(packageText),\n  language: normalizeLanguage(languageText),\n  theme: normalizeTheme(themeText),\n\n  delivery: { email },\n\n  child: {\n    name: childName,\n    age,\n    gender: genderText ? genderText.toLowerCase() : null,\n    glasses: glasses === null ? false : glasses,\n    hair_color: hairColorText ? hairColorText.toLowerCase() : null,\n    skin_tone: skinToneText ? skinToneText.toLowerCase() : null,\n\n    // Extended personalization (you added these fields — keep them in order)\n    hobby,\n    hobby_detail: hobbyDetail,\n    signature_look: signatureLook,\n    jersey_number: jerseyNumber,\n    recent_win: recentWin,\n\n    hero_trait: normalizeTrait(heroTraitText),\n  },\n\n  parent_message: parentMessage,\n\n  photos: [\n    ...photoMain.map(f => ({ ...f, type: 'photo_main' })),\n    ...photoExtra.map(f => ({ ...f, type: 'photo_extra' })),\n  ],\n\n  consent: {\n    accepted: consentAccepted,\n  },\n\n  meta: {\n    // From Tally\n    event_id: body.eventId || null,\n    event_type: body.eventType || null,\n    created_at: body.createdAt || null,\n\n    response_id: data.responseId || null,\n    submission_id: data.submissionId || null,\n    respondent_id: data.respondentId || null,\n    form_id: data.formId || null,\n    form_name: data.formName || null,\n    form_created_at: data.createdAt || null,\n\n    // From headers (useful for debugging)\n    user_agent: input.headers?.['user-agent'] || null,\n    ip_country: input.headers?.['cf-ipcountry'] || null,\n    cf_ray: input.headers?.['cf-ray'] || null,\n    received_at: body.createdAt || new Date().toISOString()\n  },\n};\n\n// ─────────────────────────────────────────────────────────────\n// Validation (fail fast)\n// ─────────────────────────────────────────────────────────────\nconst errors = [];\n\nif (!order.delivery.email) errors.push('Missing email');\nif (!order.child.name) errors.push('Missing child_name');\nif (order.child.age === null) errors.push('Missing/invalid age');\nif (!order.package) errors.push('Missing package');\nif (!order.child.hero_trait) errors.push('Missing hero_trait');\nif (!order.consent.accepted) errors.push('Consent not accepted');\nif (!order.photos.some(p => p.type === 'photo_main')) errors.push('Missing photo_main');\n\nif (errors.length) {\n  // attach for inspection and stop the workflow\n\n  return [{\n    validationErrors: errors,\n    order: order\n  }];\n  // do not throw yet if you want to handle it with IF node\n  // If you prefer hard-stop, replace with:\n  // throw new Error(`Validation failed: ${errors.join(', ')}`);\n}\n\n// ─────────────────────────────────────────────────────────────\n// Output\n// ─────────────────────────────────────────────────────────────\n\nreturn [{\n  json: {\n    order\n  }\n}];"
+        },
+        "id": "c5368eac-a7e8-48e9-ac09-c5fb155757bf",
+        "name": "Validate and Transform Order",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          352,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "tableId": "orders",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{$json.order.order_id}}"
+              },
+              {
+                "fieldId": "status",
+                "fieldValue": "created"
+              },
+              {
+                "fieldId": "email",
+                "fieldValue": "={{$json.order.delivery.email}}"
+              },
+              {
+                "fieldId": "package",
+                "fieldValue": "={{$json.order.package}}"
+              },
+              {
+                "fieldId": "language",
+                "fieldValue": "={{$json.order.language}}"
+              },
+              {
+                "fieldId": "theme",
+                "fieldValue": "={{$json.order.theme}}"
+              },
+              {
+                "fieldId": "child_age",
+                "fieldValue": "={{$json.order.child.age}}"
+              },
+              {
+                "fieldId": "child_name",
+                "fieldValue": "={{$json.order.child.name}}"
+              }
+            ]
+          }
+        },
+        "id": "0218b37a-f964-4be1-b078-8a5140352b8f",
+        "name": "Save Order to Database",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          704,
+          400
+        ],
+        "alwaysOutputData": false,
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "tableId": "order_payloads",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{$('Validate and Transform Order').first().json.order.order_id}}"
+              },
+              {
+                "fieldId": "payload_json",
+                "fieldValue": "={{JSON.stringify($('Validate and Transform Order').first().json.order)}}"
+              }
+            ]
+          }
+        },
+        "id": "b03da12f-700b-4bf5-9a9c-d21f94e66e36",
+        "name": "Save Order Payload",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          976,
+          400
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-5-nano",
+            "mode": "list",
+            "cachedResultName": "GPT-5-NANO"
+          },
+          "responses": {
+            "values": [
+              {
+                "role": "system",
+                "content": "={{ $json.system_prompt }}"
+              },
+              {
+                "content": "={{ $json.user_prompt }}"
+              }
+            ]
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "id": "651b2a22-4f66-49c5-8960-d96d6039c5bb",
+        "name": "Generate Script with AI",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 2.1,
+        "position": [
+          1792,
+          400
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "bkm4C85zHfe8HSHa",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "tableId": "scripts",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $json.order_id }}"
+              },
+              {
+                "fieldId": "version",
+                "fieldValue": "1"
+              },
+              {
+                "fieldId": "status",
+                "fieldValue": "={{ $('Envs').item.json.env.script_approval_required ? 'draft' : 'approved'}}"
+              },
+              {
+                "fieldId": "title",
+                "fieldValue": "={{ $json.script.title }}"
+              },
+              {
+                "fieldId": "tagline",
+                "fieldValue": "={{ $json.script.tagline }}"
+              },
+              {
+                "fieldId": "content",
+                "fieldValue": "={{ JSON.stringify($json.script) }}"
+              }
+            ]
+          }
+        },
+        "id": "a2d8784a-4f54-4796-8c95-6ba031f57ef8",
+        "name": "Save Generated Script",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          2368,
+          400
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "={{ $('Envs').item.json.env.script_approval_required ? 'script_generated' : 'approved'}}"
+              }
+            ]
+          }
+        },
+        "id": "d67a8fa6-61e5-47b0-b212-9b028c1dcae6",
+        "name": "Update Order Status",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          2592,
+          400
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "={{ $json.to }}",
+          "subject": "={{ $json.subject }}",
+          "html": "={{ $json.html }}",
+          "options": {
+            "appendAttribution": true
+          }
+        },
+        "id": "ed908765-3a65-4f08-9df4-a7365e3939b3",
+        "name": "Send Confirmation Email",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          3200,
+          400
+        ],
+        "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build Prompt\"\n// Placed AFTER the \"Fetch Prompt\" HTTP Request node\n// Combines the system prompt (from GitHub) with order data (from Transform node)\n\n// ─────────────────────────────────────────────────────────────\n// 1. Get system prompt from the HTTP Request node output\n// ─────────────────────────────────────────────────────────────\n\nconst systemPrompt = $('Fetch Script Prompt').first().json.data;\n\n// ─────────────────────────────────────────────────────────────\n// 2. Get order from the Transform node\n// ─────────────────────────────────────────────────────────────\n\nconst order = $('Validate and Transform Order').first().json.order;\nconst child = order.child;\n\n// ─────────────────────────────────────────────────────────────\n// 3. Build user prompt from order data\n// ─────────────────────────────────────────────────────────────\n\nconst userPrompt = `Create a personalized story with these details:\n\n**Child:**\n- Name: ${child.name}\n- Age: ${child.age}\n- Gender: ${child.gender}\n- Glasses: ${child.glasses ? 'yes' : 'no'}\n- Hair color: ${child.hair_color}\n- Skin tone: ${child.skin_tone}\n\n**Personality & Interests:**\n- Hobby: ${child.hobby}\n- Hobby details: ${child.hobby_detail || 'not provided'}\n- Signature look: ${child.signature_look || 'not provided'}\n- Jersey / lucky number: ${child.jersey_number || 'not provided'}\n- Recent achievement: ${child.recent_win || 'not provided'}\n\n**Story Settings:**\n- Theme: ${order.theme}\n- Hero trait: ${child.hero_trait}\n- Language: ${order.language}\n\n**Parent's message (include in final scene):**\n${order.parent_message || 'No message provided.'}`;\n\n// ─────────────────────────────────────────────────────────────\n// 4. Output — ready for OpenAI node\n// ─────────────────────────────────────────────────────────────\n\nreturn [{\n    json: {\n        system_prompt: systemPrompt,\n        user_prompt: userPrompt,\n        order_id: order.order_id,\n        order: order\n    }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1568,
+          400
+        ],
+        "id": "2efe7ba1-010c-4531-975b-20f5a0135132",
+        "name": "Build Script Prompt"
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').item.json.env.is_live ? 'main' : 'develop' }}/prompts/space_hero/system.md",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          1264,
+          400
+        ],
+        "id": "6bb83e69-2ada-46e8-b76e-1fdb81f948b0",
+        "name": "Fetch Script Prompt"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Extract the story JSON string from OpenAI response\nconst aiOutput = $input.first().json;\n\n// Try multiple paths — n8n OpenAI node output varies by version\nlet rawText;\n\nif (aiOutput.output?.[0]?.content?.[0]?.text) {\n  // Responses API format\n  rawText = aiOutput.output[0].content[0].text;\n} else if (aiOutput.message?.content) {\n  // Chat Completion format\n  rawText = aiOutput.message.content;\n} else if (aiOutput.text) {\n  // Simple text output\n  rawText = aiOutput.text;\n} else if (typeof aiOutput === 'string') {\n  rawText = aiOutput;\n} else {\n  // Debug: output what we actually received\n  throw new Error('Unexpected AI output shape: ' + JSON.stringify(Object.keys(aiOutput)));\n}\n\n// Parse the JSON string into an actual object\nconst script = JSON.parse(rawText);\n\n// Get the order from the earlier node\nconst order = $('Validate and Transform Order').first().json.order;\n\nreturn [{\n  json: {\n    order_id: order.order_id,\n    script: script,\n    script_raw: rawText,\n    version: 1,\n    order: order\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2160,
+          400
+        ],
+        "id": "4ac57a4f-2570-4636-b1c2-dd3eb99352e8",
+        "name": "Parse Script"
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build Emails\"\n// Place AFTER \"Parse Script\" node\n// Outputs TWO items: [0] = customer email, [1] = admin email\n// Then use a Send Email node for each (or split with IF)\n\nconst order = $('Validate and Transform Order').first().json.order;\nconst script = $('Parse Script').first().json.script;\nconst scriptVersion = $('Parse Script').first().json.version || 1;\n\n// ─────────────────────────────────────────────────────────────\n// Env flags\n// ─────────────────────────────────────────────────────────────\nconst env = $('Envs').first().json.env;\nconst approvalRequired = env.script_approval_required === true || env.script_approval_required === 'true';\nconst REVIEW_BASE = `https://evermagic.app.n8n.cloud/webhook${env.is_live ? '' : '-test'}/evermagic/review`;\n\n// ─────────────────────────────────────────────────────────────\n// 1. Customer Confirmation Email\n// ─────────────────────────────────────────────────────────────\n\nconst packageLabels = {\n  'BASIC': 'Basic (PDF + printable)',\n  'FULL': 'Full Bundle (Video + PDF + printable)',\n  'PARTY': 'Party Pack',\n};\n\nconst themeLabels = {\n  'SPACE_HERO': 'Space Hero Mission',\n};\n\nconst customerHtml = `\n<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0\"></head>\n<body style=\"margin:0;padding:0;background-color:#0f0f1a;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;\">\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0f0f1a;\">\n<tr><td align=\"center\" style=\"padding:40px 20px;\">\n<table role=\"presentation\" width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-radius:16px;overflow:hidden;\">\n  <tr><td align=\"center\" style=\"padding:40px 40px 20px;\">\n    <div style=\"font-size:48px;line-height:1;\">✨</div>\n    <h1 style=\"margin:16px 0 0;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;\">Your Magic Is Being Created!</h1>\n  </td></tr>\n  <tr><td style=\"padding:20px 40px;\">\n    <p style=\"margin:0 0 16px;font-size:16px;line-height:1.6;color:#c4c4d4;\">Hi there! 👋</p>\n    <p style=\"margin:0 0 24px;font-size:16px;line-height:1.6;color:#c4c4d4;\">\n      We've received your order and our magic machines are already working on\n      <strong style=\"color:#ffffff;\">${order.child.name}</strong>'s personalized adventure!\n    </p>\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:rgba(255,255,255,0.06);border-radius:12px;border:1px solid rgba(255,255,255,0.08);\">\n      <tr><td style=\"padding:24px;\">\n        <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n          <tr><td style=\"font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#8b8ba3;padding-bottom:12px;\">Order Details</td></tr>\n          <tr><td>\n            <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n              <tr>\n                <td style=\"font-size:14px;color:#8b8ba3;padding:6px 0;\">Order No.</td>\n                <td align=\"right\" style=\"font-size:14px;color:#ffffff;font-weight:600;font-family:monospace;padding:6px 0;\">${order.order_id}</td>\n              </tr>\n              <tr>\n                <td style=\"font-size:14px;color:#8b8ba3;padding:6px 0;\">Hero</td>\n                <td align=\"right\" style=\"font-size:14px;color:#ffffff;padding:6px 0;\">${order.child.name}, age ${order.child.age}</td>\n              </tr>\n              <tr>\n                <td style=\"font-size:14px;color:#8b8ba3;padding:6px 0;\">Package</td>\n                <td align=\"right\" style=\"font-size:14px;color:#ffffff;padding:6px 0;\">${packageLabels[order.package] || order.package}</td>\n              </tr>\n              <tr>\n                <td style=\"font-size:14px;color:#8b8ba3;padding:6px 0;\">Theme</td>\n                <td align=\"right\" style=\"font-size:14px;color:#ffffff;padding:6px 0;\">${themeLabels[order.theme] || order.theme}</td>\n              </tr>\n            </table>\n          </td></tr>\n        </table>\n      </td></tr>\n    </table>\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin-top:24px;\">\n      <tr><td align=\"center\" style=\"padding:20px;background:rgba(139,92,246,0.1);border-radius:12px;border:1px solid rgba(139,92,246,0.2);\">\n        <div style=\"font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:#a78bfa;margin-bottom:8px;\">Estimated Delivery</div>\n        <div style=\"font-size:22px;font-weight:700;color:#ffffff;\">⏱ ~15 minutes</div>\n        <div style=\"font-size:13px;color:#8b8ba3;margin-top:4px;\">We'll email you when it's ready!</div>\n      </td></tr>\n    </table>\n    <p style=\"margin:24px 0 0;font-size:14px;line-height:1.6;color:#8b8ba3;text-align:center;\">Sit back and relax — the magic is happening! 🚀</p>\n  </td></tr>\n  <tr><td align=\"center\" style=\"padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.06);\">\n    <p style=\"margin:0;font-size:13px;color:#5a5a7a;\">Made with ❤️ by <strong style=\"color:#8b8ba3;\">EverMagic</strong></p>\n  </td></tr>\n</table>\n</td></tr>\n</table>\n</body></html>`;\n\n// ─────────────────────────────────────────────────────────────\n// 2. Admin Review Email\n// ─────────────────────────────────────────────────────────────\n\nconst scenesHtml = script.scenes.map(s => `\n  <tr><td style=\"padding:8px 32px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;margin-bottom:8px;\">\n      <tr><td style=\"padding:16px;\">\n        <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;font-weight:600;\">Scene ${s.scene_number} · ${s.emotion || ''}</div>\n        <h3 style=\"margin:4px 0 8px;font-size:16px;color:#111;\">${s.scene_title}</h3>\n        <p style=\"margin:0 0 12px;font-size:14px;color:#374151;line-height:1.6;\">${s.narration}</p>\n        <div style=\"font-size:12px;color:#9ca3af;line-height:1.5;border-top:1px solid #e5e7eb;padding-top:8px;\">\n          <strong style=\"color:#6b7280;\">🎬 Visual:</strong> ${s.visual_description}\n        </div>\n      </td></tr>\n    </table>\n  </td></tr>`).join('\\n');\n\nconst adminHtml = `\n<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0\"></head>\n<body style=\"margin:0;padding:0;background-color:#f8f9fa;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;\">\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#f8f9fa;\">\n<tr><td align=\"center\" style=\"padding:32px 16px;\">\n<table role=\"presentation\" width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);\">\n  <tr><td style=\"padding:28px 32px 16px;border-bottom:1px solid #eee;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n      <tr>\n        <td>\n          <span style=\"font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280;font-weight:600;\">⚡ EverMagic Admin</span>\n          <h1 style=\"margin:8px 0 0;font-size:22px;color:#111;font-weight:700;\">${approvalRequired ? 'Script Ready for Review' : 'Script Auto-Approved'}</h1>\n        </td>\n        <td align=\"right\" style=\"vertical-align:top;\">\n          ${approvalRequired\n    ? `<span style=\"display:inline-block;padding:6px 14px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;\">Needs Review</span>`\n    : `<span style=\"display:inline-block;padding:6px 14px;background:#d1fae5;color:#065f46;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;\">Auto-Approved ✅</span>`\n  }\n        </td>\n      </tr>\n    </table>\n  </td></tr>\n  <tr><td style=\"padding:24px 32px 16px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;\">\n      <tr><td style=\"padding:16px;\">\n        <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"font-size:13px;\">\n          <tr>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Order</td>\n            <td style=\"color:#111;font-weight:600;font-family:monospace;\">${order.order_id}</td>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Package</td>\n            <td style=\"color:#111;font-weight:600;\">${packageLabels[order.package] || order.package}</td>\n          </tr>\n          <tr>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Hero</td>\n            <td style=\"color:#111;font-weight:600;\">${order.child.name} (${order.child.age})</td>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Theme</td>\n            <td style=\"color:#111;font-weight:600;\">${themeLabels[order.theme] || order.theme}</td>\n          </tr>\n          <tr>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Trait</td>\n            <td style=\"color:#111;font-weight:600;\">${order.child.hero_trait}</td>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Language</td>\n            <td style=\"color:#111;font-weight:600;\">${order.language}</td>\n          </tr>\n        </table>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td style=\"padding:8px 32px 16px;\">\n    <h2 style=\"margin:0;font-size:20px;color:#111;\">📖 ${script.title}</h2>\n    <p style=\"margin:4px 0 0;font-size:14px;color:#6b7280;font-style:italic;\">${script.tagline}</p>\n    <span style=\"display:inline-block;margin-top:8px;padding:3px 10px;background:#e0e7ff;color:#3730a3;font-size:11px;font-weight:600;border-radius:12px;\">v${scriptVersion}</span>\n  </td></tr>\n  ${scenesHtml}\n  <tr><td style=\"padding:8px 32px 24px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;\">\n      <tr><td style=\"padding:16px;\">\n        <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#16a34a;font-weight:600;margin-bottom:6px;\">💚 Parent's Message</div>\n        <div style=\"font-size:14px;color:#166534;line-height:1.5;\">${order.parent_message || 'No message provided.'}</div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <!-- ACTION BUTTONS (conditional on script_approval_required) -->\n  ${approvalRequired ? `\n  <tr><td style=\"padding:16px 32px 24px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n      <tr>\n        <td align=\"center\" width=\"33%\" style=\"padding:0 4px;\">\n          <a href=\"${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=approve\"\n             style=\"display:block;padding:14px 8px;background:#16a34a;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;\">\n            ✅ Approve\n          </a>\n        </td>\n        <td align=\"center\" width=\"33%\" style=\"padding:0 4px;\">\n          <a href=\"${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=retry\"\n             style=\"display:block;padding:14px 8px;background:#f59e0b;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;\">\n            🔄 Edit &amp; Retry\n          </a>\n        </td>\n        <td align=\"center\" width=\"33%\" style=\"padding:0 4px;\">\n          <a href=\"${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=edit\"\n             style=\"display:block;padding:14px 8px;background:#3b82f6;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;\">\n            ✏️ Manual Edit\n          </a>\n        </td>\n      </tr>\n    </table>\n  </td></tr>\n  <tr><td style=\"padding:12px 32px 28px;border-top:1px solid #eee;\">\n    <p style=\"margin:0;font-size:12px;color:#9ca3af;text-align:center;\">Click an action above to approve, retry with AI, or manually edit this script.</p>\n  </td></tr>` : `\n  <tr><td style=\"padding:16px 32px 24px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;\">\n      <tr><td style=\"padding:16px;text-align:center;\">\n        <div style=\"font-size:28px;margin-bottom:8px;\">🤖</div>\n        <div style=\"font-size:14px;font-weight:700;color:#065f46;margin-bottom:4px;\">Script was auto-approved</div>\n        <div style=\"font-size:13px;color:#6b7280;\">Image generation has already started. No action needed.</div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td style=\"padding:12px 32px 28px;border-top:1px solid #eee;\">\n    <p style=\"margin:0;font-size:12px;color:#9ca3af;text-align:center;\">This is an FYI notification. Script approval is currently disabled.</p>\n  </td></tr>`}\n</table>\n</td></tr>\n</table>\n</body></html>`;\n\n// ─────────────────────────────────────────────────────────────\n// 3. Output both emails as two items\n// ─────────────────────────────────────────────────────────────\n\nreturn [\n  {\n    json: {\n      email_type: 'customer_confirmation',\n      to: order.delivery.email,\n      subject: `✨ Your magic is being created, ${order.child.name}!`,\n      html: customerHtml,\n      order_id: order.order_id\n    }\n  },\n  {\n    json: {\n      email_type: 'admin_review',\n      to: 'taras.evermagic@gmail.com',\n      subject: `📋 Script Review — ${order.order_id} — ${order.child.name}`,\n      html: adminHtml,\n      order_id: order.order_id\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2848,
+          400
+        ],
+        "id": "fa329891-0188-4bf4-9888-e39c65cba4a3",
+        "name": "Build Emails"
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "envs"
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -112,
+          400
+        ],
+        "id": "3110c800-7bed-4f31-b05e-88ec34b782c3",
+        "name": "Load Envs",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,       \n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true', \n  evrm_token: raw.evrm_token\n};\n\nreturn [{ json: { env } }];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          96,
+          400
+        ],
+        "id": "43c96187-9019-4f4a-8006-8c8d70ade12f",
+        "name": "Envs"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "4340baf0-232b-4a99-920e-9948a7b6026a",
+                "leftValue": "={{ $('Envs').item.json.env.script_approval_required }}",
+                "rightValue": "true",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "false",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": "={{ false }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2848,
+          160
+        ],
+        "id": "156c42ce-0d6e-428d-8c5c-a6e5266dd1fc",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://evermagic.app.n8n.cloud/webhook{{ $('Envs').item.json.env.is_live ? '' : '-test' }}/orders/images/generate",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "X-EverMagic-Token",
+                "value": "={{ $('Envs').item.json.env.evrm_token }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          3136,
+          48
+        ],
+        "id": "1fd03d25-674f-413a-b560-3b2dfd94dbad",
+        "name": "Image Generation Webhook"
+      }
+    ],
+    "connections": {
+      "Save Order to Database": {
+        "main": [
+          [
+            {
+              "node": "Save Order Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Receive Order": {
+        "main": [
+          [
+            {
+              "node": "Load Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Validate and Transform Order": {
+        "main": [
+          [
+            {
+              "node": "Save Order to Database",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Script with AI": {
+        "main": [
+          [
+            {
+              "node": "Parse Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Generated Script": {
+        "main": [
+          [
+            {
+              "node": "Update Order Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Order Status": {
+        "main": [
+          [
+            {
+              "node": "Build Emails",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Order Payload": {
+        "main": [
+          [
+            {
+              "node": "Fetch Script Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Script Prompt": {
+        "main": [
+          [
+            {
+              "node": "Generate Script with AI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Script Prompt": {
+        "main": [
+          [
+            {
+              "node": "Build Script Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Script": {
+        "main": [
+          [
+            {
+              "node": "Save Generated Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Emails": {
+        "main": [
+          [
+            {
+              "node": "Send Confirmation Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Envs": {
+        "main": [
+          [
+            {
+              "node": "Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envs": {
+        "main": [
+          [
+            {
+              "node": "Validate and Transform Order",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Image Generation Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Taras Holub",
+    "name": "Version 3750209f",
+    "description": "",
+    "autosaved": true
+  },
   "tags": []
 }

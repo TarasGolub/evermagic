@@ -1,6 +1,10 @@
 {
+  "updatedAt": "2026-03-19T01:04:07.862Z",
+  "createdAt": "2026-03-14T17:52:56.850Z",
+  "id": "Zwhkv86d2kqVMVhg",
   "name": "3.2 EverMagic PDF Assembly",
-  "active": false,
+  "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -9,11 +13,14 @@
         "authentication": "headerAuth",
         "options": {}
       },
-      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "id": "fa2e3e99-b005-4fd5-a7b2-586109305cc4",
       "name": "Generate PDFs",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [0, 0],
+      "position": [
+        -3168,
+        128
+      ],
       "webhookId": "a1b2c3d4-0001-4000-8000-000000000099",
       "credentials": {
         "httpHeaderAuth": {
@@ -27,11 +34,14 @@
         "operation": "getAll",
         "tableId": "envs"
       },
-      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "id": "ae435c1b-cf54-4bcd-a772-5f580d866447",
       "name": "Load Envs",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [240, 0],
+      "position": [
+        -2944,
+        128
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -41,13 +51,16 @@
     },
     {
       "parameters": {
-        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_service_key: raw.supabase_service_key || ''\n};\n\nreturn [{ json: { env } }];\n"
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_storage_url: raw.supabase_storage_url || '',\n  supabase_service_key: raw.supabase_service_key || ''\n};\n\nreturn [{ json: { env } }];\n"
       },
-      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "id": "b3e4be2a-8fab-4c60-ae93-5fb5347030a4",
       "name": "Envs",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [480, 0]
+      "position": [
+        -2704,
+        128
+      ]
     },
     {
       "parameters": {
@@ -59,16 +72,19 @@
             {
               "keyName": "order_id",
               "condition": "eq",
-              "keyValue": "={{ $json.body.order_id }}"
+              "keyValue": "={{ $json.order_id }}"
             }
           ]
         }
       },
-      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "id": "13a4dec1-1e96-488a-aa1c-97748b7fbee2",
       "name": "Fetch Order Payload",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [720, 0],
+      "position": [
+        -2160,
+        128
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -84,23 +100,21 @@
         "filters": {
           "conditions": [
             {
-              "keyName": "order_id",
-              "condition": "eq",
-              "keyValue": "={{ $json.order_id }}"
-            },
-            {
               "keyName": "status",
               "condition": "eq",
-              "keyValue": "approved"
+              "keyValue": "scenario_expanded"
             }
           ]
         }
       },
-      "id": "a1b2c3d4-0005-4000-8000-000000000005",
+      "id": "9bb4dda6-1d2c-4bb0-8781-070195efbbfd",
       "name": "Fetch Script",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [960, 0],
+      "position": [
+        -2432,
+        128
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -128,11 +142,14 @@
           ]
         }
       },
-      "id": "a1b2c3d4-0006-4000-8000-000000000006",
+      "id": "4fe895f3-ad90-40a3-af00-279865e3865f",
       "name": "Fetch Images",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [1200, 0],
+      "position": [
+        -1680,
+        128
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -163,11 +180,14 @@
           ]
         }
       },
-      "id": "a1b2c3d4-0007-4000-8000-000000000007",
+      "id": "4dfacb8a-a450-46fb-aa77-f6a9e9a40dbd",
       "name": "Update Status: pdf_generating",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [1440, 0],
+      "position": [
+        -1440,
+        128
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -180,54 +200,68 @@
         "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/storybook.html",
         "options": {}
       },
-      "id": "a1b2c3d4-0008-4000-8000-000000000008",
+      "id": "0e3e3732-9dfd-4524-9a0f-e8af9e394239",
       "name": "Fetch Storybook Template",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1680, 0]
+      "position": [
+        -1200,
+        128
+      ]
     },
     {
       "parameters": {
         "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/coloring-book.html",
         "options": {}
       },
-      "id": "a1b2c3d4-0009-4000-8000-000000000009",
+      "id": "2c72d195-3178-48ff-8668-d30c94212fc6",
       "name": "Fetch Coloring Book Template",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1920, 0]
+      "position": [
+        -960,
+        128
+      ]
     },
     {
       "parameters": {
         "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/certificate.html",
         "options": {}
       },
-      "id": "a1b2c3d4-0010-4000-8000-000000000010",
+      "id": "7fba882e-79e4-4283-9f0c-c229601e9b6b",
       "name": "Fetch Certificate Template",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [2160, 0]
+      "position": [
+        -720,
+        128
+      ]
     },
     {
       "parameters": {
-        "jsCode": "const order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string' ? JSON.parse(scriptRow.content) : scriptRow.content;\nconst expandedContent = scriptRow.expanded_content\n  ? (typeof scriptRow.expanded_content === 'string' ? JSON.parse(scriptRow.expanded_content) : scriptRow.expanded_content)\n  : null;\n\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) { images[row.json.image_type] = row.json.file_url; }\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\n\nfunction sceneText(n) {\n  if (expandedContent && expandedContent.scenes) {\n    const ex = expandedContent.scenes.find(s => s.scene_number === n);\n    if (ex && ex.expanded_narrative) return ex.expanded_narrative;\n  }\n  const s = scriptContent.scenes.find(s => s.scene_number === n);\n  return s ? s.narration : '';\n}\nfunction sceneTitle(n) {\n  const s = scriptContent.scenes.find(s => s.scene_number === n);\n  return s ? s.scene_title : '';\n}\n\nconst heroTraitTitle = child.hero_trait\n  ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n  : 'Courage';\n\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n  'story.title': scriptContent.title || '',\n  'story.tagline': scriptContent.tagline || '',\n  'closing_message': scriptContent.closing_message || '',\n  'parent_message': order.parent_message || '',\n  'child.name': child.name,\n  'child.age': String(child.age),\n  'child.hero_trait': child.hero_trait || '',\n  'child.hobby': child.hobby || '',\n  'order.order_id': order.order_id,\n  'qr_code_url': qrCodeUrl,\n  'cover.image_url': images['cover'] || '',\n  'scene_1.image_url': images['scene_1'] || '',\n  'scene_2.image_url': images['scene_2'] || '',\n  'scene_3.image_url': images['scene_3'] || '',\n  'scene_4.image_url': images['scene_4'] || '',\n  'scene_5.image_url': images['scene_5'] || '',\n  'coloring.image_url': images['coloring'] || '',\n  'coloring_1.image_url': images['coloring_1'] || '',\n  'coloring_2.image_url': images['coloring_2'] || '',\n  'coloring_3.image_url': images['coloring_3'] || '',\n  'coloring_4.image_url': images['coloring_4'] || '',\n  'coloring_5.image_url': images['coloring_5'] || '',\n  'scene_1.title': sceneTitle(1), 'scene_2.title': sceneTitle(2),\n  'scene_3.title': sceneTitle(3), 'scene_4.title': sceneTitle(4), 'scene_5.title': sceneTitle(5),\n  'scene_1.narration': sceneText(1), 'scene_2.narration': sceneText(2),\n  'scene_3.narration': sceneText(3), 'scene_4.narration': sceneText(4), 'scene_5.narration': sceneText(5),\n  'cert.hero_trait_title': heroTraitTitle,\n  'cert.citation': citation,\n  'cert.date': awardDate\n};\n\nfunction injectVars(html, variables) {\n  let result = html;\n  for (const [key, value] of Object.entries(variables)) {\n    const regex = new RegExp('\\\\{\\\\{' + key.replace('.', '\\\\.') + '\\\\}\\\\}', 'g');\n    result = result.replace(regex, value);\n  }\n  return result;\n}\n\nconst apiKey = env.pdfshift_api_key || '';\nconst authHeader = 'Basic ' + Buffer.from('api:' + apiKey).toString('base64');\n\nconst PDF_TYPES = [\n  { type: 'storybook',     template_node: 'Fetch Storybook Template',     options: { width: '7in', height: '7in', landscape: false } },\n  { type: 'coloring_book', template_node: 'Fetch Coloring Book Template', options: { format: 'Letter',  landscape: false } },\n  { type: 'certificate',   template_node: 'Fetch Certificate Template',   options: { format: 'Letter',  landscape: true  } }\n];\n\nconst results = [];\nfor (const pdfType of PDF_TYPES) {\n  const rawHtml = $(pdfType.template_node).first().json.data;\n  const html = injectVars(rawHtml, vars);\n  const body = { source: html, landscape: pdfType.options.landscape || false };\n  if (pdfType.options.format) {\n    body.format = pdfType.options.format;\n  } else {\n    body.width = pdfType.options.width;\n    body.height = pdfType.options.height;\n  }\n  results.push({ json: {\n    order_id:       order.order_id,\n    pdf_type:       pdfType.type,\n    pdfshift_body:  body,\n    pdfshift_auth:  authHeader,\n    file_path:      'pdfs/' + order.order_id + '/' + pdfType.type + '.pdf',\n    supabase_url:   env.supabase_url || '',\n    supabase_key:   env.supabase_service_key || ''\n  }});\n}\nreturn results;\n"
+        "jsCode": "// n8n Code node — \"Build PDF HTML\"\n// Placed AFTER \"Fetch PDF Template\" HTTP Request node\n// Injects order/script/image data into an HTML template string\n// Returns one item per PDF type — feeds into the PDFShift loop\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order       = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child       = order.child;\n\nconst scriptRow   = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst expandedContent = typeof scriptRow.expanded_content === 'string'\n    ? JSON.parse(scriptRow.expanded_content)\n    : scriptRow.expanded_content;\n\n// Images: build a map of image_type → file_url\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) {\n    images[row.json.image_type] = row.json.file_url;\n}\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\n\n// ─────────────────────────────────────────────────────────────\n// 2. Build variable map\n// ─────────────────────────────────────────────────────────────\n\n// Per-scene text: use expanded_content if available, fall back to narration\nfunction sceneText(sceneNumber) {\n    if (expandedContent && expandedContent.scenes) {\n        const expanded = expandedContent.scenes.find(s => s.scene_number === sceneNumber);\n        if (expanded && expanded.expanded_narrative) return expanded.expanded_narrative;\n    }\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.narration : '';\n}\n\nfunction sceneTitle(sceneNumber) {\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.scene_title : '';\n}\n\n// Hero trait → capitalised title for certificate\nconst heroTraitTitle = child.hero_trait\n    ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n    : 'Courage';\n\n// Certificate citation — hobby-aware\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — `\n    + `demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, `\n    + `courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} `\n    + `to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n    // Story\n    'story.title':          scriptContent.title || '',\n    'story.tagline':        scriptContent.tagline || '',\n    'closing_message':      scriptContent.closing_message || '',\n    'parent_message':       order.parent_message || '',\n\n    // Child\n    'child.name':           child.name,\n    'child.age':            String(child.age),\n    'child.hero_trait':     child.hero_trait || '',\n    'child.hobby':          child.hobby || '',\n\n    // Order\n    'order.order_id':       order.order_id,\n    'qr_code_url':          qrCodeUrl,\n\n    // Images — scene images\n    'cover.image_url':      images['cover']    || '',\n    'scene_1.image_url':    images['scene_1']  || '',\n    'scene_2.image_url':    images['scene_2']  || '',\n    'scene_3.image_url':    images['scene_3']  || '',\n    'scene_4.image_url':    images['scene_4']  || '',\n    'scene_5.image_url':    images['scene_5']  || '',\n\n    // Images — coloring pages\n    'coloring.image_url':   images['coloring']   || '',\n    'coloring_1.image_url': images['coloring_1'] || '',\n    'coloring_2.image_url': images['coloring_2'] || '',\n    'coloring_3.image_url': images['coloring_3'] || '',\n    'coloring_4.image_url': images['coloring_4'] || '',\n    'coloring_5.image_url': images['coloring_5'] || '',\n\n    // Scene titles\n    'scene_1.title':        sceneTitle(1),\n    'scene_2.title':        sceneTitle(2),\n    'scene_3.title':        sceneTitle(3),\n    'scene_4.title':        sceneTitle(4),\n    'scene_5.title':        sceneTitle(5),\n\n    // Scene narration / expanded text — formatted as <p> chunks\n    'scene_1.narration':    formatNarration(sceneText(1)),\n    'scene_2.narration':    formatNarration(sceneText(2)),\n    'scene_3.narration':    formatNarration(sceneText(3)),\n    'scene_4.narration':    formatNarration(sceneText(4)),\n    'scene_5.narration':    formatNarration(sceneText(5)),\n\n    // Certificate\n    'cert.hero_trait_title': heroTraitTitle,\n    'cert.citation':         citation,\n    'cert.date':             awardDate,\n};\n\n// ─────────────────────────────────────────────────────────────\n// 3. Format narration into paragraph chunks (2–3 sentences each)\n// ─────────────────────────────────────────────────────────────\n\nfunction formatNarration(text) {\n    if (!text) return '';\n    // Split into sentences on . ! ? — keep the punctuation\n    const sentences = text.match(/[^.!?]+[.!?]+[\"']?/g) || [text];\n    const paragraphs = [];\n    for (let i = 0; i < sentences.length; i += 3) {\n        const chunk = sentences.slice(i, i + 3).join(' ').trim();\n        if (chunk) paragraphs.push('<p>' + chunk + '</p>');\n    }\n    return paragraphs.join('\\n');\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Inject variables into template HTML\n// ─────────────────────────────────────────────────────────────\n\nfunction injectVars(html, variables) {\n    let result = html;\n    for (const [key, value] of Object.entries(variables)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Build one output item per PDF type\n//    Each item feeds into the PDFShift loop\n// ─────────────────────────────────────────────────────────────\n\nconst PDF_TYPES = [\n    {\n        type: 'storybook',\n        template_node: 'Fetch Storybook Template',\n        pdfshift_options: { format: '7inx7in' },\n    },\n    {\n        type: 'coloring_book',\n        template_node: 'Fetch Coloring Book Template',\n        pdfshift_options: { format: 'Letter', landscape: false },\n    },\n    {\n        type: 'certificate',\n        template_node: 'Fetch Certificate Template',\n        pdfshift_options: { format: 'Letter', landscape: true },\n    },\n];\n\nconst results = [];\n\nfor (const pdfType of PDF_TYPES) {\n    const rawHtml = $(`${pdfType.template_node}`).first().json.data;\n    const populatedHtml = injectVars(rawHtml, vars);\n\n    const pdfshiftBody = Object.assign({ source: populatedHtml }, pdfType.pdfshift_options);\n\n    results.push({\n        json: {\n            order_id:      order.order_id,\n            pdf_type:      pdfType.type,\n            pdfshift_body: pdfshiftBody,\n            file_path:     `pdfs/${order.order_id}/${pdfType.type}.pdf`,\n        }\n    });\n}\n\nreturn results;\n"
       },
-      "id": "a1b2c3d4-0011-4000-8000-000000000011",
+      "id": "0ab590c8-94c2-43dd-9bf7-a350875c683a",
       "name": "Build PDF HTML",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2400, 0]
+      "position": [
+        -480,
+        128
+      ]
     },
     {
       "parameters": {
-        "batchSize": 1,
         "options": {}
       },
-      "id": "a1b2c3d4-0012-4000-8000-000000000012",
+      "id": "a3456ec9-ab53-43e5-a445-ee070b822869",
       "name": "Loop Over PDFs",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
-      "position": [2640, 0]
+      "position": [
+        -240,
+        128
+      ]
     },
     {
       "parameters": {
@@ -239,10 +273,6 @@
             {
               "name": "X-API-Key",
               "value": "={{ $('Envs').first().json.env.pdfshift_api_key }}"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
             }
           ]
         },
@@ -253,36 +283,36 @@
         "options": {
           "response": {
             "response": {
-              "responseFormat": "file",
-              "outputPropertyName": "data"
+              "responseFormat": "file"
             }
           }
         }
       },
-      "id": "a1b2c3d4-0013-4000-8000-000000000013",
+      "id": "0e7bbebf-3254-425d-875a-b307e8477601",
       "name": "Call PDFShift",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [2880, -120]
+      "position": [
+        256,
+        144
+      ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $('Loop Over PDFs').item.json.supabase_url }}/storage/v1/object/pdfs/{{ $('Loop Over PDFs').item.json.file_path }}",
+        "url": "=https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/pdfs/{{ $('Loop Over PDFs').item.json.file_path }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
-              "name": "Authorization",
-              "value": "=Bearer {{ $('Loop Over PDFs').item.json.supabase_key }}"
+              "name": "x-upsert",
+              "value": "true"
             },
             {
               "name": "Content-Type",
               "value": "application/pdf"
-            },
-            {
-              "name": "x-upsert",
-              "value": "true"
             }
           ]
         },
@@ -291,61 +321,57 @@
         "inputDataFieldName": "data",
         "options": {}
       },
-      "id": "a1b2c3d4-0014-4000-8000-000000000014",
+      "id": "e936ea86-f945-4e04-b7b6-bf596ec0c33d",
       "name": "Upload PDF to Storage",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [3120, -120]
+      "position": [
+        496,
+        144
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     },
     {
       "parameters": {
-        "operation": "upsert",
         "tableId": "pdfs",
-        "matchType": "allFilters",
-        "filters": {
-          "conditions": [
-            {
-              "keyName": "order_id",
-              "condition": "eq",
-              "keyValue": "={{ $('Loop Over PDFs').item.json.order_id }}"
-            },
-            {
-              "keyName": "pdf_type",
-              "condition": "eq",
-              "keyValue": "={{ $('Loop Over PDFs').item.json.pdf_type }}"
-            }
-          ]
-        },
         "fieldsUi": {
           "fieldValues": [
             {
               "fieldId": "order_id",
-              "fieldValue": "={{ $('Loop Over PDFs').item.json.order_id }}"
+              "fieldValue": "={{ $('Call PDFShift').item.json.order_id }}"
             },
             {
               "fieldId": "pdf_type",
-              "fieldValue": "={{ $('Loop Over PDFs').item.json.pdf_type }}"
+              "fieldValue": "={{ $('Call PDFShift').item.json.pdf_type }}"
             },
             {
               "fieldId": "file_path",
-              "fieldValue": "={{ $('Loop Over PDFs').item.json.file_path }}"
+              "fieldValue": "={{ $('Call PDFShift').item.json.file_path }}"
             },
             {
               "fieldId": "file_url",
-              "fieldValue": "={{ $('Loop Over PDFs').item.json.supabase_url }}/storage/v1/object/public/pdfs/{{ $('Loop Over PDFs').item.json.file_path }}"
+              "fieldValue": "=https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/public/{{ $json.Key }}"
             },
             {
               "fieldId": "status",
-              "fieldValue": "completed"
+              "fieldValue": "comleted"
             }
           ]
         }
       },
-      "id": "a1b2c3d4-0015-4000-8000-000000000015",
+      "id": "fbfce114-09ff-4ca5-8d22-c3414098ca04",
       "name": "Save PDF Record",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [3360, -120],
+      "position": [
+        736,
+        144
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -376,11 +402,14 @@
           ]
         }
       },
-      "id": "a1b2c3d4-0016-4000-8000-000000000016",
+      "id": "3bad200a-f05d-40ad-8b38-d9d0327f6485",
       "name": "Update Order Status: pdf_generated",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [2880, 160],
+      "position": [
+        528,
+        -64
+      ],
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -390,68 +419,397 @@
     },
     {
       "parameters": {
-        "respondWith": "json",
-        "responseBody": "={ \"status\": \"ok\", \"order_id\": \"{{ $('Fetch Order Payload').first().json.order_id }}\" }",
+        "operation": "update",
+        "tableId": "scripts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "pdf_generated"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        128
+      ],
+      "id": "dea81b5f-2d13-457f-bfa5-509db9eeb3ca",
+      "name": "Update Script Status",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/customer-delivery.html",
         "options": {}
       },
-      "id": "a1b2c3d4-0017-4000-8000-000000000017",
-      "name": "Respond OK",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [3120, 160]
+      "id": "a80e7ec3-fccb-4508-8278-741fe663864a",
+      "name": "Fetch Delivery Email Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        928,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — \"Build Delivery\"\n// Placed AFTER the PDFShift loop (all 3 PDFs assembled and stored in Supabase)\n//\n// Inputs expected (from prior nodes):\n//   - 'Fetch Order Payload'  → order JSON\n//   - 'Fetch Script'         → script row (for story title)\n//   - 'Fetch PDFs'           → rows from pdfs table (or pass pdf URLs directly)\n//   - 'Fetch Delivery Email Template' → raw HTML string (from GitHub fetch)\n//   - 'Envs'                 → env config\n//\n// Outputs (one item):\n//   {\n//     order_id, child_name, child_email,\n//     customer_email_html,  ← send to customer\n//     customer_email_subject,\n//     admin_email_html,     ← send to admin\n//     admin_email_subject,\n//   }\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\n\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst env = $('Envs').first().json.env;\n\n// Supabase public storage base URL — store this in envs table as 'supabase_storage_url'\n// e.g. https://YOURPROJECT.supabase.co/storage/v1/object/public\nconst storageBase = env.supabase_storage_url || '';\nconst bucket = 'pdfs';\n\n// PDF public URLs — constructed from known storage paths\nconst pdfBase = `${storageBase}/${bucket}/pdfs/${order.order_id}`;\nconst storybookUrl    = `${pdfBase}/storybook.pdf`;\nconst coloringBookUrl = `${pdfBase}/coloring_book.pdf`;\nconst certificateUrl  = `${pdfBase}/certificate.pdf`;\nconsole.log('Certificate: ' + certificateUrl);\n\n// Story title\nconst storyTitle = scriptContent.title || `${child.name}'s Space Adventure`;\n\n// Thank-you message shown on page and in email\nconst thankYouMessage = `Your story is here — all three files are ready to save and treasure. `\n    + `We hope ${child.name} loves every moment of the adventure! 🚀`;\n\n// ─────────────────────────────────────────────────────────────\n// 2. Populate templates\n// ─────────────────────────────────────────────────────────────\n\nconst emailVars = {\n    'child_name':          child.name,\n    'story_title':         storyTitle,\n    'thank_you_message':   thankYouMessage,\n    'storybook_url':       storybookUrl,\n    'coloring_book_url':   coloringBookUrl,\n    'certificate_url':     certificateUrl,\n};\n\nfunction injectVars(html, vars) {\n    let result = html;\n    for (const [key, value] of Object.entries(vars)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\nconst emailTemplate     = $('Fetch Delivery Email Template').first().json.data;\nconst customerEmailHtml = injectVars(emailTemplate, emailVars);\n\n// ─────────────────────────────────────────────────────────────\n// 3. Admin notification (plain HTML — no separate template needed)\n// ─────────────────────────────────────────────────────────────\n\nconst adminEmailHtml = `\n<div style=\"font-family:monospace; padding:20px;\">\n  <h2>✅ Order Delivered — ${order.order_id}</h2>\n  <p><strong>Child:</strong> ${child.name}, age ${child.age}</p>\n  <p><strong>Story:</strong> ${storyTitle}</p>\n  <p><strong>Customer email:</strong> ${order.delivery.email}</p>\n  <hr>\n  <p>PDFs:<br>\n    📖 <a href=\"${storybookUrl}\">Storybook</a><br>\n    🎨 <a href=\"${coloringBookUrl}\">Coloring Book</a><br>\n    🏅 <a href=\"${certificateUrl}\">Certificate</a>\n  </p>\n</div>\n`.trim();\n\n// ─────────────────────────────────────────────────────────────\n// 4. Return\n// ─────────────────────────────────────────────────────────────\n\nreturn [{\n    json: {\n        order_id:               order.order_id,\n        child_name:             child.name,\n        child_email:            order.delivery.email,\n\n        customer_email_html:    customerEmailHtml,\n        customer_email_subject: `✨ ${child.name}'s magic is ready — download your files!`,\n\n        admin_email_html:       adminEmailHtml,\n        admin_email_subject:    `✅ Delivered — ${order.order_id} — ${child.name}`,\n    }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        -64
+      ],
+      "id": "955af283-c502-40a3-aa69-e3df28a5eec3",
+      "name": "Build Delivery"
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "={{ $('Build Delivery').item.json.child_email }}",
+        "subject": "={{ $('Build Delivery').item.json.customer_email_subject }}",
+        "html": "={{ $('Build Delivery').item.json.customer_email_html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "33be52dd-733c-466c-862f-0e36d05a93d7",
+      "name": "Send Customer Delivery Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1552,
+        -64
+      ],
+      "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "=taras.evermagic@gmail.com",
+        "subject": "={{ $('Build Delivery').item.json.admin_email_subject }}",
+        "html": "={{ $('Build Delivery').item.json.admin_email_html }}",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "id": "9f9db3c5-f889-4746-bc49-da444d7ecd73",
+      "name": "Send Admin Notification",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1744,
+        -64
+      ],
+      "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "pdf_delivered"
+            }
+          ]
+        }
+      },
+      "id": "a0481888-8217-45a5-b8a0-6b802e56b896",
+      "name": "Update Order Status: PDFs delivered",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        -64
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
   "connections": {
     "Generate PDFs": {
-      "main": [[{ "node": "Load Envs", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Load Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Load Envs": {
-      "main": [[{ "node": "Envs", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Envs": {
-      "main": [[{ "node": "Fetch Order Payload", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Fetch Order Payload": {
-      "main": [[{ "node": "Fetch Script", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Fetch Script": {
-      "main": [[{ "node": "Fetch Images", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Order Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Fetch Images": {
-      "main": [[{ "node": "Update Status: pdf_generating", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Update Status: pdf_generating",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Update Status: pdf_generating": {
-      "main": [[{ "node": "Fetch Storybook Template", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Storybook Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Fetch Storybook Template": {
-      "main": [[{ "node": "Fetch Coloring Book Template", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Coloring Book Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Fetch Coloring Book Template": {
-      "main": [[{ "node": "Fetch Certificate Template", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Certificate Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Fetch Certificate Template": {
-      "main": [[{ "node": "Build PDF HTML", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Build PDF HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Build PDF HTML": {
-      "main": [[{ "node": "Loop Over PDFs", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Loop Over PDFs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Loop Over PDFs": {
       "main": [
-        [{ "node": "Call PDFShift", "type": "main", "index": 0 }],
-        [{ "node": "Update Order Status: pdf_generated", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Update Script Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call PDFShift",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Call PDFShift": {
-      "main": [[{ "node": "Upload PDF to Storage", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Upload PDF to Storage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Upload PDF to Storage": {
-      "main": [[{ "node": "Save PDF Record", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Save PDF Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Save PDF Record": {
-      "main": [[{ "node": "Loop Over PDFs", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Loop Over PDFs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Update Order Status: pdf_generated": {
-      "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Fetch Delivery Email Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Script Status": {
+      "main": [
+        [
+          {
+            "node": "Update Order Status: pdf_generated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Delivery Email Template": {
+      "main": [
+        [
+          {
+            "node": "Build Delivery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Delivery": {
+      "main": [
+        [
+          {
+            "node": "Send Customer Delivery Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Customer Delivery Email": {
+      "main": [
+        [
+          {
+            "node": "Send Admin Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Admin Notification": {
+      "main": [
+        [
+          {
+            "node": "Update Order Status: PDFs delivered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -460,7 +818,838 @@
     "availableInMCP": false
   },
   "staticData": null,
-  "meta": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "pinData": {},
+  "versionId": "256a7990-fbda-456a-ae04-a35197eb7b4a",
+  "activeVersionId": "256a7990-fbda-456a-ae04-a35197eb7b4a",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-14T17:52:56.853Z",
+      "createdAt": "2026-03-14T17:52:56.853Z",
+      "role": "workflow:owner",
+      "workflowId": "Zwhkv86d2kqVMVhg",
+      "projectId": "Ez9yaDRraIYPeCTc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-03-19T01:06:26.000Z",
+    "createdAt": "2026-03-19T01:04:07.863Z",
+    "versionId": "256a7990-fbda-456a-ae04-a35197eb7b4a",
+    "workflowId": "Zwhkv86d2kqVMVhg",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "orders/pdf/generate",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "fa2e3e99-b005-4fd5-a7b2-586109305cc4",
+        "name": "Generate PDFs",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -3168,
+          128
+        ],
+        "webhookId": "a1b2c3d4-0001-4000-8000-000000000099",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "Pc4RF1BUmq9cRkHn",
+            "name": "Header Auth account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "envs"
+        },
+        "id": "ae435c1b-cf54-4bcd-a772-5f580d866447",
+        "name": "Load Envs",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -2944,
+          128
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_storage_url: raw.supabase_storage_url || '',\n  supabase_service_key: raw.supabase_service_key || ''\n};\n\nreturn [{ json: { env } }];\n"
+        },
+        "id": "b3e4be2a-8fab-4c60-ae93-5fb5347030a4",
+        "name": "Envs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -2704,
+          128
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "order_payloads",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.order_id }}"
+              }
+            ]
+          }
+        },
+        "id": "13a4dec1-1e96-488a-aa1c-97748b7fbee2",
+        "name": "Fetch Order Payload",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -2160,
+          128
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "scripts",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "status",
+                "condition": "eq",
+                "keyValue": "scenario_expanded"
+              }
+            ]
+          }
+        },
+        "id": "9bb4dda6-1d2c-4bb0-8781-070195efbbfd",
+        "name": "Fetch Script",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -2432,
+          128
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "images",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              },
+              {
+                "keyName": "status",
+                "condition": "eq",
+                "keyValue": "completed"
+              }
+            ]
+          }
+        },
+        "id": "4fe895f3-ad90-40a3-af00-279865e3865f",
+        "name": "Fetch Images",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -1680,
+          128
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "pdf_generating"
+              }
+            ]
+          }
+        },
+        "id": "4dfacb8a-a450-46fb-aa77-f6a9e9a40dbd",
+        "name": "Update Status: pdf_generating",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -1440,
+          128
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/storybook.html",
+          "options": {}
+        },
+        "id": "0e3e3732-9dfd-4524-9a0f-e8af9e394239",
+        "name": "Fetch Storybook Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          -1200,
+          128
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/coloring-book.html",
+          "options": {}
+        },
+        "id": "2c72d195-3178-48ff-8668-d30c94212fc6",
+        "name": "Fetch Coloring Book Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          -960,
+          128
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/certificate.html",
+          "options": {}
+        },
+        "id": "7fba882e-79e4-4283-9f0c-c229601e9b6b",
+        "name": "Fetch Certificate Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          -720,
+          128
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build PDF HTML\"\n// Placed AFTER \"Fetch PDF Template\" HTTP Request node\n// Injects order/script/image data into an HTML template string\n// Returns one item per PDF type — feeds into the PDFShift loop\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order       = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child       = order.child;\n\nconst scriptRow   = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst expandedContent = typeof scriptRow.expanded_content === 'string'\n    ? JSON.parse(scriptRow.expanded_content)\n    : scriptRow.expanded_content;\n\n// Images: build a map of image_type → file_url\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) {\n    images[row.json.image_type] = row.json.file_url;\n}\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\n\n// ─────────────────────────────────────────────────────────────\n// 2. Build variable map\n// ─────────────────────────────────────────────────────────────\n\n// Per-scene text: use expanded_content if available, fall back to narration\nfunction sceneText(sceneNumber) {\n    if (expandedContent && expandedContent.scenes) {\n        const expanded = expandedContent.scenes.find(s => s.scene_number === sceneNumber);\n        if (expanded && expanded.expanded_narrative) return expanded.expanded_narrative;\n    }\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.narration : '';\n}\n\nfunction sceneTitle(sceneNumber) {\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.scene_title : '';\n}\n\n// Hero trait → capitalised title for certificate\nconst heroTraitTitle = child.hero_trait\n    ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n    : 'Courage';\n\n// Certificate citation — hobby-aware\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — `\n    + `demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, `\n    + `courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} `\n    + `to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n    // Story\n    'story.title':          scriptContent.title || '',\n    'story.tagline':        scriptContent.tagline || '',\n    'closing_message':      scriptContent.closing_message || '',\n    'parent_message':       order.parent_message || '',\n\n    // Child\n    'child.name':           child.name,\n    'child.age':            String(child.age),\n    'child.hero_trait':     child.hero_trait || '',\n    'child.hobby':          child.hobby || '',\n\n    // Order\n    'order.order_id':       order.order_id,\n    'qr_code_url':          qrCodeUrl,\n\n    // Images — scene images\n    'cover.image_url':      images['cover']    || '',\n    'scene_1.image_url':    images['scene_1']  || '',\n    'scene_2.image_url':    images['scene_2']  || '',\n    'scene_3.image_url':    images['scene_3']  || '',\n    'scene_4.image_url':    images['scene_4']  || '',\n    'scene_5.image_url':    images['scene_5']  || '',\n\n    // Images — coloring pages\n    'coloring.image_url':   images['coloring']   || '',\n    'coloring_1.image_url': images['coloring_1'] || '',\n    'coloring_2.image_url': images['coloring_2'] || '',\n    'coloring_3.image_url': images['coloring_3'] || '',\n    'coloring_4.image_url': images['coloring_4'] || '',\n    'coloring_5.image_url': images['coloring_5'] || '',\n\n    // Scene titles\n    'scene_1.title':        sceneTitle(1),\n    'scene_2.title':        sceneTitle(2),\n    'scene_3.title':        sceneTitle(3),\n    'scene_4.title':        sceneTitle(4),\n    'scene_5.title':        sceneTitle(5),\n\n    // Scene narration / expanded text — formatted as <p> chunks\n    'scene_1.narration':    formatNarration(sceneText(1)),\n    'scene_2.narration':    formatNarration(sceneText(2)),\n    'scene_3.narration':    formatNarration(sceneText(3)),\n    'scene_4.narration':    formatNarration(sceneText(4)),\n    'scene_5.narration':    formatNarration(sceneText(5)),\n\n    // Certificate\n    'cert.hero_trait_title': heroTraitTitle,\n    'cert.citation':         citation,\n    'cert.date':             awardDate,\n};\n\n// ─────────────────────────────────────────────────────────────\n// 3. Format narration into paragraph chunks (2–3 sentences each)\n// ─────────────────────────────────────────────────────────────\n\nfunction formatNarration(text) {\n    if (!text) return '';\n    // Split into sentences on . ! ? — keep the punctuation\n    const sentences = text.match(/[^.!?]+[.!?]+[\"']?/g) || [text];\n    const paragraphs = [];\n    for (let i = 0; i < sentences.length; i += 3) {\n        const chunk = sentences.slice(i, i + 3).join(' ').trim();\n        if (chunk) paragraphs.push('<p>' + chunk + '</p>');\n    }\n    return paragraphs.join('\\n');\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Inject variables into template HTML\n// ─────────────────────────────────────────────────────────────\n\nfunction injectVars(html, variables) {\n    let result = html;\n    for (const [key, value] of Object.entries(variables)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Build one output item per PDF type\n//    Each item feeds into the PDFShift loop\n// ─────────────────────────────────────────────────────────────\n\nconst PDF_TYPES = [\n    {\n        type: 'storybook',\n        template_node: 'Fetch Storybook Template',\n        pdfshift_options: { format: '7inx7in' },\n    },\n    {\n        type: 'coloring_book',\n        template_node: 'Fetch Coloring Book Template',\n        pdfshift_options: { format: 'Letter', landscape: false },\n    },\n    {\n        type: 'certificate',\n        template_node: 'Fetch Certificate Template',\n        pdfshift_options: { format: 'Letter', landscape: true },\n    },\n];\n\nconst results = [];\n\nfor (const pdfType of PDF_TYPES) {\n    const rawHtml = $(`${pdfType.template_node}`).first().json.data;\n    const populatedHtml = injectVars(rawHtml, vars);\n\n    const pdfshiftBody = Object.assign({ source: populatedHtml }, pdfType.pdfshift_options);\n\n    results.push({\n        json: {\n            order_id:      order.order_id,\n            pdf_type:      pdfType.type,\n            pdfshift_body: pdfshiftBody,\n            file_path:     `pdfs/${order.order_id}/${pdfType.type}.pdf`,\n        }\n    });\n}\n\nreturn results;\n"
+        },
+        "id": "0ab590c8-94c2-43dd-9bf7-a350875c683a",
+        "name": "Build PDF HTML",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -480,
+          128
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "a3456ec9-ab53-43e5-a445-ee070b822869",
+        "name": "Loop Over PDFs",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -240,
+          128
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pdfshift.io/v3/convert/pdf",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "X-API-Key",
+                "value": "={{ $('Envs').first().json.env.pdfshift_api_key }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "raw",
+          "rawContentType": "application/json",
+          "body": "={{ JSON.stringify($json.pdfshift_body) }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "id": "0e7bbebf-3254-425d-875a-b307e8477601",
+        "name": "Call PDFShift",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          256,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/pdfs/{{ $('Loop Over PDFs').item.json.file_path }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "x-upsert",
+                "value": "true"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "binaryData",
+          "inputDataFieldName": "data",
+          "options": {}
+        },
+        "id": "e936ea86-f945-4e04-b7b6-bf596ec0c33d",
+        "name": "Upload PDF to Storage",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          496,
+          144
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "tableId": "pdfs",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $('Call PDFShift').item.json.order_id }}"
+              },
+              {
+                "fieldId": "pdf_type",
+                "fieldValue": "={{ $('Call PDFShift').item.json.pdf_type }}"
+              },
+              {
+                "fieldId": "file_path",
+                "fieldValue": "={{ $('Call PDFShift').item.json.file_path }}"
+              },
+              {
+                "fieldId": "file_url",
+                "fieldValue": "=https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/public/{{ $json.Key }}"
+              },
+              {
+                "fieldId": "status",
+                "fieldValue": "comleted"
+              }
+            ]
+          }
+        },
+        "id": "fbfce114-09ff-4ca5-8d22-c3414098ca04",
+        "name": "Save PDF Record",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          736,
+          144
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "pdf_generated"
+              }
+            ]
+          }
+        },
+        "id": "3bad200a-f05d-40ad-8b38-d9d0327f6485",
+        "name": "Update Order Status: pdf_generated",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          528,
+          -64
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "scripts",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "pdf_generated"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -32,
+          128
+        ],
+        "id": "dea81b5f-2d13-457f-bfa5-509db9eeb3ca",
+        "name": "Update Script Status",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/customer-delivery.html",
+          "options": {}
+        },
+        "id": "a80e7ec3-fccb-4508-8278-741fe663864a",
+        "name": "Fetch Delivery Email Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          928,
+          -64
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build Delivery\"\n// Placed AFTER the PDFShift loop (all 3 PDFs assembled and stored in Supabase)\n//\n// Inputs expected (from prior nodes):\n//   - 'Fetch Order Payload'  → order JSON\n//   - 'Fetch Script'         → script row (for story title)\n//   - 'Fetch PDFs'           → rows from pdfs table (or pass pdf URLs directly)\n//   - 'Fetch Delivery Email Template' → raw HTML string (from GitHub fetch)\n//   - 'Envs'                 → env config\n//\n// Outputs (one item):\n//   {\n//     order_id, child_name, child_email,\n//     customer_email_html,  ← send to customer\n//     customer_email_subject,\n//     admin_email_html,     ← send to admin\n//     admin_email_subject,\n//   }\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\n\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst env = $('Envs').first().json.env;\n\n// Supabase public storage base URL — store this in envs table as 'supabase_storage_url'\n// e.g. https://YOURPROJECT.supabase.co/storage/v1/object/public\nconst storageBase = env.supabase_storage_url || '';\nconst bucket = 'pdfs';\n\n// PDF public URLs — constructed from known storage paths\nconst pdfBase = `${storageBase}/${bucket}/pdfs/${order.order_id}`;\nconst storybookUrl    = `${pdfBase}/storybook.pdf`;\nconst coloringBookUrl = `${pdfBase}/coloring_book.pdf`;\nconst certificateUrl  = `${pdfBase}/certificate.pdf`;\nconsole.log('Certificate: ' + certificateUrl);\n\n// Story title\nconst storyTitle = scriptContent.title || `${child.name}'s Space Adventure`;\n\n// Thank-you message shown on page and in email\nconst thankYouMessage = `Your story is here — all three files are ready to save and treasure. `\n    + `We hope ${child.name} loves every moment of the adventure! 🚀`;\n\n// ─────────────────────────────────────────────────────────────\n// 2. Populate templates\n// ─────────────────────────────────────────────────────────────\n\nconst emailVars = {\n    'child_name':          child.name,\n    'story_title':         storyTitle,\n    'thank_you_message':   thankYouMessage,\n    'storybook_url':       storybookUrl,\n    'coloring_book_url':   coloringBookUrl,\n    'certificate_url':     certificateUrl,\n};\n\nfunction injectVars(html, vars) {\n    let result = html;\n    for (const [key, value] of Object.entries(vars)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\nconst emailTemplate     = $('Fetch Delivery Email Template').first().json.data;\nconst customerEmailHtml = injectVars(emailTemplate, emailVars);\n\n// ─────────────────────────────────────────────────────────────\n// 3. Admin notification (plain HTML — no separate template needed)\n// ─────────────────────────────────────────────────────────────\n\nconst adminEmailHtml = `\n<div style=\"font-family:monospace; padding:20px;\">\n  <h2>✅ Order Delivered — ${order.order_id}</h2>\n  <p><strong>Child:</strong> ${child.name}, age ${child.age}</p>\n  <p><strong>Story:</strong> ${storyTitle}</p>\n  <p><strong>Customer email:</strong> ${order.delivery.email}</p>\n  <hr>\n  <p>PDFs:<br>\n    📖 <a href=\"${storybookUrl}\">Storybook</a><br>\n    🎨 <a href=\"${coloringBookUrl}\">Coloring Book</a><br>\n    🏅 <a href=\"${certificateUrl}\">Certificate</a>\n  </p>\n</div>\n`.trim();\n\n// ─────────────────────────────────────────────────────────────\n// 4. Return\n// ─────────────────────────────────────────────────────────────\n\nreturn [{\n    json: {\n        order_id:               order.order_id,\n        child_name:             child.name,\n        child_email:            order.delivery.email,\n\n        customer_email_html:    customerEmailHtml,\n        customer_email_subject: `✨ ${child.name}'s magic is ready — download your files!`,\n\n        admin_email_html:       adminEmailHtml,\n        admin_email_subject:    `✅ Delivered — ${order.order_id} — ${child.name}`,\n    }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1136,
+          -64
+        ],
+        "id": "955af283-c502-40a3-aa69-e3df28a5eec3",
+        "name": "Build Delivery"
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "={{ $('Build Delivery').item.json.child_email }}",
+          "subject": "={{ $('Build Delivery').item.json.customer_email_subject }}",
+          "html": "={{ $('Build Delivery').item.json.customer_email_html }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "33be52dd-733c-466c-862f-0e36d05a93d7",
+        "name": "Send Customer Delivery Email",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          1552,
+          -64
+        ],
+        "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "=taras.evermagic@gmail.com",
+          "subject": "={{ $('Build Delivery').item.json.admin_email_subject }}",
+          "html": "={{ $('Build Delivery').item.json.admin_email_html }}",
+          "options": {
+            "appendAttribution": true
+          }
+        },
+        "id": "9f9db3c5-f889-4746-bc49-da444d7ecd73",
+        "name": "Send Admin Notification",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          1744,
+          -64
+        ],
+        "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "pdf_delivered"
+              }
+            ]
+          }
+        },
+        "id": "a0481888-8217-45a5-b8a0-6b802e56b896",
+        "name": "Update Order Status: PDFs delivered",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1968,
+          -64
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Generate PDFs": {
+        "main": [
+          [
+            {
+              "node": "Load Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Envs": {
+        "main": [
+          [
+            {
+              "node": "Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envs": {
+        "main": [
+          [
+            {
+              "node": "Fetch Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Order Payload": {
+        "main": [
+          [
+            {
+              "node": "Fetch Images",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Script": {
+        "main": [
+          [
+            {
+              "node": "Fetch Order Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Images": {
+        "main": [
+          [
+            {
+              "node": "Update Status: pdf_generating",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Status: pdf_generating": {
+        "main": [
+          [
+            {
+              "node": "Fetch Storybook Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Storybook Template": {
+        "main": [
+          [
+            {
+              "node": "Fetch Coloring Book Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Coloring Book Template": {
+        "main": [
+          [
+            {
+              "node": "Fetch Certificate Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Certificate Template": {
+        "main": [
+          [
+            {
+              "node": "Build PDF HTML",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build PDF HTML": {
+        "main": [
+          [
+            {
+              "node": "Loop Over PDFs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over PDFs": {
+        "main": [
+          [
+            {
+              "node": "Update Script Status",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Call PDFShift",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call PDFShift": {
+        "main": [
+          [
+            {
+              "node": "Upload PDF to Storage",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload PDF to Storage": {
+        "main": [
+          [
+            {
+              "node": "Save PDF Record",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save PDF Record": {
+        "main": [
+          [
+            {
+              "node": "Loop Over PDFs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Order Status: pdf_generated": {
+        "main": [
+          [
+            {
+              "node": "Fetch Delivery Email Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Script Status": {
+        "main": [
+          [
+            {
+              "node": "Update Order Status: pdf_generated",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Delivery Email Template": {
+        "main": [
+          [
+            {
+              "node": "Build Delivery",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Delivery": {
+        "main": [
+          [
+            {
+              "node": "Send Customer Delivery Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Customer Delivery Email": {
+        "main": [
+          [
+            {
+              "node": "Send Admin Notification",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Admin Notification": {
+        "main": [
+          [
+            {
+              "node": "Update Order Status: PDFs delivered",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Taras Holub",
+    "name": "Version 256a7990",
+    "description": "",
+    "autosaved": true
+  },
   "tags": []
 }
