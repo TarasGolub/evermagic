@@ -1,8 +1,8 @@
 # 📚 EverMagic — Project Documentation
 
-> **Last updated:** March 13, 2026
-> **Current Phase:** Phase 3 — PDF Storybook Engine (Step 3.1 foundation built)
-> **Completed:** Phases 1 & 2 (Intake + Script Automation + Image Generation) + Step 3.1 Scenario Expansion foundation
+> **Last updated:** March 20, 2026
+> **Current Phase:** Phase 3 — PDF Storybook Engine (Steps 3.1–3.5 complete)
+> **Completed:** Phases 1 & 2 (Intake + Script Automation + Image Generation) + Steps 3.1–3.5 (Scenario Expansion, PDF Design, PDF Assembly, Token System)
 
 ---
 
@@ -299,6 +299,8 @@ Manual Trigger
 | `theme` | TEXT | SPACE_HERO |
 | `child_name` | TEXT | Child's first name |
 | `child_age` | INT | Child's age |
+| `source` | TEXT | Channel: etsy / direct / test |
+| `order_no` | TEXT | External order reference (e.g. Etsy order ID) |
 
 #### `order_payloads`
 
@@ -337,6 +339,20 @@ Manual Trigger
 | `model` | TEXT | Model used (gpt-image-1) |
 | `status` | TEXT | pending / generating / completed / failed |
 | `error_message` | TEXT | Error details if failed |
+
+#### `intake_tokens`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `token` | TEXT PK | Single-use token string (e.g. `EVRM-A1B2C3D4`) |
+| `status` | TEXT | `unused` / `used` |
+| `source` | TEXT | Channel used (etsy / direct / etc.) |
+| `etsy_order_id` | TEXT | Original Etsy/channel order number |
+| `order_id` | TEXT | EM-... order ID filled when token is consumed |
+| `used_at` | TIMESTAMPTZ | When token was consumed |
+| `created_at` | TIMESTAMPTZ | When token was generated |
+
+Cheat token: `EVRM-DEV` — skips DB lookup entirely, always passes (hardcoded in n8n code node).
 
 #### `envs`
 
@@ -533,7 +549,8 @@ evermagic/
 │       ├── style.md            # Visual style guide
 │       └── theme.json          # Theme configuration
 ├── database/
-│   └── images_table.sql        # SQL schema for images table
+│   ├── images_table.sql        # SQL schema for images table
+│   └── intake_tokens.sql       # SQL: intake_tokens table + seed + orders migration
 ├── emails/
 │   ├── admin-script-review.html     # Admin review email template
 │   └── customer-confirmation.html   # Customer confirmation email template
@@ -549,6 +566,9 @@ evermagic/
 │   ├── n8n-generate-images.js       # Image generation helper
 │   ├── n8n-process-image-response.js # Image response processor
 │   ├── n8n-reconcile-images.js      # Idempotency reconciliation
+│   ├── n8n-validate-token.js        # Step 3.5: Parse Token code node
+│   ├── n8n-check-token-row.js       # Step 3.5: Validate Token code node
+│   ├── n8n-reject-token.js          # Step 3.5: Reject Token error builder
 │   ├── n8n-call-flux.js             # Flux API caller (deprecated → OpenAI)
 │   └── fill-form.js                 # Test utility: auto-fill Tally form
 ├── temp_data/                        # Sample payloads & test data
@@ -622,11 +642,11 @@ evermagic/
 
 | Step | Description | Status |
 |------|-------------|--------|
-| 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative with dialogs | ✅ Built and tested |
-| 3.2 — PDF Layout Design | HTML/CSS templates for storybook, coloring book, certificate | ✅ Built — design pass done |
-| 3.3 — PDF Assembly | Inject content + images into templates → PDFShift → Storage | ✅ Built — E2E test in progress |
-| 3.4 — Delivery Flow | Branded download page per order hosted in Supabase Storage | ✅ Designed — not yet built |
-| 3.5 — Intake Token System | Single-use tokens to prevent duplicate/unauthorized form submissions | ✅ Designed — not yet built |
+| 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative with dialogs | ✅ Complete |
+| 3.2 — PDF Layout Design | HTML/CSS templates for storybook, coloring book, certificate | ✅ Complete |
+| 3.3 — PDF Assembly | Inject content + images into templates → PDFShift → Storage | ✅ Complete |
+| 3.4 — Delivery Flow | Branded download page per order hosted in Supabase Storage | 🔄 Next to build |
+| 3.5 — Intake Token System | Single-use tokens to prevent duplicate/unauthorized form submissions | ✅ Complete |
 | 3.6 — Audiobook Research | Evaluate ElevenLabs for narration quality, cost, format | 📋 Deferred to Phase 4+ |
 
 **Next to build:** Step 3.4 (delivery flow) — generate branded HTML landing page per order, upload to Supabase Storage, email customer one link, notify admin.
@@ -742,8 +762,9 @@ Tools: ElevenLabs (voice), Remotion / FFmpeg / Creatomate (video — TBD).
 
 ### What's Next
 
-The immediate next step is **Phase 3** — building the PDF storybook engine. This involves:
-1. Expanding the AI script into full narrative (scenario expansion)
-2. Designing HTML/CSS templates for the storybook
-3. Assembling content + images into PDFs via PDFShift API
-4. Listing on Etsy to validate market demand
+Steps 3.1–3.5 are complete. The immediate next step is **Step 3.4 — Delivery Flow**:
+1. n8n generates a branded `pages/{order_id}/index.html` after PDFs are assembled
+2. Upload the page to Supabase Storage (public bucket — free hosting)
+3. Email customer one link to their personalized download page
+4. Notify admin when order is delivered
+5. Then: list first order on Etsy to validate market demand

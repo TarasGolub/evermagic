@@ -175,7 +175,7 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 ---
 
-### PHASE 3 — PDF Storybook Engine (CURRENT 🔄)
+### PHASE 3 — PDF Storybook Engine (CURRENT 🔄 — Steps 3.1–3.5 ✅, Step 3.4 next)
 
 **Goal:** Generate illustrated PDF storybook as first sellable product for Etsy.
 
@@ -231,7 +231,7 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 3. List on Etsy → get first sale
 4. Then automate the pipeline
 
-#### Step 3.4 — Delivery Flow ✅ Designed (not yet built)
+#### Step 3.4 — Delivery Flow 🔄 NEXT
 
 **Decision:** Branded per-order download page hosted in Supabase Storage.
 
@@ -248,25 +248,31 @@ Send customer email with one link to that page
 Send admin notification: order delivered
 ```
 
-**Landing page contains:** child's name + story title + 3 download buttons (storybook, coloring book, certificate) + thank-you message + EverMagic branding.
+**Landing page contains:** child’s name + story title + 3 download buttons (storybook, coloring book, certificate) + thank-you message + EverMagic branding.
 
-**Out of scope for now:** page expiry (delete manually if needed), token system.
+**Out of scope for now:** page expiry (delete manually if needed).
 
-#### Step 3.5 — Intake Token System ✅ Designed (not yet built)
+#### Step 3.5 — Intake Token System ✅ BUILT
 
-Prevents duplicate/unauthorized form submissions. Designed for Etsy MVP launch.
+Prevents duplicate/unauthorized form submissions. Single-use token required for every Tally form submission.
 
-**Design:**
-- Pre-generate single-use tokens in Supabase (pool of ~100, top up manually)
-- One static hardcoded "cheat" token for internal testing (unlimited use)
+**How it works:**
+- Pool of ~100 pre-generated tokens in Supabase `intake_tokens` table (top up manually via SQL seed)
+- Cheat token `EVRM-DEV` — unlimited use, for internal testing only (no DB row needed)
 - When Etsy order comes in → pick a token → send customer:
   `https://tally.so/r/FORM_ID?source=etsy&orderNo=ORDER_NO&token=TOKEN`
-- Hidden fields pre-fill source/orderNo/token via Tally URL params
-- n8n validates token on submission: unused → mark used + process; used/invalid → reject
-- `source` param enables future multi-channel analytics
-- Future: Stripe coupon system per channel (Etsy = 100% off)
+- Tally hidden fields (`token`, `source`, `orderNo`) pre-fill from URL params
+- n8n validates token on submission: unused → mark used + process; used/missing/invalid → HTTP 400 reject
+- `source` and `order_no` stored on both `intake_tokens` and `orders` tables for channel analytics
 
-**DB:** Add `intake_tokens` table with `token`, `status` (unused/used), `etsy_order_id`, `used_at`.
+**DB:** `intake_tokens` table + `source` / `order_no` columns added to `orders`
+
+**Files:**
+- `database/intake_tokens.sql` — table + seed SQL + orders migration
+- `utils/n8n-validate-token.js` — "Parse Token" code node
+- `utils/n8n-check-token-row.js` — "Validate Token" code node
+- `utils/n8n-reject-token.js` — "Reject Token" error builder
+- `project_data/step3.5_token_system_blueprint.md` — full n8n build guide
 
 ---
 
