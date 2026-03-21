@@ -27,7 +27,7 @@
                     "required": true,
                     "hint": null,
                     "options": [
-                        "Basic (PDF + printable)",
+                        "Basic (Storybook + Coloring + Certificate)",
                         "Full Bundle (Video + PDF + printable)"
                     ]
                 }
