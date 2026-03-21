@@ -175,7 +175,7 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 ---
 
-### PHASE 3 — PDF Storybook Engine (CURRENT 🔄 — Steps 3.1–3.5 ✅, Step 3.4 next)
+### PHASE 3 — PDF Storybook Engine ✅ COMPLETE (Steps 3.1–3.5 done)
 
 **Goal:** Generate illustrated PDF storybook as first sellable product for Etsy.
 
@@ -186,71 +186,38 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 **Pipeline steps:**
 
-#### Step 3.1 — Scenario Expansion ✅ Foundation built (EVRM-011/012)
+#### Step 3.1 — Scenario Expansion ✅ COMPLETE
 - GPT-4o expansion prompt: `prompts/space_hero/expansion.md`
 - n8n Code nodes: `utils/n8n-build-expansion-prompt.js`, `utils/n8n-parse-expansion-response.js`
 - n8n workflow exported: `n8n_backup/3.1 EverMagic Scenario Expansion.json`
 - DB migration: `database/scenario_expansion.sql` (adds `expanded_content` column to `scripts`)
-- Blueprint: `project_data/phase3_expansion_workflow_blueprint.md`
-- **Next:** Run end-to-end test, validate output quality
 
-#### Step 3.2 — PDF Layout Design
-- Design HTML/CSS templates for:
-  - Storybook pages (cover + scene pages)
-  - Coloring book pages (B&W image placeholders)
-  - Certificate layout
-- Validate layouts manually with sample content before automating
+#### Step 3.2 — PDF Layout Design ✅ COMPLETE
+- HTML/CSS templates for storybook pages, coloring book pages, and certificate
 
-#### Step 3.3 — PDF Assembly
-- Inject expanded scenario text + generated images into HTML templates
-- Convert HTML → PDF using **PDFShift API**
-- Store PDFs in Supabase Storage
-- Update order status: `images_generated` → `pdf_generating` → `pdf_generated`
+#### Step 3.3 — PDF Assembly ✅ COMPLETE
+- Expanded scenario text + generated images injected into HTML templates
+- HTML → PDF via **PDFShift API**
+- PDFs stored in Supabase Storage
 
-#### Step 3.4 — Audiobook Exploration (Research)
-- Evaluate feasibility of generating an audiobook from the expanded scenario
-- Candidate tool: **ElevenLabs** text-to-speech
-- Questions to answer:
-  - Quality of narration for children's content?
-  - Cost per order?
-  - Format: single MP3 or per-scene chapters?
-  - Legal/licensing considerations for distribution?
-- Decision: include in Phase 3 or defer to Phase 4?
+#### Step 3.4 — Delivery Flow ✅ COMPLETE
 
-**Tools:**
-- **OpenAI GPT-4o** — scenario expansion
-- **PDFShift API** — HTML → PDF conversion
-- **Supabase Storage** — PDF file storage
-- **ElevenLabs** (research) — audiobook
+**Actual approach:** Direct download links embedded in the customer delivery email.
 
-**Status chain:** `images_generated` → `scenario_expanding` → `scenario_expanded` → `pdf_generating` → `pdf_generated` → `pdf_delivered`
-
-**Strategy:** Validate before automating.
-1. Write and review one expanded scenario manually
-2. Build 1–2 sample PDFs by hand
-3. List on Etsy → get first sale
-4. Then automate the pipeline
-
-#### Step 3.4 — Delivery Flow 🔄 NEXT
-
-**Decision:** Branded per-order download page hosted in Supabase Storage.
+> **Note:** Supabase Storage serves files as plain text (no HTML rendering), so the planned branded landing page was dropped. Download links are sent directly in the email — simpler and more reliable.
 
 **Flow:**
 ```
 PDFs assembled in Supabase Storage
     ↓
-n8n generates branded HTML landing page (personalized with child name + story title)
+n8n sends delivery email with direct download links for each PDF
     ↓
-Upload to Supabase Storage: pages/{order_id}/index.html  (public bucket, $0 hosting)
+Customer receives email with 3 download buttons (storybook, coloring book, certificate)
     ↓
-Send customer email with one link to that page
-    ↓
-Send admin notification: order delivered
+Admin notification: order delivered
 ```
 
-**Landing page contains:** child’s name + story title + 3 download buttons (storybook, coloring book, certificate) + thank-you message + EverMagic branding.
-
-**Out of scope for now:** page expiry (delete manually if needed).
+**Status chain:** `images_generated` → `scenario_expanding` → `scenario_expanded` → `pdf_generating` → `pdf_generated` → `pdf_delivered`
 
 #### Step 3.5 — Intake Token System ✅ BUILT
 

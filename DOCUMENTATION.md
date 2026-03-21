@@ -2,7 +2,7 @@
 
 > **Last updated:** March 20, 2026
 > **Current Phase:** Phase 3 — PDF Storybook Engine (Steps 3.1–3.5 complete)
-> **Completed:** Phases 1 & 2 (Intake + Script Automation + Image Generation) + Steps 3.1–3.5 (Scenario Expansion, PDF Design, PDF Assembly, Token System)
+> **Completed:** Phases 1 & 2 (Intake + Script Automation + Image Generation) + Steps 3.1–3.5 (Scenario Expansion, PDF Design, PDF Assembly, Delivery Flow, Token System)
 
 ---
 
@@ -645,23 +645,24 @@ evermagic/
 | 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative with dialogs | ✅ Complete |
 | 3.2 — PDF Layout Design | HTML/CSS templates for storybook, coloring book, certificate | ✅ Complete |
 | 3.3 — PDF Assembly | Inject content + images into templates → PDFShift → Storage | ✅ Complete |
-| 3.4 — Delivery Flow | Branded download page per order hosted in Supabase Storage | 🔄 Next to build |
+| 3.4 — Delivery Flow | Direct download links in delivery email (Supabase HTML page dropped — plain text only) | ✅ Complete |
 | 3.5 — Intake Token System | Single-use tokens to prevent duplicate/unauthorized form submissions | ✅ Complete |
 | 3.6 — Audiobook Research | Evaluate ElevenLabs for narration quality, cost, format | 📋 Deferred to Phase 4+ |
 
-**Next to build:** Step 3.4 (delivery flow) — generate branded HTML landing page per order, upload to Supabase Storage, email customer one link, notify admin.
+**Phase 3 complete.** Next: list on Etsy to validate market demand, then begin Phase 4 planning.
 
 **Strategy:** Validate before automating — manually create 1–2 sample PDFs, list on Etsy, get first sale, then automate.
 
-### Delivery Flow Design (Step 3.4)
+### Delivery Flow (Step 3.4) — Actual Implementation
 
-**Chosen approach:** Branded per-order download page hosted in Supabase Storage (free, no extra infrastructure).
+**Approach:** Direct download links sent in the customer delivery email.
 
-- n8n generates `pages/{order_id}/index.html` after PDFs are assembled
-- Page contains: child name, story title, 3 download buttons, thank-you message, EverMagic branding
-- Customer receives one email with one link — no attachments, no size limits
-- Admin gets a notification email when order is delivered
-- Page lives until manually deleted (no expiry for now)
+> **Note:** Supabase Storage serves files as plain text, not HTML — the planned branded landing page could not be served. Download links are embedded directly in the email instead.
+
+- n8n builds a delivery email with 3 direct Supabase Storage download links
+- Customer receives one email with download buttons for each PDF
+- Admin receives a notification email when order is delivered
+
 
 ### Intake Token System Design (Step 3.5)
 
@@ -762,9 +763,4 @@ Tools: ElevenLabs (voice), Remotion / FFmpeg / Creatomate (video — TBD).
 
 ### What's Next
 
-Steps 3.1–3.5 are complete. The immediate next step is **Step 3.4 — Delivery Flow**:
-1. n8n generates a branded `pages/{order_id}/index.html` after PDFs are assembled
-2. Upload the page to Supabase Storage (public bucket — free hosting)
-3. Email customer one link to their personalized download page
-4. Notify admin when order is delivered
-5. Then: list first order on Etsy to validate market demand
+Phase 3 is complete — all steps 3.1–3.5 are done. **Next: list on Etsy** to validate market demand, then begin Phase 4 planning (voice narration + video bundle).
