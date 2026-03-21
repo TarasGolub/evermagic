@@ -19,7 +19,7 @@ const REVIEW_BASE = `https://evermagic.app.n8n.cloud/webhook${env.is_live ? '' :
 // ─────────────────────────────────────────────────────────────
 
 const packageLabels = {
-  'BASIC': 'Basic (PDF + printable)',
+  'BASIC': 'Basic (Storybook + Coloring + Certificate)',
   'FULL': 'Full Bundle (Video + PDF + printable)',
   'PARTY': 'Party Pack',
 };
