@@ -1,0 +1,41 @@
+{
+    "theme_id": "HOME_HELPER",
+    "theme_name": "Home Helper Hero",
+    "version": "1.0.0",
+    "stylePrefix": "3D CGI animated character, Pixar-style render, cozy warm home interior, soft amber light, intimate scale, soft subsurface scattering",
+    "coverBackground": "Cozy warm home interior — kitchen, living room or garden — with tiny glowing lights visible in the baseboards and flower pots, hinting at a tiny hidden world",
+    "coverPose": "Kneeling down with cupped hands held out, a tiny glowing sprite visible in their palms",
+    "sceneStyle": {
+        "1": {
+            "lighting": "Warm amber home interior — natural everyday lighting, a single tiny shimmer or pinprick of light visible near the baseboards or flower pot",
+            "camera": "Wide-medium home shot showing child doing chores, ordinary and cozy"
+        },
+        "2": {
+            "lighting": "Same home setting revealed — warm amber with a soft green magical glow, tiny lights twinkling in the walls",
+            "camera": "Low angle (child's eye-level or lower) to emphasise tiny village scale, create sense of wonder"
+        },
+        "3": {
+            "lighting": "Slightly dimmer, cooler warm tones — the cozy magic slightly reduced, quiet sense of urgency",
+            "camera": "Close-up medium shot, intimate tension, child focused on the problem"
+        },
+        "4": {
+            "lighting": "Warm golden glow restored — sparkles, tiny lights, amber and soft gold fill the scene",
+            "camera": "Low angle wide — tiny celebration fully visible, child towering warmly above the tiny world"
+        },
+        "5": {
+            "lighting": "Softest, warmest evening light — home at its most cozy and golden, a faint shimmer at the edge of frame",
+            "camera": "Intimate close-up on child's face, content and knowing smile"
+        }
+    },
+    "coloring": {
+        "backgroundElements": "cozy home interior, flower pots with flowers, a bookshelf, tiny doors in the baseboard, stars, small glowing lights",
+        "pose": "child holding out cupped hands gently, looking down with wonder"
+    },
+    "model": {
+        "name": "gpt-image-1",
+        "quality": "high",
+        "coloringQuality": "low",
+        "output_format": "webp",
+        "output_compression": 90
+    }
+}

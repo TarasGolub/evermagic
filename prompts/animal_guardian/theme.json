@@ -1,0 +1,41 @@
+{
+    "theme_id": "ANIMAL_GUARDIAN",
+    "theme_name": "Animal Guardian Hero",
+    "version": "1.0.0",
+    "stylePrefix": "3D CGI animated character, Pixar-style render, magical nature setting, warm natural light, lush greens and soft gold, soft subsurface scattering",
+    "coverBackground": "Magical forest clearing with glowing plants, soft golden light filtering through ancient trees, small magical creatures visible",
+    "coverPose": "Kneeling gently with cupped hands, glowing animal companion resting in their hands",
+    "sceneStyle": {
+        "1": {
+            "lighting": "Soft warm dawn light — amber and sage greens, natural real-world setting with a single faint magical glow",
+            "camera": "Medium wide shot, child's home or garden framing, sense of the ordinary world"
+        },
+        "2": {
+            "lighting": "Rich lush emerald forest, dappled golden magical light, deep rich shadows, magic sparkle in the air",
+            "camera": "Wide establishing shot — forest scale and beauty, sense of wonder"
+        },
+        "3": {
+            "lighting": "Cool blue-green tones, slight desaturation — nature in imbalance, quieter and stiller than other scenes",
+            "camera": "Closer tracking shot, tension in the stillness of the forest"
+        },
+        "4": {
+            "lighting": "Warm golden burst — animals emerging, forest glowing restored, bright and joyful natural light",
+            "camera": "Wide panoramic, celebration scene with magical animals visible"
+        },
+        "5": {
+            "lighting": "Soft warm evening home light, a faint magical shimmer near the window or in a flower pot",
+            "camera": "Intimate close-up, child holding a small glowing gift from the companion"
+        }
+    },
+    "coloring": {
+        "backgroundElements": "forest trees, flowers, butterflies, a winding path, small woodland animals, a glowing plant",
+        "pose": "kneeling gently with arms open, welcoming expression"
+    },
+    "model": {
+        "name": "gpt-image-1",
+        "quality": "high",
+        "coloringQuality": "low",
+        "output_format": "webp",
+        "output_compression": 90
+    }
+}
