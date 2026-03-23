@@ -1,0 +1,41 @@
+{
+    "theme_id": "ENCHANTED_PRINCESS",
+    "theme_name": "Enchanted Princess Adventure",
+    "version": "1.0.0",
+    "stylePrefix": "3D CGI animated character, Pixar-style render, soft pastel fantasy world, warm sparkle and magical light, soft subsurface scattering",
+    "coverBackground": "Enchanted meadow with a rainbow arch overhead, glowing flower fields, and a fairy castle glowing in the distance",
+    "coverPose": "Standing gracefully with one hand resting on the unicorn companion's mane, looking forward with confidence",
+    "sceneStyle": {
+        "1": {
+            "lighting": "Warm golden bedroom glow with soft magical shimmer and sparkle particles around a glowing object",
+            "camera": "Close-up on child and glowing magical item, warm bokeh background"
+        },
+        "2": {
+            "lighting": "Soft pastel rainbow sky — pinks, lavenders, and aqua tones, gentle magical light",
+            "camera": "Wide shot — kingdom scale revealed, rainbow arch dominant in background"
+        },
+        "3": {
+            "lighting": "Muted, slightly desaturated pastels — colors drained from the world, cooler and dimmer than other scenes",
+            "camera": "Medium shot, sky visibly dimmer, slight melancholy framing"
+        },
+        "4": {
+            "lighting": "Vibrant burst of pastels and rainbow light — most colorful and luminous scene in the story",
+            "camera": "Epic wide panoramic, rainbow restored overhead, celebrating creatures visible"
+        },
+        "5": {
+            "lighting": "Soft lavender evening bedroom light, a rainbow shimmer or single star outside the window",
+            "camera": "Intimate close-up on child's face, warm and peaceful expression"
+        }
+    },
+    "coloring": {
+        "backgroundElements": "unicorn, rainbow arch, castle towers, flowers, stars, butterfly",
+        "pose": "graceful pose with arms open wide, looking up joyfully"
+    },
+    "model": {
+        "name": "gpt-image-1",
+        "quality": "high",
+        "coloringQuality": "low",
+        "output_format": "webp",
+        "output_compression": 90
+    }
+}

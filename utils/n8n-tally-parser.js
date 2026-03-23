@@ -76,7 +76,11 @@ function normalizeLanguage(text) {
 
 function normalizeTheme(text) {
   const t = (text || '').toLowerCase();
-  if (t.includes('space')) return 'SPACE_HERO';
+  if (t.includes('space'))     return 'SPACE_HERO';
+  if (t.includes('fantasy'))   return 'FANTASY_HERO';
+  if (t.includes('princess'))  return 'ENCHANTED_PRINCESS';
+  if (t.includes('animal') || t.includes('guardian')) return 'ANIMAL_GUARDIAN';
+  if (t.includes('home') || t.includes('helper'))     return 'HOME_HELPER';
   return text ? text.toUpperCase().replace(/\s+/g, '_') : 'SPACE_HERO';
 }
 

@@ -1,0 +1,41 @@
+{
+    "theme_id": "FANTASY_HERO",
+    "theme_name": "Fantasy Hero Quest",
+    "version": "1.0.0",
+    "stylePrefix": "3D CGI animated character, Pixar-style render, enchanted fantasy setting, warm magical lighting, soft subsurface scattering",
+    "coverBackground": "Enchanted kingdom with glowing castle spires, twilight sky with floating lanterns and magical stars",
+    "coverPose": "Standing in a heroic pose with one arm raised, dragon companion beside them",
+    "sceneStyle": {
+        "1": {
+            "lighting": "Warm bedroom glow with mysterious blue-green magical shimmer emanating from a glowing artifact",
+            "camera": "Close-up on child's face and magical artifact, warm-cool contrast"
+        },
+        "2": {
+            "lighting": "Lush enchanted forest with dappled golden-green light, soft magic sparkle particles in the air",
+            "camera": "Wide establishing shot — scale of kingdom revealed, deep background bokeh"
+        },
+        "3": {
+            "lighting": "Dramatic cool-toned cave or ruined castle, single warm hero spotlight on the child",
+            "camera": "Medium tracking shot with tension in the framing, slight dutch angle"
+        },
+        "4": {
+            "lighting": "Epic golden burst — warm amber and gold flooding the scene, dragon silhouette overhead",
+            "camera": "Epic wide panoramic, low angle, sky visible above"
+        },
+        "5": {
+            "lighting": "Soft warm evening bedroom light, a single bright star visible through the window",
+            "camera": "Intimate close-up on child's face, gentle smile"
+        }
+    },
+    "coloring": {
+        "backgroundElements": "enchanted trees, a castle tower, stars, a small friendly dragon, magical floating lanterns",
+        "pose": "heroic stance with one arm outstretched toward the sky"
+    },
+    "model": {
+        "name": "gpt-image-1",
+        "quality": "high",
+        "coloringQuality": "low",
+        "output_format": "webp",
+        "output_compression": 90
+    }
+}
