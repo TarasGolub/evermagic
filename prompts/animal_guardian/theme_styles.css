@@ -1,0 +1,49 @@
+/* ══════════════════════════════════════════════════
+   EverMagic — Animal Guardian Hero — PDF Theme Styles
+   Injected into storybook.html via {{theme_styles}}
+   Palette: deep forest black-green, natural leaf accent,
+   glowing firefly dots on scene text pages.
+══════════════════════════════════════════════════ */
+
+:root {
+  --bg:                #0A1A0F;
+  --accent:            #7EC86A;
+  --text-narration:    #C8D8C0;
+  --text-tagline:      #A8C898;
+  --overlay-cover-bot: rgba(10, 26, 15, 0.97);
+  --overlay-cover-mid: rgba(10, 26, 15, 0.55);
+  --overlay-scene-bot: rgba(10, 26, 15, 0.88);
+  --overlay-scene-mid: rgba(10, 26, 15, 0.20);
+  --closing-glow:      rgba(126, 200, 106, 0.08);
+}
+
+/* Magical forest: green nebula glows + warm glowing firefly dots */
+.scene-text-page {
+  background-color: #0A1A0F;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(50, 160, 60,  0.11) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 60% at 85% 80%, rgba(100, 180, 50, 0.09) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 35% at 60% 45%, rgba(200, 150, 50, 0.07) 0%, transparent 70%),
+    /* Fireflies — bright warm glow */
+    radial-gradient(2.5px 2.5px at 10% 15%, rgba(180, 255, 120, 0.90) 0%, transparent 100%),
+    radial-gradient(2px   2px   at 40% 10%, rgba(200, 255, 150, 0.82) 0%, transparent 100%),
+    radial-gradient(2.5px 2.5px at 72% 25%, rgba(160, 240, 100, 0.85) 0%, transparent 100%),
+    radial-gradient(2px   2px   at 88% 50%, rgba(220, 255, 130, 0.78) 0%, transparent 100%),
+    radial-gradient(2.5px 2.5px at 20% 65%, rgba(180, 255, 100, 0.82) 0%, transparent 100%),
+    radial-gradient(2px   2px   at 58% 78%, rgba(220, 255, 150, 0.75) 0%, transparent 100%),
+    radial-gradient(2.5px 2.5px at 82% 88%, rgba(180, 220, 100, 0.85) 0%, transparent 100%),
+    /* Fireflies — medium */
+    radial-gradient(1px 1px at 5%  45%, rgba(180, 255, 120, 0.55) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 35%, rgba(160, 240, 80,  0.50) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 55%, rgba(200, 255, 120, 0.48) 0%, transparent 100%),
+    radial-gradient(1px 1px at 65% 38%, rgba(180, 255, 100, 0.52) 0%, transparent 100%),
+    radial-gradient(1px 1px at 78% 62%, rgba(220, 255, 130, 0.45) 0%, transparent 100%),
+    radial-gradient(1px 1px at 92% 30%, rgba(200, 220, 80,  0.50) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 92%, rgba(180, 255, 120, 0.42) 0%, transparent 100%),
+    /* Fireflies — dim */
+    radial-gradient(1px 1px at 15% 80%, rgba(160, 240, 100, 0.32) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 18%, rgba(200, 255, 130, 0.28) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 68%, rgba(180, 220, 80,  0.30) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 12%, rgba(220, 255, 120, 0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 95% 72%, rgba(180, 255, 100, 0.32) 0%, transparent 100%);
+}
