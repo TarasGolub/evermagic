@@ -9,7 +9,21 @@
 
     @page { size: 7in 7in; margin: 0; }
 
-    body { font-family: 'Nunito', sans-serif; background: #0B1628; }
+    /* ─────────────────────────────────────────────
+       CSS VARIABLES — Space Hero defaults
+       Overridden by {{theme_styles}} below
+    ───────────────────────────────────────────── */
+    :root {
+      --bg:                  #0B1628;
+      --accent:              #F5A623;
+      --text-narration:      #D4CDCA;
+      --text-tagline:        #C5B8A0;
+      --overlay-cover-bot:   rgba(11, 22, 40, 0.97);
+      --overlay-cover-mid:   rgba(11, 22, 40, 0.55);
+      --overlay-scene-bot:   rgba(11, 22, 40, 0.88);
+      --overlay-scene-mid:   rgba(11, 22, 40, 0.20);
+      --closing-glow:        rgba(245, 166, 35, 0.07);
+    }
 
     /* ─────────────────────────────────────────────
        BASE PAGE — image pages keep fixed 7×7
@@ -18,7 +32,7 @@
       width: 7in;
       position: relative;
       overflow: hidden;
-      background: #0B1628;
+      background: var(--bg);
       page-break-after: always;
     }
     .page.fixed-height {
@@ -33,7 +47,7 @@
     .gold-rule {
       width: 0.45in;
       height: 1.5px;
-      background: #F5A623;
+      background: var(--accent);
       margin-bottom: 0.22in;
       flex-shrink: 0;
     }
@@ -71,8 +85,8 @@
       inset: 0;
       background: linear-gradient(
         to top,
-        rgba(11, 22, 40, 0.97) 0%,
-        rgba(11, 22, 40, 0.55) 42%,
+        var(--overlay-cover-bot) 0%,
+        var(--overlay-cover-mid) 42%,
         transparent 68%
       );
     }
@@ -88,7 +102,7 @@
       font-size: 1rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #F5A623;
+      color: var(--accent);
       margin-bottom: 0.18in;
     }
     .cover .title {
@@ -102,7 +116,7 @@
     .cover .tagline {
       font-size: 1.2rem;
       font-style: italic;
-      color: #C5B8A0;
+      color: var(--text-tagline);
       line-height: 1.5;
       margin-bottom: 0.24in;
     }
@@ -110,7 +124,7 @@
       width: 1.8in;
       height: 1px;
       margin: 0 auto 0.22in;
-      background: linear-gradient(to right, transparent, #F5A623, transparent);
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
     }
     .cover .branding {
       font-size: 0.55rem;
@@ -134,8 +148,8 @@
       inset: 0;
       background: linear-gradient(
         to top,
-        rgba(11, 22, 40, 0.88) 0%,
-        rgba(11, 22, 40, 0.2) 40%,
+        var(--overlay-scene-bot) 0%,
+        var(--overlay-scene-mid) 40%,
         transparent 65%
       );
     }
@@ -157,8 +171,8 @@
 
     /* ─────────────────────────────────────────────
        SCENE TEXT PAGE
-       - min-height so overflow flows to next page
-       - space theme starfield background
+       Default = Space Hero starfield
+       Overridden per-theme via {{theme_styles}}
     ───────────────────────────────────────────── */
     .scene-text-page {
       min-height: 7in;
@@ -168,8 +182,7 @@
       justify-content: center;
       padding: 0.6in 0.65in 0.65in;
 
-      /* Space theme: nebula glows + starfield */
-      background-color: #0B1628;
+      background-color: var(--bg);
       background-image:
         /* Nebula glows */
         radial-gradient(ellipse 55% 40% at 18% 22%, rgba(63, 94, 251, 0.10) 0%, transparent 70%),
@@ -228,7 +241,7 @@
     .scene-text-page .narration p {
       font-size: 1.4rem;
       line-height: 1.8;
-      color: #D4CDCA;
+      color: var(--text-narration);
       margin-bottom: 0.22in;
       break-inside: avoid;
     }
@@ -254,15 +267,15 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at center, rgba(245, 166, 35, 0.07) 0%, transparent 68%);
+      background: radial-gradient(ellipse at center, var(--closing-glow) 0%, transparent 68%);
       pointer-events: none;
     }
-    .closing .star { font-size: 1.6rem; color: #F5A623; margin-bottom: 0.3in; }
+    .closing .star { font-size: 1.6rem; color: var(--accent); margin-bottom: 0.3in; }
     .closing .from-label {
       font-size: 0.7rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: #F5A623;
+      color: var(--accent);
       margin-bottom: 0.25in;
     }
     .closing .message {
@@ -277,14 +290,14 @@
     .closing .divider {
       width: 1.8in;
       height: 1px;
-      background: linear-gradient(to right, transparent, #F5A623, transparent);
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
       margin-bottom: 0.32in;
     }
     .closing .the-end {
       font-family: 'Playfair Display', serif;
       font-size: 1.5rem;
       font-style: italic;
-      color: #F5A623;
+      color: var(--accent);
       margin-bottom: 0.26in;
     }
     .closing .closing-branding {
@@ -293,6 +306,12 @@
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.35);
     }
+
+    /* ─────────────────────────────────────────────
+       THEME OVERRIDE — injected by n8n Build PDF HTML node
+       Overrides :root variables + .scene-text-page background
+    ───────────────────────────────────────────── */
+    {{theme_styles}}
   </style>
 </head>
 <body>

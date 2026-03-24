@@ -1,0 +1,20 @@
+/* ══════════════════════════════════════════════════
+   EverMagic — Space Hero Mission — PDF Theme Styles
+   Injected into storybook.html via {{theme_styles}}
+   This is the default/reference theme.
+══════════════════════════════════════════════════ */
+
+:root {
+  --bg:                #0B1628;
+  --accent:            #F5A623;
+  --text-narration:    #D4CDCA;
+  --text-tagline:      #C5B8A0;
+  --overlay-cover-bot: rgba(11, 22, 40, 0.97);
+  --overlay-cover-mid: rgba(11, 22, 40, 0.55);
+  --overlay-scene-bot: rgba(11, 22, 40, 0.88);
+  --overlay-scene-mid: rgba(11, 22, 40, 0.20);
+  --closing-glow:      rgba(245, 166, 35, 0.07);
+}
+
+/* Space starfield + nebula — default already in base template */
+/* No override needed — this file exists as a reference. */
