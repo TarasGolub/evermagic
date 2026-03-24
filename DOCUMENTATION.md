@@ -1,8 +1,9 @@
 # 📚 EverMagic — Project Documentation
 
-> **Last updated:** March 20, 2026
-> **Current Phase:** Phase 3 — PDF Storybook Engine (Steps 3.1–3.5 complete)
-> **Completed:** Phases 1 & 2 (Intake + Script Automation + Image Generation) + Steps 3.1–3.5 (Scenario Expansion, PDF Design, PDF Assembly, Delivery Flow, Token System)
+> **Last updated:** March 23, 2026
+> **Current Phase:** Phase 3 complete (Steps 3.1–3.7) — Testing new themes, preparing Etsy launch
+> **Completed:** Phases 1 & 2 (Intake + Script + Images) + Phase 3 (PDF Engine + 5 Themes + Per-Theme PDF Styling)
+> **Latest tags:** v1.4.0 (4 new themes) · v1.4.1 (per-theme PDF styles)
 
 ---
 
@@ -59,11 +60,11 @@ EverMagic is an **AI-first content production engine** that creates personalized
 | **Etsy / Amazon** | PDF bundle | Market validation, reviews, proof |
 | **KidsTukan / Direct** | Premium bundle (video + PDF) | High-margin premium experience |
 
-### Current MVP
+### Current Status
 
-- **Theme:** Space Hero Mission (only theme currently active)
+- **Themes (5 active):** Space Hero Mission · Fantasy Hero Quest · Enchanted Princess Adventure · Animal Guardian Hero · Home Helper Hero
 - **Language:** English only (Ukrainian planned)
-- **Focus:** Backend automation pipeline (not branding/marketing)
+- **Status:** Phases 1–3 complete — testing new themes, pre-Etsy launch
 
 ---
 
@@ -278,7 +279,7 @@ Manual Trigger
 - **Face reference:** Downloads child's photo(s), converts to base64, passes to OpenAI `/images/edits` endpoint
 - **Coloring pages:** Use `/images/generations` (text-only, no face reference), lower quality to save cost
 - **Rate limiting:** 14-second wait between API calls to respect OpenAI limits
-- **Theme-aware:** Image prompts configured per theme (currently only `SPACE_HERO` with Pixar-style 3D rendering)
+- **Theme-aware:** Image prompts configured per theme via `THEMES` object in `Parse + Build Prompts` node. All 5 themes active: `SPACE_HERO`, `FANTASY_HERO`, `ENCHANTED_PRINCESS`, `ANIMAL_GUARDIAN`, `HOME_HELPER`
 - **Storage:** Images saved as `.webp` to `Supabase Storage` bucket at path `images/{order_id}/{image_type}.webp`
 
 ---
@@ -471,40 +472,46 @@ This replaces n8n's built-in global variables (unavailable on the basic plan).
 
 ## 🎨 AI Prompts & Themes
 
-### Script Generation Prompt
+### Prompt File Structure (per theme)
 
-Located at: `prompts/space_hero/system.md` (fetched from GitHub at runtime)
+Each theme lives in `prompts/{theme_id}/` and contains 6 files:
 
-The system prompt instructs GPT to act as "the lead screenwriter at EverMagic Studios" and generate a **5-scene personalized cinematic story script**. Key rules:
+| File | Purpose |
+|------|---------|
+| `system.md` | GPT system prompt — 5-scene script generation |
+| `expansion.md` | GPT expansion prompt — scene → full narrative |
+| `image_prompts.md` | Image prompt templates per scene |
+| `style.md` | Visual style guide (art direction, consistency rules) |
+| `theme.json` | Image generation config (lighting, camera, model, coloring) |
+| `theme_styles.css` | PDF CSS overrides — injected into storybook.html via `{{theme_styles}}` |
+
+### Active Themes
+
+| Theme ID | Name | Palette | Companion | Scene Pattern |
+|----------|------|---------|-----------|---------------|
+| `SPACE_HERO` | Space Hero Mission | Navy `#0B1628` + gold | Alien sidekick | Stars + nebula |
+| `FANTASY_HERO` | Fantasy Hero Quest | Forest `#0D1F16` + purple | Dragon | Magic fireflies |
+| `ENCHANTED_PRINCESS` | Enchanted Princess Adventure | Deep purple `#1A0E2E` + rose | Unicorn | Sparkle shimmer |
+| `ANIMAL_GUARDIAN` | Animal Guardian Hero | Forest `#0A1A0F` + leaf green | Glowing animal | Firefly dots |
+| `HOME_HELPER` | Home Helper Hero | Amber `#1A0E05` + orange | Tiny sprites | Fairy lights |
+
+### Script Generation Rules (all themes)
 
 - Child is the **undisputed hero** — real name used throughout
-- Age-appropriate vocabulary (4-6 / 7-9 / 10+)
-- 5-scene structure: The Call → The Launch → The Challenge → The Triumph → The Return
-- Emotional arc: wonder → excitement → tension → triumph → love
+- Age-adaptive vocabulary (dynamic, no hard limits)
+- 5-scene arc: The Call → Into the World → The Challenge → The Triumph → Home
 - Parent's message woven naturally into Scene 5
-- Each scene: 45–70 words narration + detailed visual description
 - Output: valid JSON (no markdown fences)
 - Safety: no violence, no scary villains, no assumed family structure
 
-### Image Generation Theme Config
+### Per-Theme PDF Styling
 
-Theme configs are embedded in the Image Generation workflow's `Parse + Build Prompts` node:
+`templates/pdf/storybook.html` uses CSS variables with Space Hero as default. Each theme's `theme_styles.css` is injected at render time via `{{theme_styles}}` in the `Build PDF HTML` n8n code node. Variables: `--bg`, `--accent`, `--text-narration`, `--text-tagline`, `--overlay-cover-bot/mid`, `--overlay-scene-bot/mid`, `--closing-glow`.
 
-```
-SPACE_HERO:
-  Style: "3D CGI animated character, oversized expressive cartoon head with large round eyes, cinematic lighting"
-  Cover: "Cosmic space background with nebula and stars"
-  Per-scene: custom lighting + camera angles
-  Coloring: "stars, planets, a small rocket" background elements
-  Model: openai/gpt-image-1.5, medium quality, webp output
-```
-
-Safety rules applied to image prompts (EVRM-012):
-- No adult/parent figures in any `visual_description` (family structure unknown)
+Safety rules applied to image prompts:
+- No adult/parent figures in `visual_description` (family structure unknown)
 - No brand references (Pixar, Boss Baby) in style prefix — commercial/legal risk
-- Jersey number removed from outfit description — text rendering unreliable in image models
-
-New themes can be added by extending the `THEMES` object in the code node.
+- Jersey number removed from outfit — text rendering unreliable in image models
 
 ---
 
@@ -534,52 +541,50 @@ evermagic/
 ├── project_data/
 │   ├── Context.MD              # Master project context & roadmap
 │   ├── form_structure.json     # Tally form field definitions
-│   ├── phase2_implementation_plan.md  # Phase 2 planning doc
-│   └── test-plan-phase1.md     # Phase 1 test plan
+│   └── step3.5_token_system_blueprint.md
 ├── n8n_backup/
 │   ├── 1. EverMagic v1.0.1.json            # Workflow: Order intake + script generation
 │   ├── 1.1 EverMagic Review Submit.json    # Workflow: Process review actions
 │   ├── 1.2 EverMagic Review.json           # Workflow: Admin review interface
-│   ├── 2. EverMagic Image Generation.json  # Workflow: AI image pipeline
-│   └── 3.1 EverMagic Scenario Expansion.json  # Workflow: Phase 3 scenario expansion
+│   ├── 2. EverMagic Image Generation.json  # Workflow: AI image pipeline (THEMES object handles all 5 themes)
+│   ├── 3.1 EverMagic Scenario Expansion.json
+│   └── 3.2 EverMagic PDF Assembly.json     # Workflow: PDF build + delivery (THEME_STYLES injection)
 ├── prompts/
-│   └── space_hero/
-│       ├── system.md           # GPT system prompt for script generation
-│       ├── image_prompts.md    # Image prompt guidelines
-│       ├── style.md            # Visual style guide
-│       └── theme.json          # Theme configuration
+│   ├── space_hero/             # 6 files: system.md, expansion.md, image_prompts.md,
+│   ├── fantasy_hero/           #          style.md, theme.json, theme_styles.css
+│   ├── enchanted_princess/
+│   ├── animal_guardian/
+│   └── home_helper/
+├── templates/
+│   ├── download-page.html      # (unused — Supabase Storage plain-text limitation)
+│   └── pdf/
+│       ├── storybook.html      # CSS-variable based, {{theme_styles}} injection slot
+│       ├── coloring-book.html
+│       └── certificate.html
 ├── database/
-│   ├── images_table.sql        # SQL schema for images table
-│   └── intake_tokens.sql       # SQL: intake_tokens table + seed + orders migration
+│   ├── images_table.sql
+│   └── intake_tokens.sql
 ├── emails/
-│   ├── admin-script-review.html     # Admin review email template
-│   └── customer-confirmation.html   # Customer confirmation email template
+│   ├── admin-script-review.html
+│   └── customer-confirmation.html
 ├── scripts/
 │   └── export-n8n-workflows.mjs     # Export all n8n workflows via API → n8n_backup/
 ├── utils/
-│   ├── n8n-tally-parser.js          # Tally webhook → order JSON parser
-│   ├── n8n-build-emails.js          # Email HTML builder
-│   ├── n8n-build-script-prompt.js   # Script prompt builder
-│   ├── n8n-build-image-prompts.js   # Image prompt builder
-│   ├── n8n-build-expansion-prompt.js # Phase 3: builds GPT-4o expansion prompt
-│   ├── n8n-parse-expansion-response.js # Phase 3: parses + validates expansion output
-│   ├── n8n-generate-images.js       # Image generation helper
-│   ├── n8n-process-image-response.js # Image response processor
-│   ├── n8n-reconcile-images.js      # Idempotency reconciliation
-│   ├── n8n-validate-token.js        # Step 3.5: Parse Token code node
-│   ├── n8n-check-token-row.js       # Step 3.5: Validate Token code node
-│   ├── n8n-reject-token.js          # Step 3.5: Reject Token error builder
-│   ├── n8n-call-flux.js             # Flux API caller (deprecated → OpenAI)
+│   ├── n8n-tally-parser.js          # Tally webhook → order JSON (normalizeTheme: all 5 themes)
+│   ├── n8n-build-emails.js
+│   ├── n8n-build-script-prompt.js
+│   ├── n8n-build-image-prompts.js
+│   ├── n8n-build-expansion-prompt.js
+│   ├── n8n-parse-expansion-response.js
+│   ├── n8n-generate-images.js
+│   ├── n8n-process-image-response.js
+│   ├── n8n-reconcile-images.js
+│   ├── n8n-validate-token.js
+│   ├── n8n-check-token-row.js
+│   ├── n8n-reject-token.js
 │   └── fill-form.js                 # Test utility: auto-fill Tally form
-├── temp_data/                        # Sample payloads & test data
-│   ├── form_intake_payload_sample.json
-│   ├── script_sample.json
-│   ├── image_prompts_sample.json
-│   └── ...
-├── n8n-workflows/
-│   └── workflow-image-prompts.json   # WIP workflow fragment
-├── DOCUMENTATION.md            # This file
-└── README.md                   # Project overview
+├── DOCUMENTATION.md
+└── README.md
 ```
 
 ---
@@ -629,29 +634,19 @@ evermagic/
 
 ## 🗺 Planned Work & Roadmap
 
-### Phase 3 — PDF Storybook Engine 🔄 (Current)
-
-**Goal:** Generate an illustrated PDF storybook as the first sellable product for Etsy.
-
-**Deliverables (3 separate PDFs):**
-1. **Storybook PDF** — cover + 5 illustrated scenes with detailed narrative
-2. **Coloring Book PDF** — B&W line art pages assembled together
-3. **Certificate PDF** — personalized printable achievement certificate
-
-**Steps:**
+### Phase 3 — PDF Storybook Engine ✅ COMPLETE
 
 | Step | Description | Status |
 |------|-------------|--------|
-| 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative with dialogs | ✅ Complete |
+| 3.1 — Scenario Expansion | GPT-4o expands scenes into full child-facing narrative | ✅ Complete |
 | 3.2 — PDF Layout Design | HTML/CSS templates for storybook, coloring book, certificate | ✅ Complete |
-| 3.3 — PDF Assembly | Inject content + images into templates → PDFShift → Storage | ✅ Complete |
-| 3.4 — Delivery Flow | Direct download links in delivery email (Supabase HTML page dropped — plain text only) | ✅ Complete |
-| 3.5 — Intake Token System | Single-use tokens to prevent duplicate/unauthorized form submissions | ✅ Complete |
-| 3.6 — Audiobook Research | Evaluate ElevenLabs for narration quality, cost, format | 📋 Deferred to Phase 4+ |
+| 3.3 — PDF Assembly | Inject content + images → PDFShift → Supabase Storage | ✅ Complete |
+| 3.4 — Delivery Flow | Direct download links in delivery email | ✅ Complete |
+| 3.5 — Intake Token System | Single-use tokens, EVRM-DEV cheat token | ✅ Complete |
+| 3.6 — New Themes (v1.4.0) | 4 new themes: Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper | ✅ Complete |
+| 3.7 — Per-Theme PDF Styling (v1.4.1) | CSS variables in storybook.html + theme_styles.css per theme | ✅ Complete |
 
-**Phase 3 complete.** Next: list on Etsy to validate market demand, then begin Phase 4 planning.
-
-**Strategy:** Validate before automating — manually create 1–2 sample PDFs, list on Etsy, get first sale, then automate.
+**Current:** Testing all 5 themes end-to-end. Building friend-feedback loop before Etsy listing.
 
 ### Delivery Flow (Step 3.4) — Actual Implementation
 
@@ -763,4 +758,9 @@ Tools: ElevenLabs (voice), Remotion / FFmpeg / Creatomate (video — TBD).
 
 ### What's Next
 
-Phase 3 is complete — all steps 3.1–3.5 are done. **Next: list on Etsy** to validate market demand, then begin Phase 4 planning (voice narration + video bundle).
+Phase 3 is complete (3.1–3.7). **Immediate next steps:**
+1. Test all 5 themes end-to-end with `EVRM-DEV` token
+2. Build a small friend feedback loop (invite ~10 parents to try, collect feedback)
+3. Prioritize and address feedback
+4. List on Etsy — validate market demand
+5. Begin Phase 4 planning (voice narration + video bundle)

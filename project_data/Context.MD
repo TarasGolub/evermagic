@@ -44,14 +44,14 @@ It is:
 
 ---
 
-## 🎯 MVP SCOPE (PHASE 1)
+## 🎯 CURRENT SCOPE (v1.4.1)
 
 | Dimension | Value |
 |-----------|-------|
-| Theme | Space Hero Mission |
-| Language | English only (UA option exists in form but not active yet) |
+| Themes | Space Hero · Fantasy Hero · Enchanted Princess · Animal Guardian · Home Helper |
+| Language | English only (Ukrainian planned) |
 | Packages | Basic · Full Bundle · Party Pack |
-| Focus now | Backend automation — not branding |
+| Status | Phases 1–3 complete — testing new themes, pre-Etsy launch |
 
 ---
 
@@ -175,7 +175,7 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 ---
 
-### PHASE 3 — PDF Storybook Engine ✅ COMPLETE (Steps 3.1–3.5 done)
+### PHASE 3 — PDF Storybook Engine ✅ COMPLETE (Steps 3.1–3.7 done)
 
 **Goal:** Generate illustrated PDF storybook as first sellable product for Etsy.
 
@@ -201,45 +201,32 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 - PDFs stored in Supabase Storage
 
 #### Step 3.4 — Delivery Flow ✅ COMPLETE
+- Direct download links embedded in delivery email (Supabase Storage plain-text limitation)
+- Status chain: `images_generated` → `scenario_expanding` → `scenario_expanded` → `pdf_generating` → `pdf_generated` → `pdf_delivered`
 
-**Actual approach:** Direct download links embedded in the customer delivery email.
+#### Step 3.5 — Intake Token System ✅ COMPLETE
+- Single-use tokens prevent duplicate/unauthorized form submissions
+- Pool of ~100 tokens in Supabase `intake_tokens` table
+- Cheat token `EVRM-DEV` for internal testing (unlimited, no DB row)
+- URL format: `tally.so/r/FORM_ID?source=etsy&orderNo=ORDER_NO&token=TOKEN`
+- n8n validates on webhook receipt; invalid/used → HTTP 400 reject
 
-> **Note:** Supabase Storage serves files as plain text (no HTML rendering), so the planned branded landing page was dropped. Download links are sent directly in the email — simpler and more reliable.
+#### Step 3.6 — New Story Themes ✅ COMPLETE (v1.4.0)
+- Added 4 new themes alongside Space Hero Mission:
+  - **Fantasy Hero Quest** — enchanted kingdom, dragon companion, magic forest
+  - **Enchanted Princess Adventure** — rainbow kingdom, unicorn companion, sparkle world
+  - **Animal Guardian Hero** — magical forest, animal rescue, kindness-driven story
+  - **Home Helper Hero** — cozy home, tiny magical village, everyday helpfulness
+- Each theme: `system.md`, `expansion.md`, `style.md`, `image_prompts.md`, `theme.json`
+- `n8n-tally-parser.js` `normalizeTheme()` updated for all 5 themes
+- `THEMES` object in Image Generation + `themeLabels` in email workflows updated
 
-**Flow:**
-```
-PDFs assembled in Supabase Storage
-    ↓
-n8n sends delivery email with direct download links for each PDF
-    ↓
-Customer receives email with 3 download buttons (storybook, coloring book, certificate)
-    ↓
-Admin notification: order delivered
-```
-
-**Status chain:** `images_generated` → `scenario_expanding` → `scenario_expanded` → `pdf_generating` → `pdf_generated` → `pdf_delivered`
-
-#### Step 3.5 — Intake Token System ✅ BUILT
-
-Prevents duplicate/unauthorized form submissions. Single-use token required for every Tally form submission.
-
-**How it works:**
-- Pool of ~100 pre-generated tokens in Supabase `intake_tokens` table (top up manually via SQL seed)
-- Cheat token `EVRM-DEV` — unlimited use, for internal testing only (no DB row needed)
-- When Etsy order comes in → pick a token → send customer:
-  `https://tally.so/r/FORM_ID?source=etsy&orderNo=ORDER_NO&token=TOKEN`
-- Tally hidden fields (`token`, `source`, `orderNo`) pre-fill from URL params
-- n8n validates token on submission: unused → mark used + process; used/missing/invalid → HTTP 400 reject
-- `source` and `order_no` stored on both `intake_tokens` and `orders` tables for channel analytics
-
-**DB:** `intake_tokens` table + `source` / `order_no` columns added to `orders`
-
-**Files:**
-- `database/intake_tokens.sql` — table + seed SQL + orders migration
-- `utils/n8n-validate-token.js` — "Parse Token" code node
-- `utils/n8n-check-token-row.js` — "Validate Token" code node
-- `utils/n8n-reject-token.js` — "Reject Token" error builder
-- `project_data/step3.5_token_system_blueprint.md` — full n8n build guide
+#### Step 3.7 — Per-Theme PDF Styling ✅ COMPLETE (v1.4.1)
+- `templates/pdf/storybook.html` refactored to use CSS variables (`--bg`, `--accent`, `--text-narration`, etc.)
+- Space Hero defaults baked into base template (backward compatible)
+- `{{theme_styles}}` injection slot at end of `<style>` block
+- `prompts/{theme}/theme_styles.css` created for all 5 themes — each overrides CSS variables + `.scene-text-page` background pattern
+- `Build PDF HTML` n8n code node updated with `THEME_STYLES` object (same pattern as `THEMES` in Image Gen)
 
 ---
 
@@ -271,7 +258,7 @@ Prevents duplicate/unauthorized form submissions. Single-use token required for 
 
 ### PHASE 6 — Scale & Optimize
 
-- Additional themes beyond Space Hero
+- ~~Additional themes beyond Space Hero~~ ✅ Done in v1.4.0 (4 new themes)
 - Multi-language support (Ukrainian)
 - Batch processing
 - Quality monitoring dashboard
@@ -338,7 +325,7 @@ EverMagic is an **AI content production engine.**
 
 ## 📌 WHEN YOU NEED TO RESTORE CONTEXT
 
-> "Continuing EverMagic AI Factory. We are in Phase 3 (PDF Storybook). Here is our architecture summary."
+> "Continuing EverMagic AI Factory. Phases 1–3 complete. 5 themes active (Space Hero, Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper). Currently testing new themes pre-Etsy launch (v1.4.1, branch feature/EVRM-020)."
 
 ## OPTIMIZATION IDEAS
 
