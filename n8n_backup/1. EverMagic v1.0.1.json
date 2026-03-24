@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-23T22:54:02.294Z",
+  "updatedAt": "2026-03-23T23:54:28.719Z",
   "createdAt": "2026-02-22T01:53:38.170Z",
   "id": "BqU3JEiy7Y1LGWgi",
   "name": "1. EverMagic v1.0.1",
@@ -301,7 +301,7 @@
     },
     {
       "parameters": {
-        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').item.json.env.is_live ? 'main' : 'develop' }}/prompts/{{ $('Validate and Transform Order').item.json.order.theme }}/system.md",
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').item.json.env.is_live ? 'main' : 'develop' }}/prompts/{{ $('Validate and Transform Order').item.json.order.theme.toLowerCase() }}/system.md",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -904,7 +904,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "f34b3265-1702-44ed-a8dd-a3f2b2aa28d8",
+  "versionId": "9b1339da-9a2d-49f2-9785-05c57ea21d12",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
