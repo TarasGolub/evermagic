@@ -23,7 +23,8 @@ This story will be **read aloud by a parent** to a young child (age ≤ 5).
 {{else}}
 This story will be **read independently by the child** (age ≥ 6).
 - Write directly to the child — use "you" to make them feel the discovery.
-- Describe the tiny world with rich detail — the sprite's tiny furniture, tiny sounds, tiny celebrations.
+- Clear, simple language — short sentences, everyday words. Aim for grade 2–3 reading level.
+- Describe the tiny world with simple, vivid detail — "a table the size of a button", "a door no bigger than your thumb."
 - The child's growing understanding (that their chores matter more than they knew) is the emotional arc.
 - The sprite's voice can have quiet humor and warmth.
 {{/if}}
