@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 EverMagic is an **AI-powered automated content production engine** that creates personalized cinematic storybooks for children. It is a **no-code/low-code pipeline** — there is no traditional backend server, no npm build, no test runner. The "code" in this repo consists of JavaScript functions that are manually copied into n8n workflow code nodes, plus documentation, prompts, and database schemas.
 
+**Current status:** Phases 1, 2, and 3 (steps 3.1–3.5) are complete. Next: Etsy listing for market validation, then Phase 4 (voice + video).
+
 ## Repository Structure
 
 - `n8n_backup/` — Exported n8n workflow JSONs (source of truth for workflow logic)
@@ -30,12 +32,14 @@ Supabase (PostgreSQL + Storage)
 Customer Email (confirmation + deliverables)
 ```
 
-### 4 n8n Workflows
+### 6 n8n Workflows
 
-1. **EverMagic v1.0.1** — Intake + Script Generation: receives Tally webhook, parses form, saves order to Supabase, fetches prompt from GitHub, calls GPT-4o to generate 5-scene story script, emails admin + customer
+1. **EverMagic v1.0.1** — Intake + Script Generation: receives Tally webhook, validates intake token, parses form, saves order to Supabase, fetches prompt from GitHub, calls GPT to generate 5-scene story script, emails admin + customer
 2. **EverMagic Review** — Admin review UI: admin clicks link in email to see order/script details
 3. **EverMagic Review Submit** — Processes admin actions: Approve / Retry (re-generate) / Edit (save changes)
 4. **EverMagic Image Generation** — Fetches approved script, builds 12 image prompts, calls OpenAI image API (gpt-image-1), uploads to Supabase Storage
+5. **EverMagic Scenario Expansion** — GPT-4o expands each scene into full child-facing narrative with dialogue (Phase 3)
+6. **EverMagic PDF Assembly** — Injects expanded content + images into HTML/CSS templates, sends to PDFShift API, stores PDFs in Supabase Storage, sends delivery email with download links (Phase 3)
 
 ### Canonical Order JSON
 
@@ -55,7 +59,7 @@ All workflows pass a single canonical order object parsed by `utils/n8n-tally-pa
 
 ### Order State Machine
 
-`created` → `validated` → `script_generated` → `script_review` ↔ (retry loops) → `approved` → `images_generating` → `images_generated`
+`created` → `validated` → `script_generated` → `script_review` ↔ (retry loops) → `approved` → `images_generating` → `images_generated` → `scenario_expanding` → `scenario_expanded` → `pdf_generating` → `pdf_generated` → `pdf_delivered`
 
 ### Database (Supabase)
 
@@ -66,6 +70,7 @@ All workflows pass a single canonical order object parsed by `utils/n8n-tally-pa
 | `scripts` | Versioned scripts; old versions marked `superseded` |
 | `images` | One row per image (12 per order), tracks generation status |
 | `envs` | Key/value config: `mode` (test/live), `script_approval_required` |
+| `intake_tokens` | Single-use tokens (`EVRM-XXXXXXXX`) that gate form submission; `EVRM-DEV` is the hardcoded dev cheat token |
 
 ### Configuration
 
@@ -78,6 +83,11 @@ Runtime config is read from the Supabase `envs` table (not environment variables
 1. Edit the file in `utils/`
 2. Manually paste the updated function into the corresponding n8n Code node
 3. Export the updated workflow JSON from n8n and save to `n8n_backup/`
+
+To export all workflows at once:
+```
+N8N_BASE_URL=https://yourname.app.n8n.cloud N8N_API_KEY=your_key node scripts/export-n8n-workflows.mjs
+```
 
 ### Testing
 
