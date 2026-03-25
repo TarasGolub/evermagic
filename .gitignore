@@ -1,3 +1,4 @@
 .claude/settings.local.json
 z_hidden/
 tests/
+.agents/
