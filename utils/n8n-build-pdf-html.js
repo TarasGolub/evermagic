@@ -102,12 +102,12 @@ const vars = {
     'scene_4.title':        sceneTitle(4),
     'scene_5.title':        sceneTitle(5),
 
-    // Scene narration / expanded text — formatted as <p> chunks
-    'scene_1.narration':    formatNarration(sceneText(1)),
-    'scene_2.narration':    formatNarration(sceneText(2)),
-    'scene_3.narration':    formatNarration(sceneText(3)),
-    'scene_4.narration':    formatNarration(sceneText(4)),
-    'scene_5.narration':    formatNarration(sceneText(5)),
+    // Scene text pages — each scene split across two fixed-height pages
+    'scene_1.text_pages':   buildTextPages(1),
+    'scene_2.text_pages':   buildTextPages(2),
+    'scene_3.text_pages':   buildTextPages(3),
+    'scene_4.text_pages':   buildTextPages(4),
+    'scene_5.text_pages':   buildTextPages(5),
 
     // Certificate
     'cert.hero_trait_title': heroTraitTitle,
@@ -116,19 +116,45 @@ const vars = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// 3. Format narration into paragraph chunks (2–3 sentences each)
+// 3. Build scene text pages — splits narration across two fixed-height pages
+//    Even N paragraphs: N/2 each. Odd N: ceil(N/2) on page 1, floor(N/2) on page 2.
 // ─────────────────────────────────────────────────────────────
 
-function formatNarration(text) {
+function buildTextPages(sceneNumber) {
+    const title = sceneTitle(sceneNumber);
+    const text  = sceneText(sceneNumber);
     if (!text) return '';
-    // Split into sentences on . ! ? — keep the punctuation
-    const sentences = text.match(/[^.!?]+[.!?]+["']?/g) || [text];
+
+    // Group sentences into paragraphs of 3
+    const sentences  = text.match(/[^.!?]+[.!?]+["']?/g) || [text];
     const paragraphs = [];
     for (let i = 0; i < sentences.length; i += 3) {
         const chunk = sentences.slice(i, i + 3).join(' ').trim();
         if (chunk) paragraphs.push('<p>' + chunk + '</p>');
     }
-    return paragraphs.join('\n');
+
+    const N      = paragraphs.length;
+    const split  = Math.ceil(N / 2);
+    const p1Html = paragraphs.slice(0, split).join('\n');
+    const p2Html = paragraphs.slice(split).join('\n');
+
+    const page1 =
+        '\n  <div class="page fixed-height scene-text-page">'
+        + '\n    <h2 class="scene-title">' + title + '</h2>'
+        + '\n    <div class="gold-rule"></div>'
+        + '\n    <div class="narration">' + p1Html + '</div>'
+        + '\n    <div class="page-branding">EverMagic</div>'
+        + '\n  </div>';
+
+    if (!p2Html) return page1;
+
+    const page2 =
+        '\n  <div class="page fixed-height scene-text-page">'
+        + '\n    <div class="narration">' + p2Html + '</div>'
+        + '\n    <div class="page-branding">EverMagic</div>'
+        + '\n  </div>';
+
+    return page1 + '\n' + page2;
 }
 
 // ─────────────────────────────────────────────────────────────
