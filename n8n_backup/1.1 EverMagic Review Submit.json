@@ -3,7 +3,7 @@
   "createdAt": "2026-02-28T04:04:42.792Z",
   "id": "5tdiaL3r2CwU3D2T",
   "name": "1.1 EverMagic Review Submit",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -897,7 +897,7 @@
   },
   "pinData": {},
   "versionId": "616f7008-f6fb-435d-ae9c-1d79e5cbbf98",
-  "activeVersionId": null,
+  "activeVersionId": "616f7008-f6fb-435d-ae9c-1d79e5cbbf98",
   "triggerCount": 1,
   "shared": [
     {
@@ -908,6 +908,896 @@
       "projectId": "Ez9yaDRraIYPeCTc"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-03-25T20:30:16.000Z",
+    "createdAt": "2026-03-23T22:54:29.775Z",
+    "versionId": "616f7008-f6fb-435d-ae9c-1d79e5cbbf98",
+    "workflowId": "5tdiaL3r2CwU3D2T",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "evermagic/review-submit",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "409bd5ec-ed36-4178-b6fd-1dbd30ab070b",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -1408,
+          208
+        ],
+        "webhookId": "b0478527-1df8-4d4c-b58d-35b210d79232"
+      },
+      {
+        "parameters": {
+          "jsCode": "const body = $('Webhook').first().json.body || $('Webhook').first().json;\n\nconst orderId = body.order_id;\nconst currentVersion = parseInt(body.version || '1', 10);\nconst action = (body.action || '').toLowerCase();\nconst newVersion = currentVersion + 1;\n\nif (action === 'retry_submit') {\n  const feedback = body.feedback || '';\n  return [{\n    json: {\n      action: 'retry',\n      order_id: orderId,\n      current_version: currentVersion,\n      new_version: newVersion,\n      feedback: feedback,\n      html: `<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>🔄 Regenerating...</title><style>body{font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f8f9fa;margin:0;}.card{text-align:center;background:#fff;padding:48px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}h1{font-size:24px;color:#111;margin-bottom:8px;}p{color:#6b7280;font-size:14px;}</style></head><body><div class=\"card\"><div style=\"font-size:48px;margin-bottom:16px;\">🔄</div><h1>Regenerating Script...</h1><p>Order: <strong>${orderId}</strong> · Creating version v${newVersion}</p><p style=\"margin-top:16px;\">You'll receive a new review email shortly.</p></div></body></html>`\n    }\n  }];\n}\n\nif (action === 'edit_submit') {\n  let scriptContent;\n  try {\n    scriptContent = typeof body.script === 'string' ? JSON.parse(body.script) : body.script;\n  } catch (e) {\n    return [{\n      json: {\n        action: 'error',\n        html: `<html><body style=\"font-family:sans-serif;padding:40px;\"><h1>❌ Invalid JSON</h1><p>${e.message}</p><p><a href=\"javascript:history.back()\">Go back</a></p></body></html>`\n      }\n    }];\n  }\n  return [{\n    json: {\n      action: 'edit_save',\n      order_id: orderId,\n      current_version: currentVersion,\n      new_version: newVersion,\n      script: scriptContent,\n      script_raw: JSON.stringify(scriptContent),\n      html: `<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>✅ Saved</title><style>body{font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f0fdf4;margin:0;}.card{text-align:center;background:#fff;padding:48px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}h1{font-size:24px;color:#16a34a;margin-bottom:8px;}p{color:#6b7280;font-size:14px;}</style></head><body><div class=\"card\"><div style=\"font-size:48px;margin-bottom:16px;\">✅</div><h1>Script Saved & Approved!</h1><p>Order: <strong>${orderId}</strong> · Version v${newVersion}</p><p style=\"margin-top:16px;\">The order is now ready for the next phase.</p></div></body></html>`\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    action: 'error',\n    html: '<html><body><h1>❌ Unknown action</h1></body></html>'\n  }\n}];"
+        },
+        "id": "e3ae2168-d94a-40bb-8cc8-7d072865bea8",
+        "name": "Handle Submit",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -448,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action }}",
+                      "rightValue": "retry",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "aab42a2f-e382-4132-a73c-cd608ad559a0"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "retry"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action }}",
+                      "rightValue": "edit_save",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "74a33f3e-ee81-4f93-b909-46292073459b"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "edit_save"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra"
+          }
+        },
+        "id": "80816fb9-d1b7-4d30-bffa-7db6180e0287",
+        "name": "Switch Submit Action",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          -224,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "={{ $('Handle Submit').first().json.html }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html"
+                }
+              ]
+            }
+          }
+        },
+        "id": "2910fe87-2238-4b7e-bed0-0bafebb02015",
+        "name": "Respond Retry Confirmation",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          224,
+          -176
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "scripts",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.order_id }}"
+              },
+              {
+                "keyName": "version",
+                "condition": "eq",
+                "keyValue": "={{ $json.current_version }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "superseded"
+              }
+            ]
+          }
+        },
+        "id": "db04540f-2d86-4b44-b5c3-5fdb241da905",
+        "name": "Supersede Old Script (Retry)",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          224,
+          0
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "orders",
+          "limit": 1,
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.order_id }}"
+              }
+            ]
+          }
+        },
+        "id": "9b6847af-c5ad-46c9-89f1-ab57e2064ed6",
+        "name": "Fetch Order",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          640,
+          0
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "scripts",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.order_id }}"
+              },
+              {
+                "keyName": "version",
+                "condition": "eq",
+                "keyValue": "={{ $json.version }}"
+              }
+            ]
+          }
+        },
+        "id": "83c36128-1350-4b00-9875-4464bc94021f",
+        "name": "Fetch Current Script",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          432,
+          0
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "https://raw.githubusercontent.com/TarasGolub/evermagic/main/prompts/space_hero/system.md",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "text"
+              }
+            }
+          }
+        },
+        "id": "7e9aeb32-27e3-4db3-90a0-a18d1d53c957",
+        "name": "Fetch Prompt",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          864,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const submitData = $('Handle Submit').first().json;\nconst orderId = submitData.order_id;\nconst feedback = submitData.feedback;\nconst newVersion = submitData.new_version;\n\nconst systemPrompt = $('Fetch Prompt').first().json.data;\nconst currentScript = $('Fetch Current Script').first().json.content;\nconst order = $('Fetch Order').first().json;\nconst child = order.child || {};\n\nconst userPrompt = `You previously generated this story:\\n\\n\\`\\`\\`json\\n${JSON.stringify(currentScript, null, 2)}\\n\\`\\`\\`\\n\\nThe reviewer has provided the following feedback. Please regenerate the script incorporating these changes:\\n\\n**Reviewer Feedback:**\\n${feedback}\\n\\n**Original order details (for reference):**\\n- Name: ${child.name}\\n- Age: ${child.age}\\n- Gender: ${child.gender}\\n- Hobby: ${child.hobby}\\n- Hobby details: ${child.hobby_detail || 'not provided'}\\n- Signature look: ${child.signature_look || 'not provided'}\\n- Theme: ${order.theme}\\n- Hero trait: ${child.hero_trait}\\n- Parent message: ${order.parent_message || 'No message provided.'}\\n\\nPlease output the COMPLETE revised script in the exact same JSON format.`;\n\nreturn [{\n  json: {\n    system_prompt: systemPrompt,\n    user_prompt: userPrompt,\n    order_id: orderId,\n    version: newVersion,\n    feedback: feedback,\n    order: order\n  }\n}];"
+        },
+        "id": "9e80226d-463a-4a49-b408-b949e5e265aa",
+        "name": "Build Retry Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1088,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "={{ $('Handle Submit').first().json.html }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html"
+                }
+              ]
+            }
+          }
+        },
+        "id": "04a7a192-6245-4bd9-8a50-de8b5e9fe562",
+        "name": "Respond Edit Saved",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1168,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "scripts",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.order_id }}"
+              },
+              {
+                "keyName": "version",
+                "condition": "eq",
+                "keyValue": "={{ $json.current_version }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "superseded"
+              }
+            ]
+          }
+        },
+        "id": "9528edcc-fec1-485a-a375-45e95c6d30e3",
+        "name": "Supersede Old Script (Edit)",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          224,
+          400
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "tableId": "scripts",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $('Handle Submit').first().json.order_id }}"
+              },
+              {
+                "fieldId": "version",
+                "fieldValue": "={{ $('Handle Submit').first().json.new_version }}"
+              },
+              {
+                "fieldId": "status",
+                "fieldValue": "approved"
+              },
+              {
+                "fieldId": "title",
+                "fieldValue": "={{ $('Handle Submit').first().json.script.title }}"
+              },
+              {
+                "fieldId": "tagline",
+                "fieldValue": "={{ $('Handle Submit').first().json.script.tagline }}"
+              },
+              {
+                "fieldId": "content",
+                "fieldValue": "={{ $('Handle Submit').first().json.script_raw }}"
+              }
+            ]
+          }
+        },
+        "id": "6ee6d0d3-19ea-40e6-81b4-7323b13b5b55",
+        "name": "Save Edited Script",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          448,
+          400
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "approved"
+              }
+            ]
+          }
+        },
+        "id": "45b63501-c4de-47d0-83a0-8f123247d158",
+        "name": "Update Order Status (Edit)",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          672,
+          400
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "={{ $json.html || '<html><body><h1>❌ Error</h1></body></html>' }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html"
+                }
+              ]
+            }
+          }
+        },
+        "id": "83964ab6-2d27-420c-ab10-a6173524cc78",
+        "name": "Respond Error",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          608
+        ]
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-5-nano",
+            "mode": "list",
+            "cachedResultName": "GPT-5-NANO"
+          },
+          "responses": {
+            "values": [
+              {
+                "role": "system",
+                "content": "={{ $json.system_prompt }}"
+              },
+              {
+                "content": "={{ $json.user_prompt }}"
+              }
+            ]
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "id": "a85e24f6-3c9d-4f96-a800-beff9acbe4a6",
+        "name": "Generate Script with AI",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 2.1,
+        "position": [
+          1328,
+          0
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "bkm4C85zHfe8HSHa",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "tableId": "scripts",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $json.order_id }}"
+              },
+              {
+                "fieldId": "version",
+                "fieldValue": "={{ $json.version }}"
+              },
+              {
+                "fieldId": "status",
+                "fieldValue": "draft"
+              },
+              {
+                "fieldId": "title",
+                "fieldValue": "={{ $json.script.title }}"
+              },
+              {
+                "fieldId": "tagline",
+                "fieldValue": "={{ $json.script.tagline }}"
+              },
+              {
+                "fieldId": "content",
+                "fieldValue": "={{ JSON.stringify($json.script) }}"
+              }
+            ]
+          }
+        },
+        "id": "ae2bfe80-8e42-41cc-a63d-8c9f67f3251f",
+        "name": "Save Generated Script",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1904,
+          0
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "={{ $json.to }}",
+          "subject": "={{ $json.subject }}",
+          "html": "={{ $json.html }}",
+          "options": {
+            "appendAttribution": true
+          }
+        },
+        "id": "adda97f9-9b99-48e0-b7f4-fea0ce1cf5d0",
+        "name": "Send Confirmation Email",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          2368,
+          0
+        ],
+        "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Extract the story JSON string from OpenAI response\nconst aiOutput = $input.first().json;\n\n// Try multiple paths — n8n OpenAI node output varies by version\nlet rawText;\n\nif (aiOutput.output?.[0]?.content?.[0]?.text) {\n  // Responses API format\n  rawText = aiOutput.output[0].content[0].text;\n} else if (aiOutput.message?.content) {\n  // Chat Completion format\n  rawText = aiOutput.message.content;\n} else if (aiOutput.text) {\n  // Simple text output\n  rawText = aiOutput.text;\n} else if (typeof aiOutput === 'string') {\n  rawText = aiOutput;\n} else {\n  // Debug: output what we actually received\n  throw new Error('Unexpected AI output shape: ' + JSON.stringify(Object.keys(aiOutput)));\n}\n\n// Parse the JSON string into an actual object\nconst script = JSON.parse(rawText);\n\n// Get the order from the earlier node\nconst order = $('Fetch Order').first().json;\n\nreturn [{\n  json: {\n    order_id: order.order_id,\n    script: script,\n    script_raw: rawText,\n    version: $('Handle Submit').first().json.new_version,\n    order: order\n  }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1696,
+          0
+        ],
+        "id": "f47c20d6-49bb-4d1e-951e-8099102e0edc",
+        "name": "Parse Script"
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build Emails\"\n// Place AFTER \"Parse Script\" node\n// Outputs TWO items: [0] = customer email, [1] = admin email\n// Then use a Send Email node for each (or split with IF)\n\nconst order = $('Fetch Order').first().json;\nconst script = $('Parse Script').first().json.script;\nconst scriptVersion = $('Parse Script').first().json.version || 1;\n\n// ─────────────────────────────────────────────────────────────\n// Review webhook base URL (change if your n8n host differs)\n// ─────────────────────────────────────────────────────────────\n\nconst env = $('Envs').first().json.env;\nconst REVIEW_BASE = `https://evermagic.app.n8n.cloud/webhook${env.is_live ? '' : '-test'}/evermagic/review`;\n\n// ─────────────────────────────────────────────────────────────\n// 1. Customer Confirmation Email\n// ─────────────────────────────────────────────────────────────\n\nconst packageLabels = {\n  'BASIC': 'Basic (Storybook + Coloring + Certificate)',\n  'FULL': 'Full Bundle (Video + PDF + printable)',\n  'PARTY': 'Party Pack',\n};\n\nconst themeLabels = {\n  'SPACE_HERO':          'Space Hero Mission',\n  'FANTASY_HERO':        'Fantasy Hero Quest',\n  'ENCHANTED_PRINCESS':  'Enchanted Princess Adventure',\n  'ANIMAL_GUARDIAN':     'Animal Guardian Hero',\n  'HOME_HELPER':         'Home Helper Hero',\n};\n\n// ─────────────────────────────────────────────────────────────\n//  Admin Review Email\n// ─────────────────────────────────────────────────────────────\n\nconst scenesHtml = script.scenes.map(s => `\n  <tr><td style=\"padding:8px 32px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;margin-bottom:8px;\">\n      <tr><td style=\"padding:16px;\">\n        <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;font-weight:600;\">Scene ${s.scene_number} · ${s.emotion || ''}</div>\n        <h3 style=\"margin:4px 0 8px;font-size:16px;color:#111;\">${s.scene_title}</h3>\n        <p style=\"margin:0 0 12px;font-size:14px;color:#374151;line-height:1.6;\">${s.narration}</p>\n        <div style=\"font-size:12px;color:#9ca3af;line-height:1.5;border-top:1px solid #e5e7eb;padding-top:8px;\">\n          <strong style=\"color:#6b7280;\">🎬 Visual:</strong> ${s.visual_description}\n        </div>\n      </td></tr>\n    </table>\n  </td></tr>`).join('\\n');\n\nconst adminHtml = `\n<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0\"></head>\n<body style=\"margin:0;padding:0;background-color:#f8f9fa;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;\">\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#f8f9fa;\">\n<tr><td align=\"center\" style=\"padding:32px 16px;\">\n<table role=\"presentation\" width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);\">\n  <tr><td style=\"padding:28px 32px 16px;border-bottom:1px solid #eee;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n      <tr>\n        <td>\n          <span style=\"font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280;font-weight:600;\">⚡ EverMagic Admin</span>\n          <h1 style=\"margin:8px 0 0;font-size:22px;color:#111;font-weight:700;\">Script Ready for Re-Review (version - v${scriptVersion})</h1>\n        </td>\n        <td align=\"right\" style=\"vertical-align:top;\">\n          <span style=\"display:inline-block;padding:6px 14px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;\">Needs Review</span>\n        </td>\n      </tr>\n    </table>\n  </td></tr>\n  <tr><td style=\"padding:24px 32px 16px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;\">\n      <tr><td style=\"padding:16px;\">\n        <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"font-size:13px;\">\n          <tr>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Order</td>\n            <td style=\"color:#111;font-weight:600;font-family:monospace;\">${order.order_id}</td>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Package</td>\n            <td style=\"color:#111;font-weight:600;\">${packageLabels[order.package] || order.package}</td>\n          </tr>\n          <tr>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Hero</td>\n            <td style=\"color:#111;font-weight:600;\">${order.child_name} (${order.child_age})</td>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Theme</td>\n            <td style=\"color:#111;font-weight:600;\">${themeLabels[order.theme] || order.theme}</td>\n          </tr>\n          <tr>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Trait</td>\n            <td style=\"color:#6b7280;padding:3px 8px;\">Language</td>\n            <td style=\"color:#111;font-weight:600;\">${order.language}</td>\n          </tr>\n        </table>\n      </td></tr>\n    </table>\n  </td></tr>\n  <tr><td style=\"padding:8px 32px 16px;\">\n    <h2 style=\"margin:0;font-size:20px;color:#111;\">📖 ${script.title}</h2>\n    <p style=\"margin:4px 0 0;font-size:14px;color:#6b7280;font-style:italic;\">${script.tagline}</p>\n    <span style=\"display:inline-block;margin-top:8px;padding:3px 10px;background:#e0e7ff;color:#3730a3;font-size:11px;font-weight:600;border-radius:12px;\">v${scriptVersion}</span>\n  </td></tr>\n  ${scenesHtml}\n  <tr><td style=\"padding:8px 32px 24px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;\">\n      <tr><td style=\"padding:16px;\">\n        <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#16a34a;font-weight:600;margin-bottom:6px;\">💚 Parent's Message</div>\n        <div style=\"font-size:14px;color:#166534;line-height:1.5;\">${order.parent_message || 'No message provided.'}</div>\n      </td></tr>\n    </table>\n  </td></tr>\n  <!-- ACTION BUTTONS -->\n  <tr><td style=\"padding:16px 32px 24px;\">\n    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n      <tr>\n        <td align=\"center\" width=\"33%\" style=\"padding:0 4px;\">\n          <a href=\"${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=approve\"\n             style=\"display:block;padding:14px 8px;background:#16a34a;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;\">\n            ✅ Approve\n          </a>\n        </td>\n        <td align=\"center\" width=\"33%\" style=\"padding:0 4px;\">\n          <a href=\"${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=retry\"\n             style=\"display:block;padding:14px 8px;background:#f59e0b;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;\">\n            🔄 Edit &amp; Retry\n          </a>\n        </td>\n        <td align=\"center\" width=\"33%\" style=\"padding:0 4px;\">\n          <a href=\"${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=edit\"\n             style=\"display:block;padding:14px 8px;background:#3b82f6;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;\">\n            ✏️ Manual Edit\n          </a>\n        </td>\n      </tr>\n    </table>\n  </td></tr>\n  <tr><td style=\"padding:12px 32px 28px;border-top:1px solid #eee;\">\n    <p style=\"margin:0;font-size:12px;color:#9ca3af;text-align:center;\">Click an action above to approve, retry with AI, or manually edit this script.</p>\n  </td></tr>\n</table>\n</td></tr>\n</table>\n</body></html>`;\n\n// ─────────────────────────────────────────────────────────────\n// 3. Output both emails as two items\n// ─────────────────────────────────────────────────────────────\n\nreturn [\n  {\n    json: {\n      email_type: 'admin_review',\n      to: 'taras.evermagic@gmail.com',\n      subject: `📋 New Script Version Review  — ${order.order_id} — ${order.child_name} - version - ${$input.first().json.version}`,\n      html: adminHtml,\n      order_id: order.order_id\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2128,
+          0
+        ],
+        "id": "5828ff14-b282-4569-b41a-3bd49dec2fe9",
+        "name": "Build Emails"
+      },
+      {
+        "parameters": {
+          "jsCode": "const query = $('Webhook').first().json.query || {};\n\nconst orderId = query.order_id;\nconst version = parseInt(query.version || '1', 10);\nconst action = (query.action || '').toLowerCase();\n\nif (!orderId) {\n  return [{\n    json: {\n      action: 'error',\n      html: '<html><body style=\"font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;\"><div style=\"text-align:center;\"><h1>❌ Error</h1><p>Missing order_id parameter.</p></div></body></html>'\n    }\n  }];\n}\n\nif (!['approve', 'retry', 'edit'].includes(action)) {\n  return [{\n    json: {\n      action: 'error',\n      html: '<html><body style=\"font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;\"><div style=\"text-align:center;\"><h1>❌ Error</h1><p>Invalid action.</p></div></body></html>'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    action,\n    order_id: orderId,\n    version\n  }\n}];"
+        },
+        "id": "8f421c24-1d73-4338-96b0-7c2abceb12e4",
+        "name": "Review Router",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -656,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,       \n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true', \n  evrm_token: raw.evrm_token\n};\n\nreturn [{ json: { env } }];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -896,
+          208
+        ],
+        "id": "3b674e09-5a1e-4193-bb65-d9138fa5b867",
+        "name": "Envs"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://evermagic.app.n8n.cloud/webhook{{ $('Envs').item.json.env.is_live ? '' : '-test' }}/orders/images/generate",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "X-EverMagic-Token",
+                "value": "={{ $('Envs').item.json.env.evrm_token }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          896,
+          400
+        ],
+        "id": "2dba4cbb-2c7e-4dea-9716-753d6ad2acc0",
+        "name": "Image Generation Webhook"
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "envs"
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -1120,
+          208
+        ],
+        "id": "2c7ff4ab-9cfd-4d7d-b8e6-d821ee970428",
+        "name": "Load Envs",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Load Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Handle Submit": {
+        "main": [
+          [
+            {
+              "node": "Switch Submit Action",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch Submit Action": {
+        "main": [
+          [
+            {
+              "node": "Supersede Old Script (Retry)",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Respond Retry Confirmation",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Supersede Old Script (Edit)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supersede Old Script (Retry)": {
+        "main": [
+          [
+            {
+              "node": "Fetch Current Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Prompt": {
+        "main": [
+          [
+            {
+              "node": "Build Retry Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Order": {
+        "main": [
+          [
+            {
+              "node": "Fetch Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supersede Old Script (Edit)": {
+        "main": [
+          [
+            {
+              "node": "Save Edited Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Edited Script": {
+        "main": [
+          [
+            {
+              "node": "Update Order Status (Edit)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Order Status (Edit)": {
+        "main": [
+          [
+            {
+              "node": "Image Generation Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Current Script": {
+        "main": [
+          [
+            {
+              "node": "Fetch Order",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Script with AI": {
+        "main": [
+          [
+            {
+              "node": "Parse Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Generated Script": {
+        "main": [
+          [
+            {
+              "node": "Build Emails",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Script": {
+        "main": [
+          [
+            {
+              "node": "Save Generated Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Emails": {
+        "main": [
+          [
+            {
+              "node": "Send Confirmation Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Retry Prompt": {
+        "main": [
+          [
+            {
+              "node": "Generate Script with AI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Confirmation Email": {
+        "main": [
+          []
+        ]
+      },
+      "Envs": {
+        "main": [
+          [
+            {
+              "node": "Review Router",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Review Router": {
+        "main": [
+          [
+            {
+              "node": "Handle Submit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Image Generation Webhook": {
+        "main": [
+          [
+            {
+              "node": "Respond Edit Saved",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Envs": {
+        "main": [
+          [
+            {
+              "node": "Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Taras Holub",
+    "name": "Version 616f7008",
+    "description": "",
+    "autosaved": true
+  },
   "tags": []
 }
