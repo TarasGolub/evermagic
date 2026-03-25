@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-03-24T02:50:22.105Z",
+  "updatedAt": "2026-03-25T21:50:31.006Z",
   "createdAt": "2026-03-14T17:52:56.850Z",
   "id": "Zwhkv86d2kqVMVhg",
   "name": "3.2 EverMagic PDF Assembly",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -239,7 +239,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// n8n Code node — \"Build PDF HTML\"\n// Placed AFTER \"Fetch PDF Template\" HTTP Request node\n// Injects order/script/image data into an HTML template string\n// Returns one item per PDF type — feeds into the PDFShift loop\n\n// ─────────────────────────────────────────────────────────────\n// Theme-specific PDF styles — injected into {{theme_styles}} in storybook.html\n// Each value is a CSS string that overrides :root variables + .scene-text-page background\n// Add new themes here when adding new theme prompt folders\n// ─────────────────────────────────────────────────────────────\nconst THEME_STYLES = {\n  SPACE_HERO: ``, // Uses base template defaults (space starfield already defined in template)\n\n  FANTASY_HERO: `:root {\n  --bg: #0D1F16; --accent: #9B7FD4; --text-narration: #C8D9C0; --text-tagline: #A8C8B0;\n  --overlay-cover-bot: rgba(13,31,22,0.97); --overlay-cover-mid: rgba(13,31,22,0.55);\n  --overlay-scene-bot: rgba(13,31,22,0.88); --overlay-scene-mid: rgba(13,31,22,0.20);\n  --closing-glow: rgba(155,127,212,0.08);\n}\n.scene-text-page {\n  background-color: #0D1F16;\n  background-image:\n    radial-gradient(ellipse 60% 45% at 20% 25%, rgba(63,140,80,0.12) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 60% at 80% 75%, rgba(100,50,180,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 35% 30% at 60% 40%, rgba(50,180,100,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 15% 20%, rgba(180,255,150,0.85) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 45% 12%, rgba(200,255,180,0.75) 0%, transparent 100%),\n    radial-gradient(2px 2px at 75% 28%, rgba(160,255,200,0.80) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 55%, rgba(155,127,212,0.70) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 22% 68%, rgba(200,255,160,0.75) 0%, transparent 100%),\n    radial-gradient(2px 2px at 58% 82%, rgba(170,255,190,0.80) 0%, transparent 100%),\n    radial-gradient(1px 1px at 8% 55%, rgba(180,255,150,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 30% 42%, rgba(155,127,212,0.48) 0%, transparent 100%),\n    radial-gradient(1px 1px at 52% 35%, rgba(200,255,180,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 70% 48%, rgba(160,255,200,0.45) 0%, transparent 100%),\n    radial-gradient(1px 1px at 90% 72%, rgba(180,255,150,0.52) 0%, transparent 100%);\n}`,\n\n  ENCHANTED_PRINCESS: `:root {\n  --bg: #1A0E2E; --accent: #E8A4C8; --text-narration: #E0D0F0; --text-tagline: #C8A8E0;\n  --overlay-cover-bot: rgba(26,14,46,0.97); --overlay-cover-mid: rgba(26,14,46,0.55);\n  --overlay-scene-bot: rgba(26,14,46,0.88); --overlay-scene-mid: rgba(26,14,46,0.20);\n  --closing-glow: rgba(232,164,200,0.10);\n}\n.scene-text-page {\n  background-color: #1A0E2E;\n  background-image:\n    radial-gradient(ellipse 55% 40% at 20% 25%, rgba(180,80,220,0.13) 0%, transparent 70%),\n    radial-gradient(ellipse 40% 55% at 80% 70%, rgba(255,100,180,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 35% 35% at 55% 50%, rgba(100,160,255,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 12% 18%, rgba(255,200,240,0.95) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 35% 8%, rgba(255,180,230,0.88) 0%, transparent 100%),\n    radial-gradient(2px 2px at 68% 22%, rgba(220,200,255,0.92) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 85% 40%, rgba(255,220,200,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 22% 58%, rgba(255,200,240,0.88) 0%, transparent 100%),\n    radial-gradient(2px 2px at 50% 75%, rgba(220,200,255,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 78% 85%, rgba(255,180,220,0.90) 0%, transparent 100%),\n    radial-gradient(1px 1px at 5% 38%, rgba(255,200,240,0.65) 0%, transparent 100%),\n    radial-gradient(1px 1px at 28% 28%, rgba(220,200,255,0.60) 0%, transparent 100%),\n    radial-gradient(1px 1px at 62% 32%, rgba(255,220,200,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 92% 20%, rgba(220,200,255,0.58) 0%, transparent 100%);\n}`,\n\n  ANIMAL_GUARDIAN: `:root {\n  --bg: #0A1A0F; --accent: #7EC86A; --text-narration: #C8D8C0; --text-tagline: #A8C898;\n  --overlay-cover-bot: rgba(10,26,15,0.97); --overlay-cover-mid: rgba(10,26,15,0.55);\n  --overlay-scene-bot: rgba(10,26,15,0.88); --overlay-scene-mid: rgba(10,26,15,0.20);\n  --closing-glow: rgba(126,200,106,0.08);\n}\n.scene-text-page {\n  background-color: #0A1A0F;\n  background-image:\n    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(50,160,60,0.11) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 60% at 85% 80%, rgba(100,180,50,0.09) 0%, transparent 70%),\n    radial-gradient(ellipse 30% 35% at 60% 45%, rgba(200,150,50,0.07) 0%, transparent 70%),\n    radial-gradient(2.5px 2.5px at 10% 15%, rgba(180,255,120,0.90) 0%, transparent 100%),\n    radial-gradient(2px 2px at 40% 10%, rgba(200,255,150,0.82) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 72% 25%, rgba(160,240,100,0.85) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 50%, rgba(220,255,130,0.78) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 20% 65%, rgba(180,255,100,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 58% 78%, rgba(220,255,150,0.75) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 82% 88%, rgba(180,220,100,0.85) 0%, transparent 100%),\n    radial-gradient(1px 1px at 5% 45%, rgba(180,255,120,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 25% 35%, rgba(160,240,80,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 45% 55%, rgba(200,255,120,0.48) 0%, transparent 100%),\n    radial-gradient(1px 1px at 78% 62%, rgba(220,255,130,0.45) 0%, transparent 100%);\n}`,\n\n  HOME_HELPER: `:root {\n  --bg: #1A0E05; --accent: #F0A050; --text-narration: #E8D8C0; --text-tagline: #D0B890;\n  --overlay-cover-bot: rgba(26,14,5,0.97); --overlay-cover-mid: rgba(26,14,5,0.55);\n  --overlay-scene-bot: rgba(26,14,5,0.88); --overlay-scene-mid: rgba(26,14,5,0.20);\n  --closing-glow: rgba(240,160,80,0.09);\n}\n.scene-text-page {\n  background-color: #1A0E05;\n  background-image:\n    radial-gradient(ellipse 60% 45% at 20% 25%, rgba(240,140,50,0.13) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 55% at 80% 75%, rgba(200,100,30,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 30% 35% at 55% 50%, rgba(255,180,80,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 8% 12%, rgba(255,220,150,0.92) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 25% 8%, rgba(255,200,120,0.85) 0%, transparent 100%),\n    radial-gradient(2px 2px at 55% 18%, rgba(255,215,140,0.88) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 78% 35%, rgba(255,225,160,0.80) 0%, transparent 100%),\n    radial-gradient(2px 2px at 15% 60%, rgba(255,205,130,0.85) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 45% 72%, rgba(255,215,150,0.78) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 78%, rgba(255,225,140,0.82) 0%, transparent 100%),\n    radial-gradient(1px 1px at 32% 42%, rgba(255,200,120,0.58) 0%, transparent 100%),\n    radial-gradient(1px 1px at 62% 28%, rgba(255,215,140,0.52) 0%, transparent 100%),\n    radial-gradient(1px 1px at 72% 55%, rgba(255,205,130,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 12% 80%, rgba(255,220,150,0.55) 0%, transparent 100%);\n}`,\n};\n\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order       = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child       = order.child;\n\nconst scriptRow   = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst expandedContent = typeof scriptRow.expanded_content === 'string'\n    ? JSON.parse(scriptRow.expanded_content)\n    : scriptRow.expanded_content;\n\n// Images: build a map of image_type → file_url\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) {\n    images[row.json.image_type] = row.json.file_url;\n}\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\n\n// ─────────────────────────────────────────────────────────────\n// 2. Build variable map\n// ─────────────────────────────────────────────────────────────\n\n// Per-scene text: use expanded_content if available, fall back to narration\nfunction sceneText(sceneNumber) {\n    if (expandedContent && expandedContent.scenes) {\n        const expanded = expandedContent.scenes.find(s => s.scene_number === sceneNumber);\n        if (expanded && expanded.expanded_narrative) return expanded.expanded_narrative;\n    }\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.narration : '';\n}\n\nfunction sceneTitle(sceneNumber) {\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.scene_title : '';\n}\n\n// Hero trait → capitalised title for certificate\nconst heroTraitTitle = child.hero_trait\n    ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n    : 'Courage';\n\n// Certificate citation — hobby-aware\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — `\n    + `demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, `\n    + `courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} `\n    + `to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n    // Story\n    'story.title':          scriptContent.title || '',\n    'story.tagline':        scriptContent.tagline || '',\n    'closing_message':      scriptContent.closing_message || '',\n    'parent_message':       order.parent_message || '',\n\n    // Child\n    'child.name':           child.name,\n    'child.age':            String(child.age),\n    'child.hero_trait':     child.hero_trait || '',\n    'child.hobby':          child.hobby || '',\n\n    // Order\n    'order.order_id':       order.order_id,\n    'qr_code_url':          qrCodeUrl,\n\n\n    // Inject theme-specific styles\n    'theme_styles': THEME_STYLES[(order.theme || 'SPACE_HERO').toUpperCase()] || '',\n    // Images — scene images\n    'cover.image_url':      images['cover']    || '',\n    'scene_1.image_url':    images['scene_1']  || '',\n    'scene_2.image_url':    images['scene_2']  || '',\n    'scene_3.image_url':    images['scene_3']  || '',\n    'scene_4.image_url':    images['scene_4']  || '',\n    'scene_5.image_url':    images['scene_5']  || '',\n\n    // Images — coloring pages\n    'coloring.image_url':   images['coloring']   || '',\n    'coloring_1.image_url': images['coloring_1'] || '',\n    'coloring_2.image_url': images['coloring_2'] || '',\n    'coloring_3.image_url': images['coloring_3'] || '',\n    'coloring_4.image_url': images['coloring_4'] || '',\n    'coloring_5.image_url': images['coloring_5'] || '',\n\n    // Scene titles\n    'scene_1.title':        sceneTitle(1),\n    'scene_2.title':        sceneTitle(2),\n    'scene_3.title':        sceneTitle(3),\n    'scene_4.title':        sceneTitle(4),\n    'scene_5.title':        sceneTitle(5),\n\n    // Scene narration / expanded text — formatted as <p> chunks\n    'scene_1.narration':    formatNarration(sceneText(1)),\n    'scene_2.narration':    formatNarration(sceneText(2)),\n    'scene_3.narration':    formatNarration(sceneText(3)),\n    'scene_4.narration':    formatNarration(sceneText(4)),\n    'scene_5.narration':    formatNarration(sceneText(5)),\n\n    // Certificate\n    'cert.hero_trait_title': heroTraitTitle,\n    'cert.citation':         citation,\n    'cert.date':             awardDate,\n};\n\n// ─────────────────────────────────────────────────────────────\n// 3. Format narration into paragraph chunks (2–3 sentences each)\n// ─────────────────────────────────────────────────────────────\n\nfunction formatNarration(text) {\n    if (!text) return '';\n    // Split into sentences on . ! ? — keep the punctuation\n    const sentences = text.match(/[^.!?]+[.!?]+[\"']?/g) || [text];\n    const paragraphs = [];\n    for (let i = 0; i < sentences.length; i += 3) {\n        const chunk = sentences.slice(i, i + 3).join(' ').trim();\n        if (chunk) paragraphs.push('<p>' + chunk + '</p>');\n    }\n    return paragraphs.join('\\n');\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Inject variables into template HTML\n// ─────────────────────────────────────────────────────────────\n\nfunction injectVars(html, variables) {\n    let result = html;\n    for (const [key, value] of Object.entries(variables)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Build one output item per PDF type\n//    Each item feeds into the PDFShift loop\n// ─────────────────────────────────────────────────────────────\n\nconst PDF_TYPES = [\n    {\n        type: 'storybook',\n        template_node: 'Fetch Storybook Template',\n        pdfshift_options: { format: '7inx7in' },\n    },\n    {\n        type: 'coloring_book',\n        template_node: 'Fetch Coloring Book Template',\n        pdfshift_options: { format: 'Letter', landscape: false },\n    },\n    {\n        type: 'certificate',\n        template_node: 'Fetch Certificate Template',\n        pdfshift_options: { format: 'Letter', landscape: true },\n    },\n];\n\nconst results = [];\n\nfor (const pdfType of PDF_TYPES) {\n    const rawHtml = $(`${pdfType.template_node}`).first().json.data;\n    const populatedHtml = injectVars(rawHtml, vars);\n\n    const pdfshiftBody = Object.assign({ source: populatedHtml }, pdfType.pdfshift_options);\n\n    results.push({\n        json: {\n            order_id:      order.order_id,\n            pdf_type:      pdfType.type,\n            pdfshift_body: pdfshiftBody,\n            file_path:     `pdfs/${order.order_id}/${pdfType.type}.pdf`,\n        }\n    });\n}\n\nreturn results;\n"
+        "jsCode": "// n8n Code node — \"Build PDF HTML\"\n// Placed AFTER \"Fetch PDF Template\" HTTP Request node\n// Injects order/script/image data into an HTML template string\n// Returns one item per PDF type — feeds into the PDFShift loop\n\n// ─────────────────────────────────────────────────────────────\n// Theme-specific PDF styles — injected into {{theme_styles}} in storybook.html\n// Each value is a CSS string that overrides :root variables + .scene-text-page background\n// Add new themes here when adding new theme prompt folders\n// ─────────────────────────────────────────────────────────────\nconst THEME_STYLES = {\n  SPACE_HERO: ``, // Uses base template defaults (space starfield already defined in template)\n\n  FANTASY_HERO: `:root {\n  --bg: #0D1F16; --accent: #9B7FD4; --text-narration: #C8D9C0; --text-tagline: #A8C8B0;\n  --overlay-cover-bot: rgba(13,31,22,0.97); --overlay-cover-mid: rgba(13,31,22,0.55);\n  --overlay-scene-bot: rgba(13,31,22,0.88); --overlay-scene-mid: rgba(13,31,22,0.20);\n  --closing-glow: rgba(155,127,212,0.08);\n}\n.scene-text-page {\n  background-color: #0D1F16;\n  background-image:\n    radial-gradient(ellipse 60% 45% at 20% 25%, rgba(63,140,80,0.12) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 60% at 80% 75%, rgba(100,50,180,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 35% 30% at 60% 40%, rgba(50,180,100,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 15% 20%, rgba(180,255,150,0.85) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 45% 12%, rgba(200,255,180,0.75) 0%, transparent 100%),\n    radial-gradient(2px 2px at 75% 28%, rgba(160,255,200,0.80) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 55%, rgba(155,127,212,0.70) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 22% 68%, rgba(200,255,160,0.75) 0%, transparent 100%),\n    radial-gradient(2px 2px at 58% 82%, rgba(170,255,190,0.80) 0%, transparent 100%),\n    radial-gradient(1px 1px at 8% 55%, rgba(180,255,150,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 30% 42%, rgba(155,127,212,0.48) 0%, transparent 100%),\n    radial-gradient(1px 1px at 52% 35%, rgba(200,255,180,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 70% 48%, rgba(160,255,200,0.45) 0%, transparent 100%),\n    radial-gradient(1px 1px at 90% 72%, rgba(180,255,150,0.52) 0%, transparent 100%);\n}`,\n\n  ENCHANTED_PRINCESS: `:root {\n  --bg: #1A0E2E; --accent: #E8A4C8; --text-narration: #E0D0F0; --text-tagline: #C8A8E0;\n  --overlay-cover-bot: rgba(26,14,46,0.97); --overlay-cover-mid: rgba(26,14,46,0.55);\n  --overlay-scene-bot: rgba(26,14,46,0.88); --overlay-scene-mid: rgba(26,14,46,0.20);\n  --closing-glow: rgba(232,164,200,0.10);\n}\n.scene-text-page {\n  background-color: #1A0E2E;\n  background-image:\n    radial-gradient(ellipse 55% 40% at 20% 25%, rgba(180,80,220,0.13) 0%, transparent 70%),\n    radial-gradient(ellipse 40% 55% at 80% 70%, rgba(255,100,180,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 35% 35% at 55% 50%, rgba(100,160,255,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 12% 18%, rgba(255,200,240,0.95) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 35% 8%, rgba(255,180,230,0.88) 0%, transparent 100%),\n    radial-gradient(2px 2px at 68% 22%, rgba(220,200,255,0.92) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 85% 40%, rgba(255,220,200,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 22% 58%, rgba(255,200,240,0.88) 0%, transparent 100%),\n    radial-gradient(2px 2px at 50% 75%, rgba(220,200,255,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 78% 85%, rgba(255,180,220,0.90) 0%, transparent 100%),\n    radial-gradient(1px 1px at 5% 38%, rgba(255,200,240,0.65) 0%, transparent 100%),\n    radial-gradient(1px 1px at 28% 28%, rgba(220,200,255,0.60) 0%, transparent 100%),\n    radial-gradient(1px 1px at 62% 32%, rgba(255,220,200,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 92% 20%, rgba(220,200,255,0.58) 0%, transparent 100%);\n}`,\n\n  ANIMAL_GUARDIAN: `:root {\n  --bg: #0A1A0F; --accent: #7EC86A; --text-narration: #C8D8C0; --text-tagline: #A8C898;\n  --overlay-cover-bot: rgba(10,26,15,0.97); --overlay-cover-mid: rgba(10,26,15,0.55);\n  --overlay-scene-bot: rgba(10,26,15,0.88); --overlay-scene-mid: rgba(10,26,15,0.20);\n  --closing-glow: rgba(126,200,106,0.08);\n}\n.scene-text-page {\n  background-color: #0A1A0F;\n  background-image:\n    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(50,160,60,0.11) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 60% at 85% 80%, rgba(100,180,50,0.09) 0%, transparent 70%),\n    radial-gradient(ellipse 30% 35% at 60% 45%, rgba(200,150,50,0.07) 0%, transparent 70%),\n    radial-gradient(2.5px 2.5px at 10% 15%, rgba(180,255,120,0.90) 0%, transparent 100%),\n    radial-gradient(2px 2px at 40% 10%, rgba(200,255,150,0.82) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 72% 25%, rgba(160,240,100,0.85) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 50%, rgba(220,255,130,0.78) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 20% 65%, rgba(180,255,100,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 58% 78%, rgba(220,255,150,0.75) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 82% 88%, rgba(180,220,100,0.85) 0%, transparent 100%),\n    radial-gradient(1px 1px at 5% 45%, rgba(180,255,120,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 25% 35%, rgba(160,240,80,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 45% 55%, rgba(200,255,120,0.48) 0%, transparent 100%),\n    radial-gradient(1px 1px at 78% 62%, rgba(220,255,130,0.45) 0%, transparent 100%);\n}`,\n\n  HOME_HELPER: `:root {\n  --bg: #1A0E05; --accent: #F0A050; --text-narration: #E8D8C0; --text-tagline: #D0B890;\n  --overlay-cover-bot: rgba(26,14,5,0.97); --overlay-cover-mid: rgba(26,14,5,0.55);\n  --overlay-scene-bot: rgba(26,14,5,0.88); --overlay-scene-mid: rgba(26,14,5,0.20);\n  --closing-glow: rgba(240,160,80,0.09);\n}\n.scene-text-page {\n  background-color: #1A0E05;\n  background-image:\n    radial-gradient(ellipse 60% 45% at 20% 25%, rgba(240,140,50,0.13) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 55% at 80% 75%, rgba(200,100,30,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 30% 35% at 55% 50%, rgba(255,180,80,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 8% 12%, rgba(255,220,150,0.92) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 25% 8%, rgba(255,200,120,0.85) 0%, transparent 100%),\n    radial-gradient(2px 2px at 55% 18%, rgba(255,215,140,0.88) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 78% 35%, rgba(255,225,160,0.80) 0%, transparent 100%),\n    radial-gradient(2px 2px at 15% 60%, rgba(255,205,130,0.85) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 45% 72%, rgba(255,215,150,0.78) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 78%, rgba(255,225,140,0.82) 0%, transparent 100%),\n    radial-gradient(1px 1px at 32% 42%, rgba(255,200,120,0.58) 0%, transparent 100%),\n    radial-gradient(1px 1px at 62% 28%, rgba(255,215,140,0.52) 0%, transparent 100%),\n    radial-gradient(1px 1px at 72% 55%, rgba(255,205,130,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 12% 80%, rgba(255,220,150,0.55) 0%, transparent 100%);\n}`,\n};\n\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order       = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child       = order.child;\n\nconst scriptRow   = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst expandedContent = typeof scriptRow.expanded_content === 'string'\n    ? JSON.parse(scriptRow.expanded_content)\n    : scriptRow.expanded_content;\n\n// Images: build a map of image_type → file_url\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) {\n    images[row.json.image_type] = row.json.file_url;\n}\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\n\n// ─────────────────────────────────────────────────────────────\n// 2. Build variable map\n// ─────────────────────────────────────────────────────────────\n\n// Per-scene text: use expanded_content if available, fall back to narration\nfunction sceneText(sceneNumber) {\n    if (expandedContent && expandedContent.scenes) {\n        const expanded = expandedContent.scenes.find(s => s.scene_number === sceneNumber);\n        if (expanded && expanded.expanded_narrative) return expanded.expanded_narrative;\n    }\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.narration : '';\n}\n\nfunction sceneTitle(sceneNumber) {\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.scene_title : '';\n}\n\n// Hero trait → capitalised title for certificate\nconst heroTraitTitle = child.hero_trait\n    ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n    : 'Courage';\n\n// Certificate citation — hobby-aware\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — `\n    + `demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, `\n    + `courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} `\n    + `to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n    // Story\n    'story.title':          scriptContent.title || '',\n    'story.tagline':        scriptContent.tagline || '',\n    'closing_message':      scriptContent.closing_message || '',\n    'parent_message':       order.parent_message || '',\n\n    // Child\n    'child.name':           child.name,\n    'child.age':            String(child.age),\n    'child.hero_trait':     child.hero_trait || '',\n    'child.hobby':          child.hobby || '',\n\n    // Order\n    'order.order_id':       order.order_id,\n    'qr_code_url':          qrCodeUrl,\n\n    // Images — scene images\n    'cover.image_url':      images['cover']    || '',\n    'scene_1.image_url':    images['scene_1']  || '',\n    'scene_2.image_url':    images['scene_2']  || '',\n    'scene_3.image_url':    images['scene_3']  || '',\n    'scene_4.image_url':    images['scene_4']  || '',\n    'scene_5.image_url':    images['scene_5']  || '',\n\n    // Images — coloring pages\n    'coloring.image_url':   images['coloring']   || '',\n    'coloring_1.image_url': images['coloring_1'] || '',\n    'coloring_2.image_url': images['coloring_2'] || '',\n    'coloring_3.image_url': images['coloring_3'] || '',\n    'coloring_4.image_url': images['coloring_4'] || '',\n    'coloring_5.image_url': images['coloring_5'] || '',\n\n    // Scene titles\n    'scene_1.title':        sceneTitle(1),\n    'scene_2.title':        sceneTitle(2),\n    'scene_3.title':        sceneTitle(3),\n    'scene_4.title':        sceneTitle(4),\n    'scene_5.title':        sceneTitle(5),\n\n    // Scene text pages — each scene split across two fixed-height pages\n    'scene_1.text_pages':   buildTextPages(1),\n    'scene_2.text_pages':   buildTextPages(2),\n    'scene_3.text_pages':   buildTextPages(3),\n    'scene_4.text_pages':   buildTextPages(4),\n    'scene_5.text_pages':   buildTextPages(5),\n\n    // Certificate\n    'cert.hero_trait_title': heroTraitTitle,\n    'cert.citation':         citation,\n    'cert.date':             awardDate,\n};\n\n// ─────────────────────────────────────────────────────────────\n// 3. Build scene text pages — splits narration across two fixed-height pages\n//    Even N paragraphs: N/2 each. Odd N: ceil(N/2) on page 1, floor(N/2) on page 2.\n// ─────────────────────────────────────────────────────────────\n\nfunction buildTextPages(sceneNumber) {\n    const title = sceneTitle(sceneNumber);\n    const text  = sceneText(sceneNumber);\n    if (!text) return '';\n\n    // Group sentences into paragraphs of 3\n    const sentences  = text.match(/[^.!?]+[.!?]+[\"']?/g) || [text];\n    const paragraphs = [];\n    for (let i = 0; i < sentences.length; i += 3) {\n        const chunk = sentences.slice(i, i + 3).join(' ').trim();\n        if (chunk) paragraphs.push('<p>' + chunk + '</p>');\n    }\n\n    const N      = paragraphs.length;\n    const split  = Math.ceil(N / 2);\n    const p1Html = paragraphs.slice(0, split).join('\\n');\n    const p2Html = paragraphs.slice(split).join('\\n');\n\n    const page1 =\n        '\\n  <div class=\"page fixed-height scene-text-page\">'\n        + '\\n    <h2 class=\"scene-title\">' + title + '</h2>'\n        + '\\n    <div class=\"gold-rule\"></div>'\n        + '\\n    <div class=\"narration\">' + p1Html + '</div>'\n        + '\\n    <div class=\"page-branding\">EverMagic</div>'\n        + '\\n  </div>';\n\n    if (!p2Html) return page1;\n\n    const page2 =\n        '\\n  <div class=\"page fixed-height scene-text-page\">'\n        + '\\n    <div class=\"narration\">' + p2Html + '</div>'\n        + '\\n    <div class=\"page-branding\">EverMagic</div>'\n        + '\\n  </div>';\n\n    return page1 + '\\n' + page2;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Inject variables into template HTML\n// ─────────────────────────────────────────────────────────────\n\nfunction injectVars(html, variables) {\n    let result = html;\n    for (const [key, value] of Object.entries(variables)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Build one output item per PDF type\n//    Each item feeds into the PDFShift loop\n// ─────────────────────────────────────────────────────────────\n\nconst PDF_TYPES = [\n    {\n        type: 'storybook',\n        template_node: 'Fetch Storybook Template',\n        pdfshift_options: { format: '7inx7in' },\n    },\n    {\n        type: 'coloring_book',\n        template_node: 'Fetch Coloring Book Template',\n        pdfshift_options: { format: 'Letter', landscape: false },\n    },\n    {\n        type: 'certificate',\n        template_node: 'Fetch Certificate Template',\n        pdfshift_options: { format: 'Letter', landscape: true },\n    },\n];\n\nconst results = [];\n\nfor (const pdfType of PDF_TYPES) {\n    const rawHtml = $(`${pdfType.template_node}`).first().json.data;\n    const populatedHtml = injectVars(rawHtml, vars);\n\n    const pdfshiftBody = Object.assign({ source: populatedHtml }, pdfType.pdfshift_options);\n\n    results.push({\n        json: {\n            order_id:      order.order_id,\n            pdf_type:      pdfType.type,\n            pdfshift_body: pdfshiftBody,\n            file_path:     `pdfs/${order.order_id}/${pdfType.type}.pdf`,\n        }\n    });\n}\n\nreturn results;\n"
       },
       "id": "7ba48a15-00dc-49a1-872b-65589514e545",
       "name": "Build PDF HTML",
@@ -822,8 +822,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "2af224e3-d3e3-4cc6-90f2-1f26d6ac68a5",
-  "activeVersionId": null,
+  "versionId": "121ec1df-d3af-4e20-91b9-84d21cde8d0a",
+  "activeVersionId": "121ec1df-d3af-4e20-91b9-84d21cde8d0a",
   "triggerCount": 1,
   "shared": [
     {
@@ -834,6 +834,822 @@
       "projectId": "Ez9yaDRraIYPeCTc"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-03-25T21:55:20.000Z",
+    "createdAt": "2026-03-25T21:50:31.007Z",
+    "versionId": "121ec1df-d3af-4e20-91b9-84d21cde8d0a",
+    "workflowId": "Zwhkv86d2kqVMVhg",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "orders/pdf/generate",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "id": "856a2dea-7d52-45e2-9c67-90fc158563df",
+        "name": "Generate PDFs",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -1232,
+          1328
+        ],
+        "webhookId": "a1b2c3d4-0001-4000-8000-000000000099",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "Pc4RF1BUmq9cRkHn",
+            "name": "Header Auth account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "envs"
+        },
+        "id": "2478f4f3-cc09-43c6-98f2-2eec39d03941",
+        "name": "Load Envs",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -1008,
+          1328
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_storage_url: raw.supabase_storage_url || '',\n  supabase_service_key: raw.supabase_service_key || ''\n};\n\nreturn [{ json: { env } }];\n"
+        },
+        "id": "f632853e-8c85-4fba-a7a9-a8068b75d31f",
+        "name": "Envs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -768,
+          1328
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "order_payloads",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.order_id }}"
+              }
+            ]
+          }
+        },
+        "id": "3efce35c-bc9b-4178-a7ef-b704a5d4705e",
+        "name": "Fetch Order Payload",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -224,
+          1328
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "scripts",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "status",
+                "condition": "eq",
+                "keyValue": "scenario_expanded"
+              }
+            ]
+          }
+        },
+        "id": "887eb575-fa87-43b2-958b-a6316d165f6e",
+        "name": "Fetch Script",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -496,
+          1328
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "images",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              },
+              {
+                "keyName": "status",
+                "condition": "eq",
+                "keyValue": "completed"
+              }
+            ]
+          }
+        },
+        "id": "386b443f-1fb6-41b1-af98-68cb234dc39b",
+        "name": "Fetch Images",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          256,
+          1328
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "pdf_generating"
+              }
+            ]
+          }
+        },
+        "id": "bd60a093-9c10-402f-8943-5b47b4863408",
+        "name": "Update Status: pdf_generating",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          496,
+          1328
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/storybook.html",
+          "options": {}
+        },
+        "id": "2293f330-348f-406a-91a7-572c1b8e85ff",
+        "name": "Fetch Storybook Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          736,
+          1328
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/coloring-book.html",
+          "options": {}
+        },
+        "id": "830c0844-3f55-45fd-858f-f4188991e7be",
+        "name": "Fetch Coloring Book Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          976,
+          1328
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/templates/pdf/certificate.html",
+          "options": {}
+        },
+        "id": "b68be5a9-b43c-477c-95ac-945a9fe05446",
+        "name": "Fetch Certificate Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          1216,
+          1328
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build PDF HTML\"\n// Placed AFTER \"Fetch PDF Template\" HTTP Request node\n// Injects order/script/image data into an HTML template string\n// Returns one item per PDF type — feeds into the PDFShift loop\n\n// ─────────────────────────────────────────────────────────────\n// Theme-specific PDF styles — injected into {{theme_styles}} in storybook.html\n// Each value is a CSS string that overrides :root variables + .scene-text-page background\n// Add new themes here when adding new theme prompt folders\n// ─────────────────────────────────────────────────────────────\nconst THEME_STYLES = {\n  SPACE_HERO: ``, // Uses base template defaults (space starfield already defined in template)\n\n  FANTASY_HERO: `:root {\n  --bg: #0D1F16; --accent: #9B7FD4; --text-narration: #C8D9C0; --text-tagline: #A8C8B0;\n  --overlay-cover-bot: rgba(13,31,22,0.97); --overlay-cover-mid: rgba(13,31,22,0.55);\n  --overlay-scene-bot: rgba(13,31,22,0.88); --overlay-scene-mid: rgba(13,31,22,0.20);\n  --closing-glow: rgba(155,127,212,0.08);\n}\n.scene-text-page {\n  background-color: #0D1F16;\n  background-image:\n    radial-gradient(ellipse 60% 45% at 20% 25%, rgba(63,140,80,0.12) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 60% at 80% 75%, rgba(100,50,180,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 35% 30% at 60% 40%, rgba(50,180,100,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 15% 20%, rgba(180,255,150,0.85) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 45% 12%, rgba(200,255,180,0.75) 0%, transparent 100%),\n    radial-gradient(2px 2px at 75% 28%, rgba(160,255,200,0.80) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 55%, rgba(155,127,212,0.70) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 22% 68%, rgba(200,255,160,0.75) 0%, transparent 100%),\n    radial-gradient(2px 2px at 58% 82%, rgba(170,255,190,0.80) 0%, transparent 100%),\n    radial-gradient(1px 1px at 8% 55%, rgba(180,255,150,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 30% 42%, rgba(155,127,212,0.48) 0%, transparent 100%),\n    radial-gradient(1px 1px at 52% 35%, rgba(200,255,180,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 70% 48%, rgba(160,255,200,0.45) 0%, transparent 100%),\n    radial-gradient(1px 1px at 90% 72%, rgba(180,255,150,0.52) 0%, transparent 100%);\n}`,\n\n  ENCHANTED_PRINCESS: `:root {\n  --bg: #1A0E2E; --accent: #E8A4C8; --text-narration: #E0D0F0; --text-tagline: #C8A8E0;\n  --overlay-cover-bot: rgba(26,14,46,0.97); --overlay-cover-mid: rgba(26,14,46,0.55);\n  --overlay-scene-bot: rgba(26,14,46,0.88); --overlay-scene-mid: rgba(26,14,46,0.20);\n  --closing-glow: rgba(232,164,200,0.10);\n}\n.scene-text-page {\n  background-color: #1A0E2E;\n  background-image:\n    radial-gradient(ellipse 55% 40% at 20% 25%, rgba(180,80,220,0.13) 0%, transparent 70%),\n    radial-gradient(ellipse 40% 55% at 80% 70%, rgba(255,100,180,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 35% 35% at 55% 50%, rgba(100,160,255,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 12% 18%, rgba(255,200,240,0.95) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 35% 8%, rgba(255,180,230,0.88) 0%, transparent 100%),\n    radial-gradient(2px 2px at 68% 22%, rgba(220,200,255,0.92) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 85% 40%, rgba(255,220,200,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 22% 58%, rgba(255,200,240,0.88) 0%, transparent 100%),\n    radial-gradient(2px 2px at 50% 75%, rgba(220,200,255,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 78% 85%, rgba(255,180,220,0.90) 0%, transparent 100%),\n    radial-gradient(1px 1px at 5% 38%, rgba(255,200,240,0.65) 0%, transparent 100%),\n    radial-gradient(1px 1px at 28% 28%, rgba(220,200,255,0.60) 0%, transparent 100%),\n    radial-gradient(1px 1px at 62% 32%, rgba(255,220,200,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 92% 20%, rgba(220,200,255,0.58) 0%, transparent 100%);\n}`,\n\n  ANIMAL_GUARDIAN: `:root {\n  --bg: #0A1A0F; --accent: #7EC86A; --text-narration: #C8D8C0; --text-tagline: #A8C898;\n  --overlay-cover-bot: rgba(10,26,15,0.97); --overlay-cover-mid: rgba(10,26,15,0.55);\n  --overlay-scene-bot: rgba(10,26,15,0.88); --overlay-scene-mid: rgba(10,26,15,0.20);\n  --closing-glow: rgba(126,200,106,0.08);\n}\n.scene-text-page {\n  background-color: #0A1A0F;\n  background-image:\n    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(50,160,60,0.11) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 60% at 85% 80%, rgba(100,180,50,0.09) 0%, transparent 70%),\n    radial-gradient(ellipse 30% 35% at 60% 45%, rgba(200,150,50,0.07) 0%, transparent 70%),\n    radial-gradient(2.5px 2.5px at 10% 15%, rgba(180,255,120,0.90) 0%, transparent 100%),\n    radial-gradient(2px 2px at 40% 10%, rgba(200,255,150,0.82) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 72% 25%, rgba(160,240,100,0.85) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 50%, rgba(220,255,130,0.78) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 20% 65%, rgba(180,255,100,0.82) 0%, transparent 100%),\n    radial-gradient(2px 2px at 58% 78%, rgba(220,255,150,0.75) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 82% 88%, rgba(180,220,100,0.85) 0%, transparent 100%),\n    radial-gradient(1px 1px at 5% 45%, rgba(180,255,120,0.55) 0%, transparent 100%),\n    radial-gradient(1px 1px at 25% 35%, rgba(160,240,80,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 45% 55%, rgba(200,255,120,0.48) 0%, transparent 100%),\n    radial-gradient(1px 1px at 78% 62%, rgba(220,255,130,0.45) 0%, transparent 100%);\n}`,\n\n  HOME_HELPER: `:root {\n  --bg: #1A0E05; --accent: #F0A050; --text-narration: #E8D8C0; --text-tagline: #D0B890;\n  --overlay-cover-bot: rgba(26,14,5,0.97); --overlay-cover-mid: rgba(26,14,5,0.55);\n  --overlay-scene-bot: rgba(26,14,5,0.88); --overlay-scene-mid: rgba(26,14,5,0.20);\n  --closing-glow: rgba(240,160,80,0.09);\n}\n.scene-text-page {\n  background-color: #1A0E05;\n  background-image:\n    radial-gradient(ellipse 60% 45% at 20% 25%, rgba(240,140,50,0.13) 0%, transparent 70%),\n    radial-gradient(ellipse 45% 55% at 80% 75%, rgba(200,100,30,0.10) 0%, transparent 70%),\n    radial-gradient(ellipse 30% 35% at 55% 50%, rgba(255,180,80,0.08) 0%, transparent 70%),\n    radial-gradient(2px 2px at 8% 12%, rgba(255,220,150,0.92) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 25% 8%, rgba(255,200,120,0.85) 0%, transparent 100%),\n    radial-gradient(2px 2px at 55% 18%, rgba(255,215,140,0.88) 0%, transparent 100%),\n    radial-gradient(2.5px 2.5px at 78% 35%, rgba(255,225,160,0.80) 0%, transparent 100%),\n    radial-gradient(2px 2px at 15% 60%, rgba(255,205,130,0.85) 0%, transparent 100%),\n    radial-gradient(1.5px 1.5px at 45% 72%, rgba(255,215,150,0.78) 0%, transparent 100%),\n    radial-gradient(2px 2px at 88% 78%, rgba(255,225,140,0.82) 0%, transparent 100%),\n    radial-gradient(1px 1px at 32% 42%, rgba(255,200,120,0.58) 0%, transparent 100%),\n    radial-gradient(1px 1px at 62% 28%, rgba(255,215,140,0.52) 0%, transparent 100%),\n    radial-gradient(1px 1px at 72% 55%, rgba(255,205,130,0.50) 0%, transparent 100%),\n    radial-gradient(1px 1px at 12% 80%, rgba(255,220,150,0.55) 0%, transparent 100%);\n}`,\n};\n\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order       = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child       = order.child;\n\nconst scriptRow   = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst expandedContent = typeof scriptRow.expanded_content === 'string'\n    ? JSON.parse(scriptRow.expanded_content)\n    : scriptRow.expanded_content;\n\n// Images: build a map of image_type → file_url\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) {\n    images[row.json.image_type] = row.json.file_url;\n}\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\n\n// ─────────────────────────────────────────────────────────────\n// 2. Build variable map\n// ─────────────────────────────────────────────────────────────\n\n// Per-scene text: use expanded_content if available, fall back to narration\nfunction sceneText(sceneNumber) {\n    if (expandedContent && expandedContent.scenes) {\n        const expanded = expandedContent.scenes.find(s => s.scene_number === sceneNumber);\n        if (expanded && expanded.expanded_narrative) return expanded.expanded_narrative;\n    }\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.narration : '';\n}\n\nfunction sceneTitle(sceneNumber) {\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.scene_title : '';\n}\n\n// Hero trait → capitalised title for certificate\nconst heroTraitTitle = child.hero_trait\n    ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n    : 'Courage';\n\n// Certificate citation — hobby-aware\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — `\n    + `demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, `\n    + `courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} `\n    + `to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n    // Story\n    'story.title':          scriptContent.title || '',\n    'story.tagline':        scriptContent.tagline || '',\n    'closing_message':      scriptContent.closing_message || '',\n    'parent_message':       order.parent_message || '',\n\n    // Child\n    'child.name':           child.name,\n    'child.age':            String(child.age),\n    'child.hero_trait':     child.hero_trait || '',\n    'child.hobby':          child.hobby || '',\n\n    // Order\n    'order.order_id':       order.order_id,\n    'qr_code_url':          qrCodeUrl,\n\n    // Images — scene images\n    'cover.image_url':      images['cover']    || '',\n    'scene_1.image_url':    images['scene_1']  || '',\n    'scene_2.image_url':    images['scene_2']  || '',\n    'scene_3.image_url':    images['scene_3']  || '',\n    'scene_4.image_url':    images['scene_4']  || '',\n    'scene_5.image_url':    images['scene_5']  || '',\n\n    // Images — coloring pages\n    'coloring.image_url':   images['coloring']   || '',\n    'coloring_1.image_url': images['coloring_1'] || '',\n    'coloring_2.image_url': images['coloring_2'] || '',\n    'coloring_3.image_url': images['coloring_3'] || '',\n    'coloring_4.image_url': images['coloring_4'] || '',\n    'coloring_5.image_url': images['coloring_5'] || '',\n\n    // Scene titles\n    'scene_1.title':        sceneTitle(1),\n    'scene_2.title':        sceneTitle(2),\n    'scene_3.title':        sceneTitle(3),\n    'scene_4.title':        sceneTitle(4),\n    'scene_5.title':        sceneTitle(5),\n\n    // Scene text pages — each scene split across two fixed-height pages\n    'scene_1.text_pages':   buildTextPages(1),\n    'scene_2.text_pages':   buildTextPages(2),\n    'scene_3.text_pages':   buildTextPages(3),\n    'scene_4.text_pages':   buildTextPages(4),\n    'scene_5.text_pages':   buildTextPages(5),\n\n    // Certificate\n    'cert.hero_trait_title': heroTraitTitle,\n    'cert.citation':         citation,\n    'cert.date':             awardDate,\n};\n\n// ─────────────────────────────────────────────────────────────\n// 3. Build scene text pages — splits narration across two fixed-height pages\n//    Even N paragraphs: N/2 each. Odd N: ceil(N/2) on page 1, floor(N/2) on page 2.\n// ─────────────────────────────────────────────────────────────\n\nfunction buildTextPages(sceneNumber) {\n    const title = sceneTitle(sceneNumber);\n    const text  = sceneText(sceneNumber);\n    if (!text) return '';\n\n    // Group sentences into paragraphs of 3\n    const sentences  = text.match(/[^.!?]+[.!?]+[\"']?/g) || [text];\n    const paragraphs = [];\n    for (let i = 0; i < sentences.length; i += 3) {\n        const chunk = sentences.slice(i, i + 3).join(' ').trim();\n        if (chunk) paragraphs.push('<p>' + chunk + '</p>');\n    }\n\n    const N      = paragraphs.length;\n    const split  = Math.ceil(N / 2);\n    const p1Html = paragraphs.slice(0, split).join('\\n');\n    const p2Html = paragraphs.slice(split).join('\\n');\n\n    const page1 =\n        '\\n  <div class=\"page fixed-height scene-text-page\">'\n        + '\\n    <h2 class=\"scene-title\">' + title + '</h2>'\n        + '\\n    <div class=\"gold-rule\"></div>'\n        + '\\n    <div class=\"narration\">' + p1Html + '</div>'\n        + '\\n    <div class=\"page-branding\">EverMagic</div>'\n        + '\\n  </div>';\n\n    if (!p2Html) return page1;\n\n    const page2 =\n        '\\n  <div class=\"page fixed-height scene-text-page\">'\n        + '\\n    <div class=\"narration\">' + p2Html + '</div>'\n        + '\\n    <div class=\"page-branding\">EverMagic</div>'\n        + '\\n  </div>';\n\n    return page1 + '\\n' + page2;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Inject variables into template HTML\n// ─────────────────────────────────────────────────────────────\n\nfunction injectVars(html, variables) {\n    let result = html;\n    for (const [key, value] of Object.entries(variables)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Build one output item per PDF type\n//    Each item feeds into the PDFShift loop\n// ─────────────────────────────────────────────────────────────\n\nconst PDF_TYPES = [\n    {\n        type: 'storybook',\n        template_node: 'Fetch Storybook Template',\n        pdfshift_options: { format: '7inx7in' },\n    },\n    {\n        type: 'coloring_book',\n        template_node: 'Fetch Coloring Book Template',\n        pdfshift_options: { format: 'Letter', landscape: false },\n    },\n    {\n        type: 'certificate',\n        template_node: 'Fetch Certificate Template',\n        pdfshift_options: { format: 'Letter', landscape: true },\n    },\n];\n\nconst results = [];\n\nfor (const pdfType of PDF_TYPES) {\n    const rawHtml = $(`${pdfType.template_node}`).first().json.data;\n    const populatedHtml = injectVars(rawHtml, vars);\n\n    const pdfshiftBody = Object.assign({ source: populatedHtml }, pdfType.pdfshift_options);\n\n    results.push({\n        json: {\n            order_id:      order.order_id,\n            pdf_type:      pdfType.type,\n            pdfshift_body: pdfshiftBody,\n            file_path:     `pdfs/${order.order_id}/${pdfType.type}.pdf`,\n        }\n    });\n}\n\nreturn results;\n"
+        },
+        "id": "7ba48a15-00dc-49a1-872b-65589514e545",
+        "name": "Build PDF HTML",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1456,
+          1328
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "0bac4b19-6bb6-4af5-a972-6885eb38228d",
+        "name": "Loop Over PDFs",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1696,
+          1328
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pdfshift.io/v3/convert/pdf",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "X-API-Key",
+                "value": "={{ $('Envs').first().json.env.pdfshift_api_key }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "raw",
+          "rawContentType": "application/json",
+          "body": "={{ JSON.stringify($json.pdfshift_body) }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "id": "20799745-79ab-4a37-9685-50bc13551ae7",
+        "name": "Call PDFShift",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          2192,
+          1344
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/pdfs/{{ $('Loop Over PDFs').item.json.file_path }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "supabaseApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "x-upsert",
+                "value": "true"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "binaryData",
+          "inputDataFieldName": "data",
+          "options": {}
+        },
+        "id": "28247ebb-2318-4997-952d-8a234b44b5f6",
+        "name": "Upload PDF to Storage",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          2432,
+          1344
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "tableId": "pdfs",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $('Call PDFShift').item.json.order_id }}"
+              },
+              {
+                "fieldId": "pdf_type",
+                "fieldValue": "={{ $('Call PDFShift').item.json.pdf_type }}"
+              },
+              {
+                "fieldId": "file_path",
+                "fieldValue": "={{ $('Call PDFShift').item.json.file_path }}"
+              },
+              {
+                "fieldId": "file_url",
+                "fieldValue": "=https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/public/{{ $json.Key }}"
+              },
+              {
+                "fieldId": "status",
+                "fieldValue": "comleted"
+              }
+            ]
+          }
+        },
+        "id": "bb2243fb-0350-4ae0-b72b-fbf2de106431",
+        "name": "Save PDF Record",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          2672,
+          1344
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "pdf_generated"
+              }
+            ]
+          }
+        },
+        "id": "1496c33f-b840-4d95-8328-95b19e914ee2",
+        "name": "Update Order Status: pdf_generated",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          2464,
+          1136
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "scripts",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "pdf_generated"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1904,
+          1328
+        ],
+        "id": "5877d877-f5f9-4f27-b89e-ddb90c050e01",
+        "name": "Update Script Status",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/customer-delivery.html",
+          "options": {}
+        },
+        "id": "416eb9cd-527f-4963-bb4c-12dd327911e5",
+        "name": "Fetch Delivery Email Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          2864,
+          1136
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build Delivery\"\n// Placed AFTER the PDFShift loop (all 3 PDFs assembled and stored in Supabase)\n//\n// Inputs expected (from prior nodes):\n//   - 'Fetch Order Payload'  → order JSON\n//   - 'Fetch Script'         → script row (for story title)\n//   - 'Fetch PDFs'           → rows from pdfs table (or pass pdf URLs directly)\n//   - 'Fetch Delivery Email Template' → raw HTML string (from GitHub fetch)\n//   - 'Envs'                 → env config\n//\n// Outputs (one item):\n//   {\n//     order_id, child_name, child_email,\n//     customer_email_html,  ← send to customer\n//     customer_email_subject,\n//     admin_email_html,     ← send to admin\n//     admin_email_subject,\n//   }\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\n\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst env = $('Envs').first().json.env;\n\n// Supabase public storage base URL — store this in envs table as 'supabase_storage_url'\n// e.g. https://YOURPROJECT.supabase.co/storage/v1/object/public\nconst storageBase = env.supabase_storage_url || '';\nconst bucket = 'pdfs';\n\n// PDF public URLs — constructed from known storage paths\nconst pdfBase = `${storageBase}/${bucket}/pdfs/${order.order_id}`;\nconst storybookUrl    = `${pdfBase}/storybook.pdf`;\nconst coloringBookUrl = `${pdfBase}/coloring_book.pdf`;\nconst certificateUrl  = `${pdfBase}/certificate.pdf`;\nconsole.log('Certificate: ' + certificateUrl);\n\n// Story title\nconst storyTitle = scriptContent.title || `${child.name}'s Space Adventure`;\n\n// Thank-you message shown on page and in email\nconst thankYouMessage = `Your story is here — all three files are ready to save and treasure. `\n    + `We hope ${child.name} loves every moment of the adventure! 🚀`;\n\n// ─────────────────────────────────────────────────────────────\n// 2. Populate templates\n// ─────────────────────────────────────────────────────────────\n\nconst emailVars = {\n    'child_name':          child.name,\n    'story_title':         storyTitle,\n    'thank_you_message':   thankYouMessage,\n    'storybook_url':       storybookUrl,\n    'coloring_book_url':   coloringBookUrl,\n    'certificate_url':     certificateUrl,\n};\n\nfunction injectVars(html, vars) {\n    let result = html;\n    for (const [key, value] of Object.entries(vars)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\nconst emailTemplate     = $('Fetch Delivery Email Template').first().json.data;\nconst customerEmailHtml = injectVars(emailTemplate, emailVars);\n\n// ─────────────────────────────────────────────────────────────\n// 3. Admin notification (plain HTML — no separate template needed)\n// ─────────────────────────────────────────────────────────────\n\nconst adminEmailHtml = `\n<div style=\"font-family:monospace; padding:20px;\">\n  <h2>✅ Order Delivered — ${order.order_id}</h2>\n  <p><strong>Child:</strong> ${child.name}, age ${child.age}</p>\n  <p><strong>Story:</strong> ${storyTitle}</p>\n  <p><strong>Customer email:</strong> ${order.delivery.email}</p>\n  <hr>\n  <p>PDFs:<br>\n    📖 <a href=\"${storybookUrl}\">Storybook</a><br>\n    🎨 <a href=\"${coloringBookUrl}\">Coloring Book</a><br>\n    🏅 <a href=\"${certificateUrl}\">Certificate</a>\n  </p>\n</div>\n`.trim();\n\n// ─────────────────────────────────────────────────────────────\n// 4. Return\n// ─────────────────────────────────────────────────────────────\n\nreturn [{\n    json: {\n        order_id:               order.order_id,\n        child_name:             child.name,\n        child_email:            order.delivery.email,\n\n        customer_email_html:    customerEmailHtml,\n        customer_email_subject: `✨ ${child.name}'s magic is ready — download your files!`,\n\n        admin_email_html:       adminEmailHtml,\n        admin_email_subject:    `✅ Delivered — ${order.order_id} — ${child.name}`,\n    }\n}];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3072,
+          1136
+        ],
+        "id": "4a53f6bf-5bf9-4ace-a674-b07810d9dead",
+        "name": "Build Delivery"
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "={{ $('Build Delivery').item.json.child_email }}",
+          "subject": "={{ $('Build Delivery').item.json.customer_email_subject }}",
+          "html": "={{ $('Build Delivery').item.json.customer_email_html }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "4f9e239d-a58f-4ee7-aa96-495558153db6",
+        "name": "Send Customer Delivery Email",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          3488,
+          1136
+        ],
+        "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "=taras.evermagic@gmail.com",
+          "subject": "={{ $('Build Delivery').item.json.admin_email_subject }}",
+          "html": "={{ $('Build Delivery').item.json.admin_email_html }}",
+          "options": {
+            "appendAttribution": true
+          }
+        },
+        "id": "d044ce49-7e39-4234-bfe9-3f08f3491ff9",
+        "name": "Send Admin Notification",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          3680,
+          1136
+        ],
+        "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Fetch Order Payload').first().json.order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "pdf_delivered"
+              }
+            ]
+          }
+        },
+        "id": "282860f1-4612-442c-9060-96b58551b980",
+        "name": "Update Order Status: PDFs delivered",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          3904,
+          1136
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Generate PDFs": {
+        "main": [
+          [
+            {
+              "node": "Load Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Envs": {
+        "main": [
+          [
+            {
+              "node": "Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envs": {
+        "main": [
+          [
+            {
+              "node": "Fetch Script",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Order Payload": {
+        "main": [
+          [
+            {
+              "node": "Fetch Images",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Script": {
+        "main": [
+          [
+            {
+              "node": "Fetch Order Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Images": {
+        "main": [
+          [
+            {
+              "node": "Update Status: pdf_generating",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Status: pdf_generating": {
+        "main": [
+          [
+            {
+              "node": "Fetch Storybook Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Storybook Template": {
+        "main": [
+          [
+            {
+              "node": "Fetch Coloring Book Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Coloring Book Template": {
+        "main": [
+          [
+            {
+              "node": "Fetch Certificate Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Certificate Template": {
+        "main": [
+          [
+            {
+              "node": "Build PDF HTML",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build PDF HTML": {
+        "main": [
+          [
+            {
+              "node": "Loop Over PDFs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over PDFs": {
+        "main": [
+          [
+            {
+              "node": "Update Script Status",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Call PDFShift",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call PDFShift": {
+        "main": [
+          [
+            {
+              "node": "Upload PDF to Storage",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload PDF to Storage": {
+        "main": [
+          [
+            {
+              "node": "Save PDF Record",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save PDF Record": {
+        "main": [
+          [
+            {
+              "node": "Loop Over PDFs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Order Status: pdf_generated": {
+        "main": [
+          [
+            {
+              "node": "Fetch Delivery Email Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Script Status": {
+        "main": [
+          [
+            {
+              "node": "Update Order Status: pdf_generated",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Delivery Email Template": {
+        "main": [
+          [
+            {
+              "node": "Build Delivery",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Delivery": {
+        "main": [
+          [
+            {
+              "node": "Send Customer Delivery Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Customer Delivery Email": {
+        "main": [
+          [
+            {
+              "node": "Send Admin Notification",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Admin Notification": {
+        "main": [
+          [
+            {
+              "node": "Update Order Status: PDFs delivered",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Taras Holub",
+    "name": "Version 121ec1df",
+    "description": "",
+    "autosaved": true
+  },
   "tags": []
 }
