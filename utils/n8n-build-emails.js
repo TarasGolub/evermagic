@@ -1,5 +1,5 @@
 // n8n Code node — "Build Emails"
-// Place AFTER "Parse Script" node
+// Place AFTER: "Fetch Confirmation Email Template", "Fetch Admin Email Template", "Parse Script"
 // Outputs TWO items: [0] = customer email, [1] = admin email
 // Then use a Send Email node for each (or split with IF)
 
@@ -25,70 +25,22 @@ const packageLabels = {
 };
 
 const themeLabels = {
-  'SPACE_HERO': 'Space Hero Mission',
+  'SPACE_HERO':          'Space Hero Mission',
+  'FANTASY_HERO':        'Fantasy Hero Quest',
+  'ENCHANTED_PRINCESS':  'Enchanted Princess Adventure',
+  'ANIMAL_GUARDIAN':     'Animal Guardian Hero',
+  'HOME_HELPER':         'Home Helper Hero',
 };
 
-const customerHtml = `
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#0f0f1a;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0f1a;">
-<tr><td align="center" style="padding:40px 20px;">
-<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-radius:16px;overflow:hidden;">
-  <tr><td align="center" style="padding:40px 40px 20px;">
-    <div style="font-size:48px;line-height:1;">✨</div>
-    <h1 style="margin:16px 0 0;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">Your Magic Is Being Created!</h1>
-  </td></tr>
-  <tr><td style="padding:20px 40px;">
-    <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#c4c4d4;">Hi there! 👋</p>
-    <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:#c4c4d4;">
-      We've received your order and our magic machines are already working on
-      <strong style="color:#ffffff;">${order.child.name}</strong>'s personalized adventure!
-    </p>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:rgba(255,255,255,0.06);border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
-      <tr><td style="padding:24px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-          <tr><td style="font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#8b8ba3;padding-bottom:12px;">Order Details</td></tr>
-          <tr><td>
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="font-size:14px;color:#8b8ba3;padding:6px 0;">Order No.</td>
-                <td align="right" style="font-size:14px;color:#ffffff;font-weight:600;font-family:monospace;padding:6px 0;">${order.order_id}</td>
-              </tr>
-              <tr>
-                <td style="font-size:14px;color:#8b8ba3;padding:6px 0;">Hero</td>
-                <td align="right" style="font-size:14px;color:#ffffff;padding:6px 0;">${order.child.name}, age ${order.child.age}</td>
-              </tr>
-              <tr>
-                <td style="font-size:14px;color:#8b8ba3;padding:6px 0;">Package</td>
-                <td align="right" style="font-size:14px;color:#ffffff;padding:6px 0;">${packageLabels[order.package] || order.package}</td>
-              </tr>
-              <tr>
-                <td style="font-size:14px;color:#8b8ba3;padding:6px 0;">Theme</td>
-                <td align="right" style="font-size:14px;color:#ffffff;padding:6px 0;">${themeLabels[order.theme] || order.theme}</td>
-              </tr>
-            </table>
-          </td></tr>
-        </table>
-      </td></tr>
-    </table>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;">
-      <tr><td align="center" style="padding:20px;background:rgba(139,92,246,0.1);border-radius:12px;border:1px solid rgba(139,92,246,0.2);">
-        <div style="font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:#a78bfa;margin-bottom:8px;">Estimated Delivery</div>
-        <div style="font-size:22px;font-weight:700;color:#ffffff;">⏱ ~15 minutes</div>
-        <div style="font-size:13px;color:#8b8ba3;margin-top:4px;">We'll email you when it's ready!</div>
-      </td></tr>
-    </table>
-    <p style="margin:24px 0 0;font-size:14px;line-height:1.6;color:#8b8ba3;text-align:center;">Sit back and relax — the magic is happening! 🚀</p>
-  </td></tr>
-  <tr><td align="center" style="padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.06);">
-    <p style="margin:0;font-size:13px;color:#5a5a7a;">Made with ❤️ by <strong style="color:#8b8ba3;">EverMagic</strong></p>
-  </td></tr>
-</table>
-</td></tr>
-</table>
-</body></html>`;
+// Inject variables into the fetched confirmation email template
+const confirmationTemplate = $('Fetch Confirmation Email Template').first().json.data;
+
+const customerHtml = confirmationTemplate
+  .replace(/\{\{child_name\}\}/g,  order.child.name)
+  .replace(/\{\{order_id\}\}/g,    order.order_id)
+  .replace(/\{\{child_age\}\}/g,   String(order.child.age))
+  .replace(/\{\{package\}\}/g,     packageLabels[order.package] || order.package)
+  .replace(/\{\{theme\}\}/g,       themeLabels[order.theme] || order.theme);
 
 // ─────────────────────────────────────────────────────────────
 // 2. Admin Review Email
@@ -108,92 +60,29 @@ const scenesHtml = script.scenes.map(s => `
     </table>
   </td></tr>`).join('\n');
 
-const adminHtml = `
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#f8f9fa;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f9fa;">
-<tr><td align="center" style="padding:32px 16px;">
-<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-  <tr><td style="padding:28px 32px 16px;border-bottom:1px solid #eee;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td>
-          <span style="font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280;font-weight:600;">⚡ EverMagic Admin</span>
-          <h1 style="margin:8px 0 0;font-size:22px;color:#111;font-weight:700;">${approvalRequired ? 'Script Ready for Review' : 'Script Auto-Approved'}</h1>
-        </td>
-        <td align="right" style="vertical-align:top;">
-          ${approvalRequired
-    ? `<span style="display:inline-block;padding:6px 14px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;">Needs Review</span>`
-    : `<span style="display:inline-block;padding:6px 14px;background:#d1fae5;color:#065f46;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;">Auto-Approved ✅</span>`
-  }
-        </td>
-      </tr>
-    </table>
-  </td></tr>
-  <tr><td style="padding:24px 32px 16px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;">
-      <tr><td style="padding:16px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:13px;">
-          <tr>
-            <td style="color:#6b7280;padding:3px 8px;">Order</td>
-            <td style="color:#111;font-weight:600;font-family:monospace;">${order.order_id}</td>
-            <td style="color:#6b7280;padding:3px 8px;">Package</td>
-            <td style="color:#111;font-weight:600;">${packageLabels[order.package] || order.package}</td>
-          </tr>
-          <tr>
-            <td style="color:#6b7280;padding:3px 8px;">Hero</td>
-            <td style="color:#111;font-weight:600;">${order.child.name} (${order.child.age})</td>
-            <td style="color:#6b7280;padding:3px 8px;">Theme</td>
-            <td style="color:#111;font-weight:600;">${themeLabels[order.theme] || order.theme}</td>
-          </tr>
-          <tr>
-            <td style="color:#6b7280;padding:3px 8px;">Trait</td>
-            <td style="color:#111;font-weight:600;">${order.child.hero_trait}</td>
-            <td style="color:#6b7280;padding:3px 8px;">Language</td>
-            <td style="color:#111;font-weight:600;">${order.language}</td>
-          </tr>
-        </table>
-      </td></tr>
-    </table>
-  </td></tr>
-  <tr><td style="padding:8px 32px 16px;">
-    <h2 style="margin:0;font-size:20px;color:#111;">📖 ${script.title}</h2>
-    <p style="margin:4px 0 0;font-size:14px;color:#6b7280;font-style:italic;">${script.tagline}</p>
-    <span style="display:inline-block;margin-top:8px;padding:3px 10px;background:#e0e7ff;color:#3730a3;font-size:11px;font-weight:600;border-radius:12px;">v${scriptVersion}</span>
-  </td></tr>
-  ${scenesHtml}
-  <tr><td style="padding:8px 32px 24px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;">
-      <tr><td style="padding:16px;">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#16a34a;font-weight:600;margin-bottom:6px;">💚 Parent's Message</div>
-        <div style="font-size:14px;color:#166534;line-height:1.5;">${order.parent_message || 'No message provided.'}</div>
-      </td></tr>
-    </table>
-  </td></tr>
-  <!-- ACTION BUTTONS (conditional on script_approval_required) -->
-  ${approvalRequired ? `
+// Build dynamic blocks for admin email
+const reviewStatusLabel = approvalRequired ? 'Script Ready for Review' : 'Script Auto-Approved';
+
+const reviewBadgeHtml = approvalRequired
+  ? `<span style="display:inline-block;padding:6px 14px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;">Needs Review</span>`
+  : `<span style="display:inline-block;padding:6px 14px;background:#d1fae5;color:#065f46;font-size:12px;font-weight:600;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;">Auto-Approved ✅</span>`;
+
+const approveUrl = `${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=approve`;
+const retryUrl   = `${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=retry`;
+const editUrl    = `${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=edit`;
+
+const actionButtonsHtml = approvalRequired ? `
   <tr><td style="padding:16px 32px 24px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td align="center" width="33%" style="padding:0 4px;">
-          <a href="${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=approve"
-             style="display:block;padding:14px 8px;background:#16a34a;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">
-            ✅ Approve
-          </a>
+          <a href="${approveUrl}" style="display:block;padding:14px 8px;background:#16a34a;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">✅ Approve</a>
         </td>
         <td align="center" width="33%" style="padding:0 4px;">
-          <a href="${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=retry"
-             style="display:block;padding:14px 8px;background:#f59e0b;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">
-            🔄 Edit &amp; Retry
-          </a>
+          <a href="${retryUrl}" style="display:block;padding:14px 8px;background:#f59e0b;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">🔄 Edit &amp; Retry</a>
         </td>
         <td align="center" width="33%" style="padding:0 4px;">
-          <a href="${REVIEW_BASE}?order_id=${order.order_id}&version=${scriptVersion}&action=edit"
-             style="display:block;padding:14px 8px;background:#3b82f6;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">
-            ✏️ Manual Edit
-          </a>
+          <a href="${editUrl}" style="display:block;padding:14px 8px;background:#3b82f6;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;text-align:center;">✏️ Manual Edit</a>
         </td>
       </tr>
     </table>
@@ -212,11 +101,27 @@ const adminHtml = `
   </td></tr>
   <tr><td style="padding:12px 32px 28px;border-top:1px solid #eee;">
     <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center;">This is an FYI notification. Script approval is currently disabled.</p>
-  </td></tr>`}
-</table>
-</td></tr>
-</table>
-</body></html>`;
+  </td></tr>`;
+
+// Inject variables into the fetched admin email template
+const adminTemplate = $('Fetch Admin Email Template').first().json.data;
+
+const adminHtml = adminTemplate
+  .replace(/\{\{order_id\}\}/g,             order.order_id)
+  .replace(/\{\{customer_email\}\}/g,       order.delivery.email)
+  .replace(/\{\{package\}\}/g,              packageLabels[order.package] || order.package)
+  .replace(/\{\{child_name\}\}/g,           order.child.name)
+  .replace(/\{\{child_age\}\}/g,            String(order.child.age))
+  .replace(/\{\{theme\}\}/g,                themeLabels[order.theme] || order.theme)
+  .replace(/\{\{language\}\}/g,             order.language)
+  .replace(/\{\{story_title\}\}/g,          script.title)
+  .replace(/\{\{story_tagline\}\}/g,        script.tagline)
+  .replace(/\{\{script_version\}\}/g,       String(scriptVersion))
+  .replace(/\{\{review_status_label\}\}/g,  reviewStatusLabel)
+  .replace(/\{\{review_badge_html\}\}/g,    reviewBadgeHtml)
+  .replace(/\{\{action_buttons_html\}\}/g,  actionButtonsHtml)
+  .replace(/\{\{scenes_html\}\}/g,          scenesHtml)
+  .replace(/\{\{parent_message\}\}/g,       order.parent_message || 'No message provided.');
 
 // ─────────────────────────────────────────────────────────────
 // 3. Output both emails as two items
