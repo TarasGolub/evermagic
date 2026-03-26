@@ -53,7 +53,11 @@ const thankYouMessage = `Your story is here — all three files are ready to sav
 // 2. Populate templates
 // ─────────────────────────────────────────────────────────────
 
+const branch  = env.is_live ? 'main' : 'develop';
+const logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/evrm1.png`;
+
 const emailVars = {
+    'logo_url':            logoUrl,
     'child_name':          child.name,
     'story_title':         storyTitle,
     'thank_you_message':   thankYouMessage,
