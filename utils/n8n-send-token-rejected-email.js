@@ -17,7 +17,7 @@ const token         = tallyPayload.data?.fields?.find(f => f.label === 'intake_t
 
 const env     = $('Envs').first().json.env;
 const branch  = env.is_live ? 'main' : 'develop';
-const logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/evrm1.png`;
+const logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;
 
 const template = $('Fetch Token Rejected Email Template').first().json.data;
 

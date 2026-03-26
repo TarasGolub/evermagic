@@ -54,7 +54,7 @@ const thankYouMessage = `Your story is here — all three files are ready to sav
 // ─────────────────────────────────────────────────────────────
 
 const branch  = env.is_live ? 'main' : 'develop';
-const logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/evrm1.png`;
+const logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;
 
 const emailVars = {
     'logo_url':            logoUrl,

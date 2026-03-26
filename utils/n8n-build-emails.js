@@ -34,7 +34,7 @@ const themeLabels = {
 
 // Shared assets
 const branch  = env.is_live ? 'main' : 'develop';
-const logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/evrm1.png`;
+const logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;
 
 // Inject variables into the fetched confirmation email template
 const confirmationTemplate = $('Fetch Confirmation Email Template').first().json.data;
