@@ -8,20 +8,24 @@
   <title>Something went wrong — EverMagic</title>
   <style>
     :root { color-scheme: light only; }
+    body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+    /* Catch-all: prevent email clients from overriding text colors */
+    body { background-color:#0f0f1a !important; color:#e8e8f5 !important; }
+    p, span, td, div, h1, h2, h3, strong { color:inherit !important; }
   </style>
 </head>
-<body style="margin:0; padding:0; background-color:#0f0f1a; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0f1a;">
+<body style="margin:0 !important; padding:0 !important; background-color:#0f0f1a !important; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0f1a !important;">
     <tr>
       <td align="center" style="padding:40px 20px;">
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); border-radius:16px; overflow:hidden;">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background-color:#16213e !important; border-radius:16px; overflow:hidden;">
 
           <!-- Header -->
           <tr>
-            <td align="center" style="padding:40px 40px 20px;">
-              <img src="{{logo_url}}" alt="EverMagic" width="72" style="display:block; margin:0 auto 16px; border:0;">
+            <td align="center" style="padding:40px 40px 20px; background-color:#16213e !important;">
+              <img src="{{logo_url}}" alt="EverMagic" width="144" style="display:block; margin:0 auto 16px; border:0;">
               <div style="font-size:48px; line-height:1;">⚠️</div>
-              <h1 style="margin:16px 0 0; font-size:26px; font-weight:700; color:#ffffff; letter-spacing:-0.5px;">
+              <h1 style="margin:16px 0 0; font-size:26px; font-weight:700; color:#ffffff !important; letter-spacing:-0.5px;">
                 Something went wrong
               </h1>
             </td>
@@ -29,27 +33,27 @@
 
           <!-- Body -->
           <tr>
-            <td style="padding:20px 40px 32px;">
-              <p style="margin:0 0 20px; font-size:16px; line-height:1.6; color:#e8e8f5;">
+            <td style="padding:20px 40px 32px; background-color:#16213e !important;">
+              <p style="margin:0 0 20px; font-size:16px; line-height:1.6; color:#e8e8f5 !important;">
                 Hi there! We weren't able to process your order submission.
               </p>
-              <p style="margin:0 0 24px; font-size:16px; line-height:1.6; color:#e8e8f5;">
+              <p style="margin:0 0 24px; font-size:16px; line-height:1.6; color:#e8e8f5 !important;">
                 This can happen if the personalisation link was already used, or if it expired. Each link can only be used once.
               </p>
 
               <!-- Reference card -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:rgba(255,255,255,0.06); border-radius:12px; border:1px solid rgba(255,255,255,0.08); margin-bottom:24px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#1e2a45 !important; border-radius:12px; border:1px solid #2a3a5c; margin-bottom:24px;">
                 <tr>
-                  <td style="padding:20px 24px;">
-                    <div style="font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#b0b0cc; margin-bottom:8px;">Your Reference</div>
-                    <div style="font-size:18px; font-weight:700; color:#ffffff; font-family:monospace;">{{order_ref}}</div>
+                  <td style="padding:20px 24px; background-color:#1e2a45 !important; border-radius:12px;">
+                    <div style="font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#b0b0cc !important; margin-bottom:8px;">Your Reference</div>
+                    <div style="font-size:18px; font-weight:700; color:#ffffff !important; font-family:monospace;">{{order_ref}}</div>
                   </td>
                 </tr>
               </table>
 
-              <p style="margin:0; font-size:15px; line-height:1.7; color:#e8e8f5;">
+              <p style="margin:0; font-size:15px; line-height:1.7; color:#e8e8f5 !important;">
                 If you think this is a mistake, please reply to this email or contact us at
-                <a href="mailto:taras.evermagic@gmail.com" style="color:#a78bfa; text-decoration:none;">taras.evermagic@gmail.com</a>
+                <a href="mailto:taras.evermagic@gmail.com" style="color:#a78bfa !important; text-decoration:none;">taras.evermagic@gmail.com</a>
                 and include your reference number above — we'll sort it out quickly.
               </p>
             </td>
@@ -57,9 +61,9 @@
 
           <!-- Footer -->
           <tr>
-            <td align="center" style="padding:20px 40px 32px; border-top:1px solid rgba(255,255,255,0.06);">
-              <p style="margin:0; font-size:13px; color:#8b8ba3;">
-                Made with ❤️ by <strong style="color:#b0b0cc;">EverMagic</strong>
+            <td align="center" style="padding:20px 40px 32px; border-top:1px solid #2a3a5c; background-color:#16213e !important;">
+              <p style="margin:0; font-size:13px; color:#8b8ba3 !important;">
+                Made with ❤️ by <strong style="color:#b0b0cc !important;">EverMagic</strong>
               </p>
             </td>
           </tr>
