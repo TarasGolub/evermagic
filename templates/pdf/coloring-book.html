@@ -112,6 +112,19 @@
       color: #ccc;
     }
 
+    .cover .logo-pdf {
+      display: block;
+      width: 0.85in;
+      margin: 0.12in auto 0;
+      opacity: 0.85;
+    }
+
+    .scene-page .logo-pdf {
+      width: 0.6in;
+      opacity: 0.75;
+      flex-shrink: 0;
+    }
+
     /* ─────────────────────────────────────────────
        QR CODE PLACEHOLDER
        To activate: remove display:none, set src to your QR image URL
@@ -136,6 +149,7 @@
     <div class="subtitle">Color your own story!</div>
     <img class="cover-img" src="{{coloring.image_url}}" alt="Cover">
     <div class="footer">✦ &nbsp; EverMagic &nbsp; ✦</div>
+    <img class="logo-pdf" src="{{logo_pdf_url}}" alt="EverMagic">
     <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
     <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
   </div>
@@ -146,7 +160,7 @@
     <img class="coloring-img" src="{{coloring_1.image_url}}" alt="Scene 1">
     <div class="footer-area">
       <div class="colored-by">Colored by:<span class="name-line"></span></div>
-      <div class="page-branding">EverMagic</div>
+      <img class="logo-pdf" src="{{logo_pdf_url}}" alt="EverMagic">
     </div>
     <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
     <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
@@ -158,7 +172,7 @@
     <img class="coloring-img" src="{{coloring_2.image_url}}" alt="Scene 2">
     <div class="footer-area">
       <div class="colored-by">Colored by:<span class="name-line"></span></div>
-      <div class="page-branding">EverMagic</div>
+      <img class="logo-pdf" src="{{logo_pdf_url}}" alt="EverMagic">
     </div>
     <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
     <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
@@ -170,7 +184,7 @@
     <img class="coloring-img" src="{{coloring_3.image_url}}" alt="Scene 3">
     <div class="footer-area">
       <div class="colored-by">Colored by:<span class="name-line"></span></div>
-      <div class="page-branding">EverMagic</div>
+      <img class="logo-pdf" src="{{logo_pdf_url}}" alt="EverMagic">
     </div>
     <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
     <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
@@ -182,7 +196,7 @@
     <img class="coloring-img" src="{{coloring_4.image_url}}" alt="Scene 4">
     <div class="footer-area">
       <div class="colored-by">Colored by:<span class="name-line"></span></div>
-      <div class="page-branding">EverMagic</div>
+      <img class="logo-pdf" src="{{logo_pdf_url}}" alt="EverMagic">
     </div>
     <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
     <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
@@ -194,7 +208,7 @@
     <img class="coloring-img" src="{{coloring_5.image_url}}" alt="Scene 5">
     <div class="footer-area">
       <div class="colored-by">Colored by:<span class="name-line"></span></div>
-      <div class="page-branding">EverMagic</div>
+      <img class="logo-pdf" src="{{logo_pdf_url}}" alt="EverMagic">
     </div>
     <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
     <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">

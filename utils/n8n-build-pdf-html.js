@@ -29,6 +29,9 @@ for (const row of imageRows) {
 const env = $('Envs').first().json.env;
 const qrCodeUrl = env.qr_code_url || '';
 
+const branch     = env.is_live ? 'main' : 'develop';
+const logoPdfUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_pdf.png`;
+
 // ─────────────────────────────────────────────────────────────
 // 2. Build variable map
 // ─────────────────────────────────────────────────────────────
@@ -78,6 +81,7 @@ const vars = {
     // Order
     'order.order_id':       order.order_id,
     'qr_code_url':          qrCodeUrl,
+    'logo_pdf_url':         logoPdfUrl,
 
     // Images — scene images
     'cover.image_url':      images['cover']    || '',

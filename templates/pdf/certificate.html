@@ -198,6 +198,15 @@
       color: #aaa;
     }
 
+    .logo-pdf {
+      display: block;
+      position: absolute;
+      bottom: 0.48in;
+      left: 0.55in;
+      width: 0.7in;
+      opacity: 0.75;
+    }
+
     /* ─────────────────────────────────────────────
        QR CODE PLACEHOLDER
        To activate: remove display:none, set src to your QR image URL
@@ -265,6 +274,7 @@
       </div>
 
     </div>
+    <img class="logo-pdf" src="{{logo_pdf_url}}" alt="EverMagic">
     <!-- QR_PLACEHOLDER: set src to QR image URL and remove display:none in .qr-code -->
     <img class="qr-code" src="{{qr_code_url}}" alt="EverMagic">
   </div>
