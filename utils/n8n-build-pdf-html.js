@@ -28,9 +28,7 @@ for (const row of imageRows) {
 
 const env = $('Envs').first().json.env;
 const qrCodeUrl = env.qr_code_url || '';
-
-const branch     = env.is_live ? 'main' : 'develop';
-const logoPdfUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_pdf.png`;
+const logoPdfUrl = env.logo_pdf_url || '';
 
 // ─────────────────────────────────────────────────────────────
 // 2. Build variable map

@@ -34,13 +34,13 @@ const env = $('Envs').first().json.env;
 // Supabase public storage base URL — store this in envs table as 'supabase_storage_url'
 // e.g. https://YOURPROJECT.supabase.co/storage/v1/object/public
 const storageBase = env.supabase_storage_url || '';
-const bucket = env.storage_bucket || 'downloads';
+const bucket = env.storage_bucket || 'pdfs';
 
 // PDF public URLs — constructed from known storage paths
 const pdfBase = `${storageBase}/${bucket}/pdfs/${order.order_id}`;
-const storybookUrl    = `${pdfBase}/storybook.pdf`;
+const storybookUrl = `${pdfBase}/storybook.pdf`;
 const coloringBookUrl = `${pdfBase}/coloring_book.pdf`;
-const certificateUrl  = `${pdfBase}/certificate.pdf`;
+const certificateUrl = `${pdfBase}/certificate.pdf`;
 
 // Story title
 const storyTitle = scriptContent.title || `${child.name}'s Space Adventure`;
@@ -53,17 +53,17 @@ const thankYouMessage = `Your story is here — all three files are ready to sav
 // 2. Populate templates
 // ─────────────────────────────────────────────────────────────
 
-const branch  = env.is_live ? 'main' : 'develop';
+const branch = env.is_live ? 'main' : 'develop';
 const logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;
 
 const emailVars = {
-    'logo_url':            logoUrl,
-    'child_name':          child.name,
-    'story_title':         storyTitle,
-    'thank_you_message':   thankYouMessage,
-    'storybook_url':       storybookUrl,
-    'coloring_book_url':   coloringBookUrl,
-    'certificate_url':     certificateUrl,
+    'logo_url': logoUrl,
+    'child_name': child.name,
+    'story_title': storyTitle,
+    'thank_you_message': thankYouMessage,
+    'storybook_url': storybookUrl,
+    'coloring_book_url': coloringBookUrl,
+    'certificate_url': certificateUrl,
 };
 
 function injectVars(html, vars) {
@@ -75,7 +75,7 @@ function injectVars(html, vars) {
     return result;
 }
 
-const emailTemplate     = $('Fetch Delivery Email Template').first().json.data;
+const emailTemplate = $('Fetch Delivery Email Template').first().json.data;
 const customerEmailHtml = injectVars(emailTemplate, emailVars);
 
 // ─────────────────────────────────────────────────────────────
@@ -103,14 +103,14 @@ const adminEmailHtml = `
 
 return [{
     json: {
-        order_id:               order.order_id,
-        child_name:             child.name,
-        child_email:            order.delivery.email,
+        order_id: order.order_id,
+        child_name: child.name,
+        child_email: order.delivery.email,
 
-        customer_email_html:    customerEmailHtml,
+        customer_email_html: customerEmailHtml,
         customer_email_subject: `✨ ${child.name}'s magic is ready — download your files!`,
 
-        admin_email_html:       adminEmailHtml,
-        admin_email_subject:    `✅ Delivered — ${order.order_id} — ${child.name}`,
+        admin_email_html: adminEmailHtml,
+        admin_email_subject: `✅ Delivered — ${order.order_id} — ${child.name}`,
     }
 }];

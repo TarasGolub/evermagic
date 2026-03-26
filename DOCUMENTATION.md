@@ -1,8 +1,8 @@
 # 📚 EverMagic — Project Documentation
 
-> **Last updated:** March 23, 2026
-> **Current Phase:** Phase 3 complete (Steps 3.1–3.7) — Testing new themes, preparing Etsy launch
-> **Completed:** Phases 1 & 2 (Intake + Script + Images) + Phase 3 (PDF Engine + 5 Themes + Per-Theme PDF Styling)
+> **Last updated:** March 25, 2026
+> **Current Phase:** Phase 3 complete and tested in live mode — next: UAT flow for friend feedback
+> **Completed:** Phases 1 & 2 (Intake + Script + Images) + Phase 3 (PDF Engine + 5 Themes + Per-Theme PDF Styling + Live Testing)
 > **Latest tags:** v1.4.0 (4 new themes) · v1.4.1 (per-theme PDF styles)
 
 ---
@@ -64,7 +64,7 @@ EverMagic is an **AI-first content production engine** that creates personalized
 
 - **Themes (5 active):** Space Hero Mission · Fantasy Hero Quest · Enchanted Princess Adventure · Animal Guardian Hero · Home Helper Hero
 - **Language:** English only (Ukrainian planned)
-- **Status:** Phases 1–3 complete — testing new themes, pre-Etsy launch
+- **Status:** Phases 1–3 complete — tested in live mode ✅ — next: UAT flow
 
 ---
 
@@ -362,7 +362,7 @@ Cheat token: `EVRM-DEV` — skips DB lookup entirely, always passes (hardcoded i
 | `key` | TEXT PK | Variable name |
 | `value` | TEXT | Variable value |
 
-Current keys: `mode` (test/live), `script_approval_required` (true/false)
+Current keys: `mode` (test/live), `script_approval_required` (true/false), `qr_code_url` (QR image URL — placeholder ready in all PDF templates), `logo_pdf_url` (EverMagic logo for PDFs — hosted on Supabase Storage)
 
 ---
 
@@ -457,6 +457,8 @@ Global configuration lives in the Supabase `envs` table (key/value rows), loaded
 |-----|--------|---------|
 | `mode` | `test` / `live` | Controls webhook routing (test vs production URLs) |
 | `script_approval_required` | `true` / `false` | If `false`, scripts auto-approve → images start immediately |
+| `qr_code_url` | URL string | QR code image URL — placeholder exists in all PDF templates (`display:none` until landing page ready) |
+| `logo_pdf_url` | URL string | EverMagic logo for PDF templates — hosted on Supabase Storage, swap image without code changes |
 
 **Usage in n8n Code nodes:**
 ```js
@@ -645,8 +647,9 @@ evermagic/
 | 3.5 — Intake Token System | Single-use tokens, EVRM-DEV cheat token | ✅ Complete |
 | 3.6 — New Themes (v1.4.0) | 4 new themes: Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper | ✅ Complete |
 | 3.7 — Per-Theme PDF Styling (v1.4.1) | CSS variables in storybook.html + theme_styles.css per theme | ✅ Complete |
+| 3.8 — Live Mode Testing | All 3 PDFs + email delivery verified end-to-end in live mode | ✅ Complete |
 
-**Current:** Testing all 5 themes end-to-end. Building friend-feedback loop before Etsy listing.
+**Current:** Full pipeline tested in live mode. Next: build UAT workflow for friend feedback loop before Etsy listing.
 
 ### Delivery Flow (Step 3.4) — Actual Implementation
 
@@ -657,6 +660,7 @@ evermagic/
 - n8n builds a delivery email with 3 direct Supabase Storage download links
 - Customer receives one email with download buttons for each PDF
 - Admin receives a notification email when order is delivered
+- **Important:** "Build Delivery" Code node must have **"Run Once for All Items"** enabled — it receives 3 items from the PDFShift loop and would otherwise timeout (60s) if run per-item
 
 
 ### Intake Token System Design (Step 3.5)
@@ -758,9 +762,9 @@ Tools: ElevenLabs (voice), Remotion / FFmpeg / Creatomate (video — TBD).
 
 ### What's Next
 
-Phase 3 is complete (3.1–3.7). **Immediate next steps:**
-1. Test all 5 themes end-to-end with `EVRM-DEV` token
-2. Build a small friend feedback loop (invite ~10 parents to try, collect feedback)
+Phase 3 is complete and tested in live mode. **Immediate next steps:**
+1. Build a separate UAT n8n workflow for friend feedback (isolated from production)
+2. Invite ~10 parents to try, collect structured feedback
 3. Prioritize and address feedback
 4. List on Etsy — validate market demand
 5. Begin Phase 4 planning (voice narration + video bundle)

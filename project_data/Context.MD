@@ -51,7 +51,7 @@ It is:
 | Themes | Space Hero · Fantasy Hero · Enchanted Princess · Animal Guardian · Home Helper |
 | Language | English only (Ukrainian planned) |
 | Packages | Basic · Full Bundle · Party Pack |
-| Status | Phases 1–3 complete — testing new themes, pre-Etsy launch |
+| Status | Phases 1–3 complete — tested in live mode ✅ — next: UAT flow |
 
 ---
 
@@ -95,6 +95,8 @@ Loaded at the top of each n8n workflow via one Supabase node + one Code node.
 |-----|--------|---------|
 | `mode` | `test` / `live` | Controls webhook routing and safety guards |
 | `script_approval_required` | `true` / `false` | If false, scripts are auto-approved and images start immediately |
+| `qr_code_url` | URL string | QR code image URL (currently hidden in templates — placeholder ready) |
+| `logo_pdf_url` | URL string | EverMagic logo image URL for PDF templates (hosted on Supabase Storage) |
 
 **Usage in n8n:**
 ```js
@@ -228,6 +230,13 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 - `prompts/{theme}/theme_styles.css` created for all 5 themes — each overrides CSS variables + `.scene-text-page` background pattern
 - `Build PDF HTML` n8n code node updated with `THEME_STYLES` object (same pattern as `THEMES` in Image Gen)
 
+#### Step 3.8 — Live Mode Testing ✅ COMPLETE
+- All 3 PDFs (storybook, coloring book, certificate) verified in live mode
+- Email delivery confirmed end-to-end
+- Gmail dark mode fix applied to all customer-facing emails
+- `logo_pdf_url` and `qr_code_url` added to `envs` table pattern (logo served from Supabase Storage)
+- Build Delivery Code node: "Run Once for All Items" required to avoid 60s timeout (3 PDF items × execution)
+
 ---
 
 ### PHASE 4 — Video Bundle (Premium Product)
@@ -325,7 +334,7 @@ EverMagic is an **AI content production engine.**
 
 ## 📌 WHEN YOU NEED TO RESTORE CONTEXT
 
-> "Continuing EverMagic AI Factory. Phases 1–3 complete. 5 themes active (Space Hero, Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper). Currently testing new themes pre-Etsy launch (v1.4.1, branch feature/EVRM-020)."
+> "Continuing EverMagic AI Factory. Phases 1–3 complete and tested in live mode. 5 themes active (Space Hero, Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper). Next step: separate UAT workflow for friend feedback loop before Etsy launch."
 
 ## OPTIMIZATION IDEAS
 
