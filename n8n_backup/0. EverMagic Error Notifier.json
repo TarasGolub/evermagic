@@ -1,0 +1,186 @@
+{
+  "updatedAt": "2026-03-26T05:12:28.464Z",
+  "createdAt": "2026-03-26T05:02:03.914Z",
+  "id": "X8i8vvopGj9AvYk6",
+  "name": "0. EverMagic Error Notifier",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b8d41e0c-bce1-4a21-be03-63b447873d88",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — \"Build Error Email\"\n// Receives error context from the Error Trigger\n// Builds a plain HTML notification email\n\nconst error = $input.first().json;\n\nconst workflowName  = error.workflow?.name   || 'Unknown Workflow';\nconst workflowId    = error.workflow?.id     || '';\nconst executionId   = error.execution?.id    || 'N/A';\nconst errorMessage  = error.execution?.error?.message || 'Unknown error';\nconst lastNode      = error.execution?.lastNodeExecuted || 'N/A';\nconst mode          = error.execution?.mode  || 'unknown';\n\nconst n8nBase      = 'https://evermagic.app.n8n.cloud';\nconst executionUrl = `${n8nBase}/workflow/${workflowId}/executions/${executionId}`;\n\nconst subject = `🚨 EverMagic flow failed: ${workflowName}`;\n\nconst html = `<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\"></head>\n<body style=\"margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f4f4f4;padding:32px 0;\">\n    <tr><td align=\"center\">\n      <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;\">\n\n        <!-- Header -->\n        <tr><td style=\"background:#c0392b;padding:20px 32px;\">\n          <div style=\"font-size:20px;font-weight:bold;color:#ffffff;\">🚨 Workflow Failed</div>\n          <div style=\"font-size:13px;color:#f5b7b1;margin-top:4px;\">${workflowName}</div>\n        </td></tr>\n\n        <!-- Details -->\n        <tr><td style=\"padding:24px 32px;\">\n          <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;width:140px;\">Workflow</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;font-weight:bold;color:#222;\">${workflowName}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Execution ID</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${executionId}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Last Node</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${lastNode}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Mode</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${mode}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:12px 0 0;color:#888;font-size:13px;vertical-align:top;\">Error</td>\n              <td style=\"padding:12px 0 0;font-size:13px;color:#c0392b;font-weight:bold;\">${errorMessage}</td>\n            </tr>\n          </table>\n        </td></tr>\n\n        <!-- CTA -->\n        <tr><td style=\"padding:0 32px 28px;\">\n          <a href=\"${executionUrl}\" style=\"display:inline-block;padding:12px 24px;background:#1a1a2e;color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;border-radius:6px;\">View Execution →</a>\n        </td></tr>\n\n        <!-- Footer -->\n        <tr><td style=\"background:#f9f9f9;padding:14px 32px;border-top:1px solid #eee;\">\n          <div style=\"font-size:11px;color:#aaa;letter-spacing:0.08em;text-transform:uppercase;\">EverMagic · Error Notifier</div>\n        </td></tr>\n\n      </table>\n    </td></tr>\n  </table>\n</body>\n</html>`;\n\nreturn [{ json: { subject, html } }];\n"
+      },
+      "id": "95065b50-cbf3-4a41-ab21-d0226aaa304d",
+      "name": "Build Error Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "taras.evermagic@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "dc58a863-daea-45a9-8dde-83214d856ef4",
+      "name": "Send Error Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        0
+      ],
+      "webhookId": "36b2c7fb-ac16-408b-b6d5-ff42cd3ca8b4",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Build Error Email": {
+      "main": [
+        [
+          {
+            "node": "Send Error Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Build Error Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "2231e1a7-8d5b-4008-844a-849d49ade586",
+  "activeVersionId": "2231e1a7-8d5b-4008-844a-849d49ade586",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-03-26T05:02:03.917Z",
+      "createdAt": "2026-03-26T05:02:03.917Z",
+      "role": "workflow:owner",
+      "workflowId": "X8i8vvopGj9AvYk6",
+      "projectId": "Ez9yaDRraIYPeCTc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-03-26T05:13:25.000Z",
+    "createdAt": "2026-03-26T05:12:28.465Z",
+    "versionId": "2231e1a7-8d5b-4008-844a-849d49ade586",
+    "workflowId": "X8i8vvopGj9AvYk6",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "b8d41e0c-bce1-4a21-be03-63b447873d88",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build Error Email\"\n// Receives error context from the Error Trigger\n// Builds a plain HTML notification email\n\nconst error = $input.first().json;\n\nconst workflowName  = error.workflow?.name   || 'Unknown Workflow';\nconst workflowId    = error.workflow?.id     || '';\nconst executionId   = error.execution?.id    || 'N/A';\nconst errorMessage  = error.execution?.error?.message || 'Unknown error';\nconst lastNode      = error.execution?.lastNodeExecuted || 'N/A';\nconst mode          = error.execution?.mode  || 'unknown';\n\nconst n8nBase      = 'https://evermagic.app.n8n.cloud';\nconst executionUrl = `${n8nBase}/workflow/${workflowId}/executions/${executionId}`;\n\nconst subject = `🚨 EverMagic flow failed: ${workflowName}`;\n\nconst html = `<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\"></head>\n<body style=\"margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f4f4f4;padding:32px 0;\">\n    <tr><td align=\"center\">\n      <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;\">\n\n        <!-- Header -->\n        <tr><td style=\"background:#c0392b;padding:20px 32px;\">\n          <div style=\"font-size:20px;font-weight:bold;color:#ffffff;\">🚨 Workflow Failed</div>\n          <div style=\"font-size:13px;color:#f5b7b1;margin-top:4px;\">${workflowName}</div>\n        </td></tr>\n\n        <!-- Details -->\n        <tr><td style=\"padding:24px 32px;\">\n          <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;width:140px;\">Workflow</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;font-weight:bold;color:#222;\">${workflowName}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Execution ID</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${executionId}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Last Node</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${lastNode}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Mode</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${mode}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:12px 0 0;color:#888;font-size:13px;vertical-align:top;\">Error</td>\n              <td style=\"padding:12px 0 0;font-size:13px;color:#c0392b;font-weight:bold;\">${errorMessage}</td>\n            </tr>\n          </table>\n        </td></tr>\n\n        <!-- CTA -->\n        <tr><td style=\"padding:0 32px 28px;\">\n          <a href=\"${executionUrl}\" style=\"display:inline-block;padding:12px 24px;background:#1a1a2e;color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;border-radius:6px;\">View Execution →</a>\n        </td></tr>\n\n        <!-- Footer -->\n        <tr><td style=\"background:#f9f9f9;padding:14px 32px;border-top:1px solid #eee;\">\n          <div style=\"font-size:11px;color:#aaa;letter-spacing:0.08em;text-transform:uppercase;\">EverMagic · Error Notifier</div>\n        </td></tr>\n\n      </table>\n    </td></tr>\n  </table>\n</body>\n</html>`;\n\nreturn [{ json: { subject, html } }];\n"
+        },
+        "id": "95065b50-cbf3-4a41-ab21-d0226aaa304d",
+        "name": "Build Error Email",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "taras.evermagic@gmail.com",
+          "subject": "={{ $json.subject }}",
+          "html": "={{ $json.html }}",
+          "options": {}
+        },
+        "id": "dc58a863-daea-45a9-8dde-83214d856ef4",
+        "name": "Send Error Email",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          448,
+          0
+        ],
+        "webhookId": "36b2c7fb-ac16-408b-b6d5-ff42cd3ca8b4",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Build Error Email": {
+        "main": [
+          [
+            {
+              "node": "Send Error Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Build Error Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Taras Holub",
+    "name": "Version 2231e1a7",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}

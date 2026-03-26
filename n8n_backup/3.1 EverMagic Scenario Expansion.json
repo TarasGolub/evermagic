@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-19T01:58:57.624Z",
+  "updatedAt": "2026-03-26T05:19:16.976Z",
   "createdAt": "2026-03-13T21:53:11.011Z",
   "id": "0RjNFJjTNtErFbCV",
   "name": "3.1 EverMagic Scenario Expansion",
@@ -162,7 +162,8 @@
       "position": [
         1552,
         0
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -215,7 +216,8 @@
       "position": [
         2096,
         0
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -488,13 +490,16 @@
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "X8i8vvopGj9AvYk6",
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "4248df8e-8690-4c60-879d-b9ca20e38996",
-  "activeVersionId": "4248df8e-8690-4c60-879d-b9ca20e38996",
+  "versionId": "f28f265b-2944-4ec2-8003-decd64f82091",
+  "activeVersionId": "f28f265b-2944-4ec2-8003-decd64f82091",
   "triggerCount": 1,
   "shared": [
     {
@@ -506,9 +511,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-25T20:30:34.000Z",
-    "createdAt": "2026-03-19T01:58:57.624Z",
-    "versionId": "4248df8e-8690-4c60-879d-b9ca20e38996",
+    "updatedAt": "2026-03-26T05:19:20.000Z",
+    "createdAt": "2026-03-26T05:19:16.976Z",
+    "versionId": "f28f265b-2944-4ec2-8003-decd64f82091",
     "workflowId": "0RjNFJjTNtErFbCV",
     "nodes": [
       {
@@ -667,7 +672,8 @@
         "position": [
           1552,
           0
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -720,7 +726,8 @@
         "position": [
           2096,
           0
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -991,7 +998,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 4248df8e",
+    "name": "Version f28f265b",
     "description": "",
     "autosaved": true
   },

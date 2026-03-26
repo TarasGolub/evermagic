@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-23T22:54:29.774Z",
+  "updatedAt": "2026-03-26T05:16:33.740Z",
   "createdAt": "2026-02-28T04:04:42.792Z",
   "id": "5tdiaL3r2CwU3D2T",
   "name": "1.1 EverMagic Review Submit",
@@ -34,7 +34,8 @@
       "position": [
         -448,
         208
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -266,7 +267,8 @@
       "position": [
         1088,
         0
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -565,7 +567,8 @@
         0
       ],
       "id": "f47c20d6-49bb-4d1e-951e-8099102e0edc",
-      "name": "Parse Script"
+      "name": "Parse Script",
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -578,7 +581,8 @@
         0
       ],
       "id": "5828ff14-b282-4569-b41a-3bd49dec2fe9",
-      "name": "Build Emails"
+      "name": "Build Emails",
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -591,7 +595,8 @@
       "position": [
         -656,
         208
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -889,15 +894,18 @@
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "X8i8vvopGj9AvYk6",
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "616f7008-f6fb-435d-ae9c-1d79e5cbbf98",
-  "activeVersionId": "616f7008-f6fb-435d-ae9c-1d79e5cbbf98",
+  "versionId": "21df0c0e-28ed-404d-bb4a-5f810522aed0",
+  "activeVersionId": "21df0c0e-28ed-404d-bb4a-5f810522aed0",
   "triggerCount": 1,
   "shared": [
     {
@@ -909,9 +917,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-25T20:30:16.000Z",
-    "createdAt": "2026-03-23T22:54:29.775Z",
-    "versionId": "616f7008-f6fb-435d-ae9c-1d79e5cbbf98",
+    "updatedAt": "2026-03-26T05:16:38.000Z",
+    "createdAt": "2026-03-26T05:16:10.223Z",
+    "versionId": "21df0c0e-28ed-404d-bb4a-5f810522aed0",
     "workflowId": "5tdiaL3r2CwU3D2T",
     "nodes": [
       {
@@ -942,7 +950,8 @@
         "position": [
           -448,
           208
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1174,7 +1183,8 @@
         "position": [
           1088,
           0
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1473,7 +1483,8 @@
           0
         ],
         "id": "f47c20d6-49bb-4d1e-951e-8099102e0edc",
-        "name": "Parse Script"
+        "name": "Parse Script",
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1486,7 +1497,8 @@
           0
         ],
         "id": "5828ff14-b282-4569-b41a-3bd49dec2fe9",
-        "name": "Build Emails"
+        "name": "Build Emails",
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1499,7 +1511,8 @@
         "position": [
           -656,
           208
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1795,7 +1808,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 616f7008",
+    "name": "Version 21df0c0e",
     "description": "",
     "autosaved": true
   },

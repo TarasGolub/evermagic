@@ -43,7 +43,7 @@ A {age}-year-old {gender} with {hair_color} hair and {skin_tone} skin, {signatur
 ## Coloring Page Prompt
 
 ```
-Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. A {age}-year-old {gender} in a confident hero pose wearing a backwards cap, hoodie, and sneakers. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Simple space-themed background: outline stars, outline planets, outline rocket. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.
+Children's coloring page for a young child to color inside the lines. Pure black outlines on solid white background only. Absolutely no color, no shading, no cross-hatching, no gradients, no fills of any kind — only crisp, clean, simple outlines. A {age}-year-old {gender} in a confident hero pose wearing a backwards cap, hoodie, and sneakers. The entire character must fit completely inside the frame — head with hat fully visible at top, feet and shoes fully visible at bottom, generous white space margin on all sides, never cropped or cut off at any edge. Minimal space background as simple outlines only: a few stars, one planet, one small rocket. Thick bold lines easy for a child to color with crayons. Printable coloring book page.
 ```
 
 ---

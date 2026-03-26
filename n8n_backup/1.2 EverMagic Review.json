@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-13T23:27:16.591Z",
+  "updatedAt": "2026-03-26T05:17:54.287Z",
   "createdAt": "2026-02-28T04:04:08.656Z",
   "id": "6g62k80v9xljSzY8",
   "name": "1.2 EverMagic Review",
@@ -33,7 +33,8 @@
       "position": [
         -1264,
         272
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -137,7 +138,8 @@
       "position": [
         -224,
         48
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -258,7 +260,8 @@
       "position": [
         -224,
         240
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -295,7 +298,8 @@
       "position": [
         -224,
         448
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -678,15 +682,18 @@
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "X8i8vvopGj9AvYk6",
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "bd5a1444-6e99-46a4-978f-b8bbd9d25df2",
-  "activeVersionId": "bd5a1444-6e99-46a4-978f-b8bbd9d25df2",
+  "versionId": "e925ffdb-0cda-4ca7-a71a-9b3e7dfcc38a",
+  "activeVersionId": "e925ffdb-0cda-4ca7-a71a-9b3e7dfcc38a",
   "triggerCount": 1,
   "shared": [
     {
@@ -698,9 +705,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-25T20:30:46.000Z",
-    "createdAt": "2026-03-13T23:27:16.592Z",
-    "versionId": "bd5a1444-6e99-46a4-978f-b8bbd9d25df2",
+    "updatedAt": "2026-03-26T05:17:59.000Z",
+    "createdAt": "2026-03-26T05:17:46.823Z",
+    "versionId": "e925ffdb-0cda-4ca7-a71a-9b3e7dfcc38a",
     "workflowId": "6g62k80v9xljSzY8",
     "nodes": [
       {
@@ -730,7 +737,8 @@
         "position": [
           -1264,
           272
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -834,7 +842,8 @@
         "position": [
           -224,
           48
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -955,7 +964,8 @@
         "position": [
           -224,
           240
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -992,7 +1002,8 @@
         "position": [
           -224,
           448
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1373,7 +1384,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version bd5a1444",
+    "name": "Version e925ffdb",
     "description": "",
     "autosaved": true
   },

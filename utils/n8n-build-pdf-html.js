@@ -7,10 +7,10 @@
 // 1. Gather inputs
 // ─────────────────────────────────────────────────────────────
 
-const order       = JSON.parse($('Fetch Order Payload').first().json.payload_json);
-const child       = order.child;
+const order = JSON.parse($('Fetch Order Payload').first().json.payload_json);
+const child = order.child;
 
-const scriptRow   = $('Fetch Script').first().json;
+const scriptRow = $('Fetch Script').first().json;
 const scriptContent = typeof scriptRow.content === 'string'
     ? JSON.parse(scriptRow.content)
     : scriptRow.content;
@@ -28,7 +28,7 @@ for (const row of imageRows) {
 
 const env = $('Envs').first().json.env;
 const qrCodeUrl = env.qr_code_url || '';
-const logoPdfUrl = env.logo_pdf_url || '';
+const logoPdfUrl = 'https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/public/logo/logo_pdf.png';
 
 // ─────────────────────────────────────────────────────────────
 // 2. Build variable map
@@ -65,32 +65,32 @@ const awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'nume
 
 const vars = {
     // Story
-    'story.title':          scriptContent.title || '',
-    'story.tagline':        scriptContent.tagline || '',
-    'closing_message':      scriptContent.closing_message || '',
-    'parent_message':       order.parent_message || '',
+    'story.title': scriptContent.title || '',
+    'story.tagline': scriptContent.tagline || '',
+    'closing_message': scriptContent.closing_message || '',
+    'parent_message': order.parent_message || '',
 
     // Child
-    'child.name':           child.name,
-    'child.age':            String(child.age),
-    'child.hero_trait':     child.hero_trait || '',
-    'child.hobby':          child.hobby || '',
+    'child.name': child.name,
+    'child.age': String(child.age),
+    'child.hero_trait': child.hero_trait || '',
+    'child.hobby': child.hobby || '',
 
     // Order
-    'order.order_id':       order.order_id,
-    'qr_code_url':          qrCodeUrl,
-    'logo_pdf_url':         logoPdfUrl,
+    'order.order_id': order.order_id,
+    'qr_code_url': qrCodeUrl,
+    'logo_pdf_url': logoPdfUrl,
 
     // Images — scene images
-    'cover.image_url':      images['cover']    || '',
-    'scene_1.image_url':    images['scene_1']  || '',
-    'scene_2.image_url':    images['scene_2']  || '',
-    'scene_3.image_url':    images['scene_3']  || '',
-    'scene_4.image_url':    images['scene_4']  || '',
-    'scene_5.image_url':    images['scene_5']  || '',
+    'cover.image_url': images['cover'] || '',
+    'scene_1.image_url': images['scene_1'] || '',
+    'scene_2.image_url': images['scene_2'] || '',
+    'scene_3.image_url': images['scene_3'] || '',
+    'scene_4.image_url': images['scene_4'] || '',
+    'scene_5.image_url': images['scene_5'] || '',
 
     // Images — coloring pages
-    'coloring.image_url':   images['coloring']   || '',
+    'coloring.image_url': images['coloring'] || '',
     'coloring_1.image_url': images['coloring_1'] || '',
     'coloring_2.image_url': images['coloring_2'] || '',
     'coloring_3.image_url': images['coloring_3'] || '',
@@ -98,23 +98,23 @@ const vars = {
     'coloring_5.image_url': images['coloring_5'] || '',
 
     // Scene titles
-    'scene_1.title':        sceneTitle(1),
-    'scene_2.title':        sceneTitle(2),
-    'scene_3.title':        sceneTitle(3),
-    'scene_4.title':        sceneTitle(4),
-    'scene_5.title':        sceneTitle(5),
+    'scene_1.title': sceneTitle(1),
+    'scene_2.title': sceneTitle(2),
+    'scene_3.title': sceneTitle(3),
+    'scene_4.title': sceneTitle(4),
+    'scene_5.title': sceneTitle(5),
 
     // Scene text pages — each scene split across two fixed-height pages
-    'scene_1.text_pages':   buildTextPages(1),
-    'scene_2.text_pages':   buildTextPages(2),
-    'scene_3.text_pages':   buildTextPages(3),
-    'scene_4.text_pages':   buildTextPages(4),
-    'scene_5.text_pages':   buildTextPages(5),
+    'scene_1.text_pages': buildTextPages(1),
+    'scene_2.text_pages': buildTextPages(2),
+    'scene_3.text_pages': buildTextPages(3),
+    'scene_4.text_pages': buildTextPages(4),
+    'scene_5.text_pages': buildTextPages(5),
 
     // Certificate
     'cert.hero_trait_title': heroTraitTitle,
-    'cert.citation':         citation,
-    'cert.date':             awardDate,
+    'cert.citation': citation,
+    'cert.date': awardDate,
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -124,19 +124,19 @@ const vars = {
 
 function buildTextPages(sceneNumber) {
     const title = sceneTitle(sceneNumber);
-    const text  = sceneText(sceneNumber);
+    const text = sceneText(sceneNumber);
     if (!text) return '';
 
     // Group sentences into paragraphs of 3
-    const sentences  = text.match(/[^.!?]+[.!?]+["']?/g) || [text];
+    const sentences = text.match(/[^.!?]+[.!?]+["']?/g) || [text];
     const paragraphs = [];
     for (let i = 0; i < sentences.length; i += 3) {
         const chunk = sentences.slice(i, i + 3).join(' ').trim();
         if (chunk) paragraphs.push('<p>' + chunk + '</p>');
     }
 
-    const N      = paragraphs.length;
-    const split  = Math.ceil(N / 2);
+    const N = paragraphs.length;
+    const split = Math.ceil(N / 2);
     const p1Html = paragraphs.slice(0, split).join('\n');
     const p2Html = paragraphs.slice(split).join('\n');
 
@@ -205,10 +205,10 @@ for (const pdfType of PDF_TYPES) {
 
     results.push({
         json: {
-            order_id:      order.order_id,
-            pdf_type:      pdfType.type,
+            order_id: order.order_id,
+            pdf_type: pdfType.type,
             pdfshift_body: pdfshiftBody,
-            file_path:     `pdfs/${order.order_id}/${pdfType.type}.pdf`,
+            file_path: `pdfs/${order.order_id}/${pdfType.type}.pdf`,
         }
     });
 }
