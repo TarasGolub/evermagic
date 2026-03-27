@@ -1,9 +1,9 @@
 # 📚 EverMagic — Project Documentation
 
-> **Last updated:** March 25, 2026
-> **Current Phase:** Phase 3 complete and tested in live mode — next: UAT flow for friend feedback
-> **Completed:** Phases 1 & 2 (Intake + Script + Images) + Phase 3 (PDF Engine + 5 Themes + Per-Theme PDF Styling + Live Testing)
-> **Latest tags:** v1.4.0 (4 new themes) · v1.4.1 (per-theme PDF styles)
+> **Last updated:** March 27, 2026
+> **Current Phase:** UAT round in progress — first group of friends invited, awaiting feedback — next: Etsy launch preparation
+> **Completed:** Phases 1–3 (Intake + Script + Images + PDF Engine + 5 Themes + Per-Theme Styling + Live Testing + UAT flow)
+> **Latest tags:** v1.4.0 (4 new themes) · v1.4.1 (per-theme PDF styles) · v1.5.0 (UAT flow)
 
 ---
 
@@ -64,7 +64,7 @@ EverMagic is an **AI-first content production engine** that creates personalized
 
 - **Themes (5 active):** Space Hero Mission · Fantasy Hero Quest · Enchanted Princess Adventure · Animal Guardian Hero · Home Helper Hero
 - **Language:** English only (Ukrainian planned)
-- **Status:** Phases 1–3 complete — tested in live mode ✅ — next: UAT flow
+- **Status:** Phases 1–3 complete ✅ — UAT round in progress — next: Etsy launch preparation
 
 ---
 
@@ -234,6 +234,63 @@ Webhook → Envs
 
 ---
 
+### Workflow `99_1`: `EverMagic UAT Invite` — Send Personalised Invites
+
+**Trigger:** Manual trigger (run once per invite batch)
+
+**Node chain:**
+```
+Manual Trigger → Load Envs → Envs
+  → Fetch UAT Participants (status = 'ready')
+  → Loop Over Participants
+      → Fetch Unused Token (source = 'UAT', status = 'unused')
+      → Fetch Invite Email Template (from GitHub)
+      → Build Invite Email (personalised link + token)
+      → Send Invite Email
+      → Update Participant Status (status = 'invited', token assigned)
+      → Update Token Status (status = 'used')
+```
+
+**Key behaviours:**
+- Only processes participants with `status = 'ready'` in `uat_participants`
+- Each invite gets a unique `intake_tokens` token with `source = 'UAT'`
+- Tally URL: `tally.so/r/{form_id}?source=UAT&orderNo={name}&token={token}`
+- Subject: `{name}, early tester invite — your honest feedback would mean a lot. Taras`
+
+---
+
+### Workflow `99_2`: `EverMagic UAT Feedback` — Feedback Form & Submission Handler
+
+**Two parallel paths triggered by separate webhooks:**
+
+**GET path** (serve form):
+```
+Feedback Form Webhook (GET /evermagic/uat-feedback)
+  → Load Envs → Envs → Build Feedback Form → Respond Feedback Form (HTML)
+```
+
+**POST path** (handle submission):
+```
+Feedback Submit Webhook (POST /evermagic/uat-feedback-submit)
+  → Load Envs → Envs
+  → Fetch Thank-you Email Template (from GitHub)
+  → Parse UAT Feedback
+  → Insert UAT Feedback (uat_feedback table)
+  → Send Thank-you Email (to friend)
+  → Respond Thank You (inline HTML page)
+  → [parallel] Fetch All Feedback → Build Synthesis Prompt
+              → OpenAI GPT-4o (product analyst system prompt)
+              → Build Admin Email → Send Admin Email
+```
+
+**Key behaviours:**
+- Dark-themed EverMagic HTML form (matches email style, mobile-first)
+- Admin email after every submission: individual response table + running AI synthesis
+- GPT-4o system prompt instructs honest analysis with 6 structured output sections
+- Form URL carries `order_id`, `email`, `friend_name` as query params
+
+---
+
 ### Workflow 4: `EverMagic Image Generation` — AI Image Pipeline
 
 **Trigger:** Manual trigger (run from n8n dashboard)
@@ -355,6 +412,34 @@ Manual Trigger
 
 Cheat token: `EVRM-DEV` — skips DB lookup entirely, always passes (hardcoded in n8n code node).
 
+UAT tokens have `source = 'UAT'` — triggers automatic feedback email after delivery.
+
+#### `uat_participants`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | UUID PK | Auto-generated |
+| `name` | TEXT | Friend's name |
+| `contact` | TEXT | Email, phone, or Telegram handle |
+| `channel` | TEXT | email / telegram / whatsapp / sms |
+| `token` | TEXT FK | Assigned intake token |
+| `status` | TEXT | pending → ready → invited → delivered → feedback_received |
+| `notes` | TEXT | Personal notes (not used by automation) |
+
+#### `uat_feedback`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | UUID PK | Auto-generated |
+| `order_id` | TEXT | Reference to orders (nullable — FK removed for testing flexibility) |
+| `email` | TEXT | Friend's email |
+| `submitted_at` | TIMESTAMPTZ | Submission time |
+| `would_buy` | TEXT | Yes / No / Maybe |
+| `price_expectation` | TEXT | Free-text price opinion |
+| `process_feedback` | TEXT | Ordering, waiting, receiving experience |
+| `result_feedback` | TEXT | Quality of PDFs |
+| `open_feedback` | TEXT | Anything else |
+
 #### `envs`
 
 | Column | Type | Description |
@@ -362,7 +447,7 @@ Cheat token: `EVRM-DEV` — skips DB lookup entirely, always passes (hardcoded i
 | `key` | TEXT PK | Variable name |
 | `value` | TEXT | Variable value |
 
-Current keys: `mode` (test/live), `script_approval_required` (true/false), `qr_code_url` (QR image URL — placeholder ready in all PDF templates), `logo_pdf_url` (EverMagic logo for PDFs — hosted on Supabase Storage)
+Current keys: `mode` (test/live), `script_approval_required` (true/false), `qr_code_url` (QR image URL — placeholder ready in all PDF templates), `logo_pdf_url` (EverMagic logo for PDFs — hosted on Supabase Storage), `logo_url_white` (white logo for emails/forms), `tally_form_id` (intake form ID for UAT invite links), `feedback_form_url` (GET webhook URL of 99_2 — used in UAT feedback request email)
 
 ---
 
@@ -444,7 +529,7 @@ stateDiagram-v2
     scenario_expanded --> pdf_generating : Phase 3
     pdf_generating --> pdf_generated : Phase 3
     pdf_generated --> pdf_delivered : Phase 3
-    note right of images_generated : ← WE ARE HERE
+    note right of pdf_delivered : ← WE ARE HERE (UAT in progress)
 ```
 
 ---
@@ -550,7 +635,9 @@ evermagic/
 │   ├── 1.2 EverMagic Review.json           # Workflow: Admin review interface
 │   ├── 2. EverMagic Image Generation.json  # Workflow: AI image pipeline (THEMES object handles all 5 themes)
 │   ├── 3.1 EverMagic Scenario Expansion.json
-│   └── 3.2 EverMagic PDF Assembly.json     # Workflow: PDF build + delivery (THEME_STYLES injection)
+│   ├── 3.2 EverMagic PDF Assembly.json     # Workflow: PDF build + delivery + UAT feedback trigger
+│   ├── 99_1 EverMagic UAT Invite.json      # Workflow: send personalised invites to uat_participants
+│   └── 99_2 EverMagic UAT Feedback.json    # Workflow: feedback form (GET) + submission handler (POST)
 ├── prompts/
 │   ├── space_hero/             # 6 files: system.md, expansion.md, image_prompts.md,
 │   ├── fantasy_hero/           #          style.md, theme.json, theme_styles.css
@@ -565,10 +652,14 @@ evermagic/
 │       └── certificate.html
 ├── database/
 │   ├── images_table.sql
-│   └── intake_tokens.sql
+│   ├── intake_tokens.sql
+│   └── uat_tables.sql              # uat_participants + uat_feedback + UAT token seeding
 ├── emails/
 │   ├── admin-script-review.html
-│   └── customer-confirmation.html
+│   ├── customer-confirmation.html
+│   ├── uat-invite.html             # Personalised UAT invite email (informal tone)
+│   ├── uat-feedback-request.html   # Sent after UAT order delivery (10 min delay)
+│   └── uat-thankyou.html           # Sent after feedback form submission
 ├── scripts/
 │   └── export-n8n-workflows.mjs     # Export all n8n workflows via API → n8n_backup/
 ├── utils/
@@ -649,7 +740,19 @@ evermagic/
 | 3.7 — Per-Theme PDF Styling (v1.4.1) | CSS variables in storybook.html + theme_styles.css per theme | ✅ Complete |
 | 3.8 — Live Mode Testing | All 3 PDFs + email delivery verified end-to-end in live mode | ✅ Complete |
 
-**Current:** Full pipeline tested in live mode. Next: build UAT workflow for friend feedback loop before Etsy listing.
+**Current:** Full pipeline tested in live mode. UAT round in progress — first group of friends invited.
+
+#### UAT Flow (v1.5.0) ✅ BUILT — 🔄 IN PROGRESS
+
+| Step | Description | Status |
+|------|-------------|--------|
+| UAT token creation | `source='UAT'` tokens seeded in `intake_tokens` | ✅ |
+| Invite workflow (99_1) | Sends personalised email with unique Tally link | ✅ |
+| Feedback trigger in 3.2 | Detects `source='UAT'` after delivery → sends feedback request (10 min delay) | ✅ |
+| Feedback form (99_2 GET) | Dark-themed n8n-hosted HTML form, mobile-first | ✅ |
+| Feedback submission (99_2 POST) | Saves to `uat_feedback`, thank-you email, AI synthesis to admin | ✅ |
+| First invites sent | First group of friends invited | ✅ |
+| Collect responses | Awaiting feedback | 🔄 |
 
 ### Delivery Flow (Step 3.4) — Actual Implementation
 
@@ -762,9 +865,9 @@ Tools: ElevenLabs (voice), Remotion / FFmpeg / Creatomate (video — TBD).
 
 ### What's Next
 
-Phase 3 is complete and tested in live mode. **Immediate next steps:**
-1. Build a separate UAT n8n workflow for friend feedback (isolated from production)
-2. Invite ~10 parents to try, collect structured feedback
-3. Prioritize and address feedback
+Phase 3 complete and tested. UAT round in progress. **Immediate next steps:**
+1. Collect UAT feedback from invited friends
+2. Address feedback — prioritise UX and quality issues
+3. Prepare Etsy listing — photos, copy, pricing ($9–15 CAD)
 4. List on Etsy — validate market demand
 5. Begin Phase 4 planning (voice narration + video bundle)

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-26T05:15:08.915Z",
+  "updatedAt": "2026-03-27T21:47:24.128Z",
   "createdAt": "2026-02-22T01:53:38.170Z",
   "id": "BqU3JEiy7Y1LGWgi",
   "name": "1. EverMagic v1.0.1",
@@ -505,7 +505,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// ─────────────────────────────────────────────────────────────\n// EverMagic — n8n Code Node: \"Validate Token\"\n// Step 3.5 — Intake Token System\n//\n// Placement: AFTER Supabase \"Fetch Token from DB\" node\n//\n// Input:\n//   $input.first().json      = Supabase row from intake_tokens (or empty if not found)\n//   $('Parse Token').first() = { token, source, orderNo, skipTokenCheck }\n//\n// Output (TRUE branch = IF node passes through):\n//   { tokenValid: true,  token, source, orderNo }\n//\n// Output (FALSE branch = reject path):\n//   { tokenValid: false, rejectReason: 'already_used' | 'not_found' }\n//\n// Supabase node setup (before this):\n//   Operation: getAll\n//   Table: intake_tokens\n//   Filter: token eq {{ $('Parse Token').first().json.token }}\n//   Limit: 1\n// ─────────────────────────────────────────────────────────────\n\nconst tokenRow  = $input.first().json;          // Supabase row — may be empty object {}\nconst parsed    = $('Parse Token').first().json; // { token, source, orderNo }\n\nconst rowExists = tokenRow && tokenRow.token;   // real row has a token column\nconst isUnused  = rowExists && tokenRow.status === 'unused';\n\nif (!rowExists) {\n  // Token not found in DB at all\n  return [{\n    json: {\n      tokenValid:   false,\n      rejectReason: 'not_found',\n      token:        parsed.token,\n      source:       parsed.source,\n      orderNo:      parsed.orderNo,\n    }\n  }];\n}\n\nif (!isUnused) {\n  // Token exists but has already been used\n  return [{\n    json: {\n      tokenValid:   false,\n      rejectReason: 'already_used',\n      token:        parsed.token,\n      source:       parsed.source,\n      orderNo:      parsed.orderNo,\n    }\n  }];\n}\n\n// ✅ Token is valid and unused\nreturn [{\n  json: {\n    tokenValid:   true,\n    rejectReason: null,\n    token:        tokenRow.token,\n    source:       parsed.source,\n    orderNo:      parsed.orderNo,\n  }\n}];\n"
+        "jsCode": "// ─────────────────────────────────────────────────────────────\n// EverMagic — n8n Code Node: \"Validate Token\"\n// Step 3.5 — Intake Token System\n//\n// Placement: AFTER Supabase \"Fetch Token from DB\" node\n//\n// Input:\n//   $input.first().json      = Supabase row from intake_tokens (or empty if not found)\n//   $('Parse Token').first() = { token, source, orderNo, skipTokenCheck }\n//\n// Output (TRUE branch = IF node passes through):\n//   { tokenValid: true,  token, source, orderNo }\n//\n// Output (FALSE branch = reject path):\n//   { tokenValid: false, rejectReason: 'already_used' | 'not_found' }\n//\n// Supabase node setup (before this):\n//   Operation: getAll\n//   Table: intake_tokens\n//   Filter: token eq {{ $('Parse Token').first().json.token }}\n//   Limit: 1\n// ─────────────────────────────────────────────────────────────\n\nconst tokenRow  = $input.first().json;          // Supabase row — may be empty object {}\nconst parsed    = $('Parse Token').first().json; // { token, source, orderNo }\n\nconst rowExists = tokenRow && tokenRow.token;   // real row has a token column\nconst isUnused  = rowExists && (tokenRow.status === 'unused' || tokenRow.status === 'pending');\n\nif (!rowExists) {\n  // Token not found in DB at all\n  return [{\n    json: {\n      tokenValid:   false,\n      rejectReason: 'not_found',\n      token:        parsed.token,\n      source:       parsed.source,\n      orderNo:      parsed.orderNo,\n    }\n  }];\n}\n\nif (!isUnused) {\n  // Token exists but has already been used\n  return [{\n    json: {\n      tokenValid:   false,\n      rejectReason: 'already_used',\n      token:        parsed.token,\n      source:       parsed.source,\n      orderNo:      parsed.orderNo,\n    }\n  }];\n}\n\n// ✅ Token is valid and unused\nreturn [{\n  json: {\n    tokenValid:   true,\n    rejectReason: null,\n    token:        tokenRow.token,\n    source:       parsed.source,\n    orderNo:      parsed.orderNo,\n  }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1016,8 +1016,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "4d6a95c2-5580-4192-a6fa-9580060b357b",
-  "activeVersionId": "4d6a95c2-5580-4192-a6fa-9580060b357b",
+  "versionId": "8d510a84-32b3-410c-a589-087edc654ab0",
+  "activeVersionId": "8d510a84-32b3-410c-a589-087edc654ab0",
   "triggerCount": 1,
   "shared": [
     {
@@ -1029,9 +1029,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-26T05:15:12.000Z",
-    "createdAt": "2026-03-26T05:14:28.888Z",
-    "versionId": "4d6a95c2-5580-4192-a6fa-9580060b357b",
+    "updatedAt": "2026-03-27T21:47:29.000Z",
+    "createdAt": "2026-03-27T21:47:24.129Z",
+    "versionId": "8d510a84-32b3-410c-a589-087edc654ab0",
     "workflowId": "BqU3JEiy7Y1LGWgi",
     "nodes": [
       {
@@ -1533,7 +1533,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// ─────────────────────────────────────────────────────────────\n// EverMagic — n8n Code Node: \"Validate Token\"\n// Step 3.5 — Intake Token System\n//\n// Placement: AFTER Supabase \"Fetch Token from DB\" node\n//\n// Input:\n//   $input.first().json      = Supabase row from intake_tokens (or empty if not found)\n//   $('Parse Token').first() = { token, source, orderNo, skipTokenCheck }\n//\n// Output (TRUE branch = IF node passes through):\n//   { tokenValid: true,  token, source, orderNo }\n//\n// Output (FALSE branch = reject path):\n//   { tokenValid: false, rejectReason: 'already_used' | 'not_found' }\n//\n// Supabase node setup (before this):\n//   Operation: getAll\n//   Table: intake_tokens\n//   Filter: token eq {{ $('Parse Token').first().json.token }}\n//   Limit: 1\n// ─────────────────────────────────────────────────────────────\n\nconst tokenRow  = $input.first().json;          // Supabase row — may be empty object {}\nconst parsed    = $('Parse Token').first().json; // { token, source, orderNo }\n\nconst rowExists = tokenRow && tokenRow.token;   // real row has a token column\nconst isUnused  = rowExists && tokenRow.status === 'unused';\n\nif (!rowExists) {\n  // Token not found in DB at all\n  return [{\n    json: {\n      tokenValid:   false,\n      rejectReason: 'not_found',\n      token:        parsed.token,\n      source:       parsed.source,\n      orderNo:      parsed.orderNo,\n    }\n  }];\n}\n\nif (!isUnused) {\n  // Token exists but has already been used\n  return [{\n    json: {\n      tokenValid:   false,\n      rejectReason: 'already_used',\n      token:        parsed.token,\n      source:       parsed.source,\n      orderNo:      parsed.orderNo,\n    }\n  }];\n}\n\n// ✅ Token is valid and unused\nreturn [{\n  json: {\n    tokenValid:   true,\n    rejectReason: null,\n    token:        tokenRow.token,\n    source:       parsed.source,\n    orderNo:      parsed.orderNo,\n  }\n}];\n"
+          "jsCode": "// ─────────────────────────────────────────────────────────────\n// EverMagic — n8n Code Node: \"Validate Token\"\n// Step 3.5 — Intake Token System\n//\n// Placement: AFTER Supabase \"Fetch Token from DB\" node\n//\n// Input:\n//   $input.first().json      = Supabase row from intake_tokens (or empty if not found)\n//   $('Parse Token').first() = { token, source, orderNo, skipTokenCheck }\n//\n// Output (TRUE branch = IF node passes through):\n//   { tokenValid: true,  token, source, orderNo }\n//\n// Output (FALSE branch = reject path):\n//   { tokenValid: false, rejectReason: 'already_used' | 'not_found' }\n//\n// Supabase node setup (before this):\n//   Operation: getAll\n//   Table: intake_tokens\n//   Filter: token eq {{ $('Parse Token').first().json.token }}\n//   Limit: 1\n// ─────────────────────────────────────────────────────────────\n\nconst tokenRow  = $input.first().json;          // Supabase row — may be empty object {}\nconst parsed    = $('Parse Token').first().json; // { token, source, orderNo }\n\nconst rowExists = tokenRow && tokenRow.token;   // real row has a token column\nconst isUnused  = rowExists && (tokenRow.status === 'unused' || tokenRow.status === 'pending');\n\nif (!rowExists) {\n  // Token not found in DB at all\n  return [{\n    json: {\n      tokenValid:   false,\n      rejectReason: 'not_found',\n      token:        parsed.token,\n      source:       parsed.source,\n      orderNo:      parsed.orderNo,\n    }\n  }];\n}\n\nif (!isUnused) {\n  // Token exists but has already been used\n  return [{\n    json: {\n      tokenValid:   false,\n      rejectReason: 'already_used',\n      token:        parsed.token,\n      source:       parsed.source,\n      orderNo:      parsed.orderNo,\n    }\n  }];\n}\n\n// ✅ Token is valid and unused\nreturn [{\n  json: {\n    tokenValid:   true,\n    rejectReason: null,\n    token:        tokenRow.token,\n    source:       parsed.source,\n    orderNo:      parsed.orderNo,\n  }\n}];\n"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -2032,7 +2032,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 4d6a95c2",
+    "name": "Version 8d510a84",
     "description": "",
     "autosaved": true
   },

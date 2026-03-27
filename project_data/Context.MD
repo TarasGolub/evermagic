@@ -44,14 +44,14 @@ It is:
 
 ---
 
-## 🎯 CURRENT SCOPE (v1.4.1)
+## 🎯 CURRENT SCOPE (v1.5.0)
 
 | Dimension | Value |
 |-----------|-------|
 | Themes | Space Hero · Fantasy Hero · Enchanted Princess · Animal Guardian · Home Helper |
 | Language | English only (Ukrainian planned) |
 | Packages | Basic · Full Bundle · Party Pack |
-| Status | Phases 1–3 complete — tested in live mode ✅ — next: UAT flow |
+| Status | Phases 1–3 complete — UAT invites sent to first group of friends — next: Etsy launch preparation |
 
 ---
 
@@ -66,9 +66,9 @@ It is:
 | Storage | Supabase Storage (images, PDFs) | ✅ Active |
 | AI — Script | OpenAI GPT-4o | ✅ Active |
 | AI — Images | OpenAI gpt-image-1 / DALL·E | ✅ Active |
-| AI — Scenario Expansion | OpenAI GPT-4o | 📋 Phase 3 |
-| PDF Generation | PDFShift API | 📋 Phase 3 |
-| Audio | ElevenLabs (audiobook exploration) | 📋 Phase 3 |
+| AI — Scenario Expansion | OpenAI GPT-4o | ✅ Active |
+| PDF Generation | PDFShift API | ✅ Active |
+| Audio | ElevenLabs (audiobook exploration) | 📋 Phase 4 |
 | Voice | ElevenLabs | 📋 Phase 4 |
 | Video rendering | TBD (Remotion / FFmpeg / Creatomate) | 📋 Phase 4 |
 | Delivery | Email via n8n | ✅ Active |
@@ -76,13 +76,27 @@ It is:
 
 ---
 
-## 🏗 CURRENT PIPELINE (Phase 1 + 2 — Complete ✅)
+## 🏗 CURRENT PIPELINE (Phases 1–3 Complete ✅)
 
 ```
-Tally → n8n Webhook → Parse & Canonicalize → Save to Supabase → Build Prompt → OpenAI → Parse Script → Save Script → Send Emails → Admin Review (Approve / Retry / Edit) → Generate Images → Save Images to Supabase Storage
+Tally → n8n Webhook → Parse & Canonicalize → Save to Supabase → Build Prompt → OpenAI → Parse Script → Save Script → Send Emails → Admin Review (Approve / Retry / Edit) → Generate Images → Scenario Expansion → PDF Assembly → Delivery Email
 ```
 
 **Webhook secured via:** Header Auth (`X-EverMagic-Token`)
+
+### n8n Workflows
+
+| # | Name | Purpose |
+|---|------|---------|
+| 0 | EverMagic Error Notifier | Global error handler — admin email on any workflow failure |
+| 1 | EverMagic v1.0.1 | Intake + Script Generation: Tally webhook → parse → save → GPT script → emails |
+| 1.1 | EverMagic Review Submit | Processes admin actions: Approve / Retry / Edit |
+| 1.2 | EverMagic Review | Admin review UI served as webhook HTML page |
+| 2 | EverMagic Image Generation | Builds 12 image prompts, calls gpt-image-1, uploads to Supabase Storage |
+| 3.1 | EverMagic Scenario Expansion | GPT-4o expands each scene into full child-facing narrative |
+| 3.2 | EverMagic PDF Assembly | Injects content + images → PDFShift → delivery email; detects UAT orders → sends feedback request |
+| 99_1 | EverMagic UAT Invite | Fetches ready participants → sends personalised invite email with unique token |
+| 99_2 | EverMagic UAT Feedback | Serves feedback form (GET) + handles submission (POST) → saves to DB → AI synthesis → admin email |
 
 ---
 
@@ -139,7 +153,7 @@ const env = $('Envs').first().json.env;
 
 | Channel | Product | Price | Status |
 |---------|---------|-------|--------|
-| **Etsy / Amazon** | PDF bundle (storybook + certificate + coloring) | $9–15 CAD | 📋 Phase 3 |
+| **Etsy / Amazon** | PDF bundle (storybook + certificate + coloring) | $9–15 CAD | 🔜 Next — preparing listing |
 | **KidsTukan / Direct** | Premium bundle (video + PDF + printable) | $35–49 CAD | 📋 Phase 4 |
 
 Etsy = market validation, reviews, proof. KidsTukan = premium experience.
@@ -177,7 +191,7 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 ---
 
-### PHASE 3 — PDF Storybook Engine ✅ COMPLETE (Steps 3.1–3.7 done)
+### PHASE 3 — PDF Storybook Engine ✅ COMPLETE (Steps 3.1–3.8 done)
 
 **Goal:** Generate illustrated PDF storybook as first sellable product for Etsy.
 
@@ -236,6 +250,23 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 - Gmail dark mode fix applied to all customer-facing emails
 - `logo_pdf_url` and `qr_code_url` added to `envs` table pattern (logo served from Supabase Storage)
 - Build Delivery Code node: "Run Once for All Items" required to avoid 60s timeout (3 PDF items × execution)
+
+---
+
+### UAT ROUND — Friend Feedback Loop 🔄 IN PROGRESS
+
+**Goal:** Validate product quality and UX with ~10 trusted friends before Etsy launch.
+
+**What's built:**
+- `99_1 EverMagic UAT Invite` — sends personalised invite email with unique token per friend
+- `99_2 EverMagic UAT Feedback` — serves feedback form, handles submission, stores responses, runs GPT-4o synthesis, emails admin running summary after each submission
+- `3.2 EverMagic PDF Assembly` extended: detects `source=UAT` → sends feedback request email 10 min after delivery
+
+**DB tables added:** `uat_participants`, `uat_feedback`; UAT tokens seeded in `intake_tokens` with `source='UAT'`
+
+**Current status:** First group of invites sent. Awaiting responses.
+
+**Next after UAT:** Address feedback → Etsy listing.
 
 ---
 
@@ -334,7 +365,7 @@ EverMagic is an **AI content production engine.**
 
 ## 📌 WHEN YOU NEED TO RESTORE CONTEXT
 
-> "Continuing EverMagic AI Factory. Phases 1–3 complete and tested in live mode. 5 themes active (Space Hero, Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper). Next step: separate UAT workflow for friend feedback loop before Etsy launch."
+> "Continuing EverMagic AI Factory. Phases 1–3 complete and tested in live mode. UAT round in progress — first group of friends invited, feedback being collected. 5 themes active (Space Hero, Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper). Next step: address UAT feedback → Etsy launch preparation."
 
 ## OPTIMIZATION IDEAS
 
