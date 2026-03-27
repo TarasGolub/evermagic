@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-26T05:53:51.970Z",
+  "updatedAt": "2026-03-27T22:36:51.844Z",
   "createdAt": "2026-03-14T17:52:56.850Z",
   "id": "Zwhkv86d2kqVMVhg",
   "name": "3.2 EverMagic PDF Assembly",
@@ -51,7 +51,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_storage_url: raw.supabase_storage_url || '',\n  supabase_service_key: raw.supabase_service_key || ''\n};\n\nreturn [{ json: { env } }];\n"
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_storage_url: raw.supabase_storage_url || '',\n  supabase_service_key: raw.supabase_service_key || '',\n  feedback_form_url: raw.feedback_form_url || ''\n};\n\nreturn [{ json: { env } }];\n"
       },
       "id": "f632853e-8c85-4fba-a7a9-a8068b75d31f",
       "name": "Envs",
@@ -85,6 +85,7 @@
         -224,
         1328
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -115,6 +116,7 @@
         -496,
         1328
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -150,6 +152,7 @@
         256,
         1328
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -188,6 +191,7 @@
         496,
         1328
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -207,7 +211,8 @@
       "position": [
         736,
         1328
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -221,7 +226,8 @@
       "position": [
         976,
         1328
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -235,7 +241,8 @@
       "position": [
         1216,
         1328
-      ]
+      ],
+      "alwaysOutputData": true
     },
     {
       "parameters": {
@@ -573,6 +580,136 @@
           "name": "Supabase account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "orders",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Build Delivery').first().json.order_id }}"
+            }
+          ]
+        }
+      },
+      "id": "2f7534b4-e681-425e-9909-a803894212a4",
+      "name": "Fetch Order Source",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        4160,
+        1136
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "uat-source-check",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "UAT",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a71a2c8c-ea4c-417e-bbbd-9601974d08cc",
+      "name": "Is UAT?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4400,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/uat-feedback-request.html",
+        "options": {}
+      },
+      "id": "69221b65-2022-49c5-bebf-eba5cc32ecc5",
+      "name": "Fetch Feedback Request Email Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        4880,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const deliveryData = $('Build Delivery').first().json;\nconst env          = $('Envs').first().json.env;\n\nconst feedbackFormBase = env.feedback_form_url;\nif (!feedbackFormBase) throw new Error('Missing env: feedback_form_url');\n\nconst feedbackUrl = feedbackFormBase\n  + `?order_id=${encodeURIComponent(deliveryData.order_id)}`\n  + `&email=${encodeURIComponent(deliveryData.child_email)}`;\n\nconst branch  = env.is_live ? 'main' : 'develop';\nconst logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\n\nconst template = $('Fetch Feedback Request Email Template').first().json.data;\n\nconst html = template\n  .replace(/\\{\\{logo_url\\}\\}/g,     logoUrl)\n  .replace(/\\{\\{child_name\\}\\}/g,   deliveryData.child_name)\n  .replace(/\\{\\{feedback_url\\}\\}/g, feedbackUrl);\n\nreturn [{\n  json: {\n    to:      deliveryData.child_email,\n    subject: `${deliveryData.child_name}'s files are ready — quick feedback? Taras`,\n    html,\n  }\n}];\n"
+      },
+      "id": "ef9e0577-0510-4274-9cf6-234e423e9108",
+      "name": "Build UAT Feedback Request Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5120,
+        1008
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "119bef13-5231-4168-8193-6a57e5d2227b",
+      "name": "Send UAT Feedback Request",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        5360,
+        1008
+      ],
+      "webhookId": "f17ffe03-a5b2-4dc6-9a81-3588d92dfa00",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "f4c017b3-4035-4977-a553-cdb3575f83ed",
+      "name": "Wait 5 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4640,
+        1008
+      ],
+      "webhookId": "uat-wait-webhook"
     }
   ],
   "connections": {
@@ -813,6 +950,72 @@
           }
         ]
       ]
+    },
+    "Fetch Order Source": {
+      "main": [
+        [
+          {
+            "node": "Is UAT?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is UAT?": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Feedback Request Email Template": {
+      "main": [
+        [
+          {
+            "node": "Build UAT Feedback Request Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build UAT Feedback Request Email": {
+      "main": [
+        [
+          {
+            "node": "Send UAT Feedback Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Order Status: PDFs delivered": {
+      "main": [
+        [
+          {
+            "node": "Fetch Order Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 min": {
+      "main": [
+        [
+          {
+            "node": "Fetch Feedback Request Email Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -828,8 +1031,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "515119b9-fe80-4bfc-a4aa-0aa22d0d5ff8",
-  "activeVersionId": "515119b9-fe80-4bfc-a4aa-0aa22d0d5ff8",
+  "versionId": "c8f7af04-f126-4a46-9e80-9caef4a52fa0",
+  "activeVersionId": "c8f7af04-f126-4a46-9e80-9caef4a52fa0",
   "triggerCount": 1,
   "shared": [
     {
@@ -841,9 +1044,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-26T05:54:01.000Z",
-    "createdAt": "2026-03-26T05:53:51.971Z",
-    "versionId": "515119b9-fe80-4bfc-a4aa-0aa22d0d5ff8",
+    "updatedAt": "2026-03-27T22:37:02.000Z",
+    "createdAt": "2026-03-27T22:36:51.846Z",
+    "versionId": "c8f7af04-f126-4a46-9e80-9caef4a52fa0",
     "workflowId": "Zwhkv86d2kqVMVhg",
     "nodes": [
       {
@@ -891,7 +1094,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_storage_url: raw.supabase_storage_url || '',\n  supabase_service_key: raw.supabase_service_key || ''\n};\n\nreturn [{ json: { env } }];\n"
+          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  script_approval_required: raw.script_approval_required === 'true',\n  evrm_token: raw.evrm_token,\n  pdfshift_api_key: raw.pdfshift_api_key || '',\n  qr_code_url: raw.qr_code_url || '',\n  supabase_url: raw.supabase_url || '',\n  supabase_storage_url: raw.supabase_storage_url || '',\n  supabase_service_key: raw.supabase_service_key || '',\n  feedback_form_url: raw.feedback_form_url || ''\n};\n\nreturn [{ json: { env } }];\n"
         },
         "id": "f632853e-8c85-4fba-a7a9-a8068b75d31f",
         "name": "Envs",
@@ -925,6 +1128,7 @@
           -224,
           1328
         ],
+        "alwaysOutputData": true,
         "credentials": {
           "supabaseApi": {
             "id": "EYHDNsSv530jAc06",
@@ -955,6 +1159,7 @@
           -496,
           1328
         ],
+        "alwaysOutputData": true,
         "credentials": {
           "supabaseApi": {
             "id": "EYHDNsSv530jAc06",
@@ -990,6 +1195,7 @@
           256,
           1328
         ],
+        "alwaysOutputData": true,
         "credentials": {
           "supabaseApi": {
             "id": "EYHDNsSv530jAc06",
@@ -1028,6 +1234,7 @@
           496,
           1328
         ],
+        "alwaysOutputData": true,
         "credentials": {
           "supabaseApi": {
             "id": "EYHDNsSv530jAc06",
@@ -1047,7 +1254,8 @@
         "position": [
           736,
           1328
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1061,7 +1269,8 @@
         "position": [
           976,
           1328
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1075,7 +1284,8 @@
         "position": [
           1216,
           1328
-        ]
+        ],
+        "alwaysOutputData": true
       },
       {
         "parameters": {
@@ -1413,6 +1623,136 @@
             "name": "Supabase account"
           }
         }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "orders",
+          "limit": 1,
+          "matchType": "allFilters",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Build Delivery').first().json.order_id }}"
+              }
+            ]
+          }
+        },
+        "id": "2f7534b4-e681-425e-9909-a803894212a4",
+        "name": "Fetch Order Source",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          4160,
+          1136
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "uat-source-check",
+                "leftValue": "={{ $json.source }}",
+                "rightValue": "UAT",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "a71a2c8c-ea4c-417e-bbbd-9601974d08cc",
+        "name": "Is UAT?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          4400,
+          1136
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/uat-feedback-request.html",
+          "options": {}
+        },
+        "id": "69221b65-2022-49c5-bebf-eba5cc32ecc5",
+        "name": "Fetch Feedback Request Email Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          4880,
+          1008
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const deliveryData = $('Build Delivery').first().json;\nconst env          = $('Envs').first().json.env;\n\nconst feedbackFormBase = env.feedback_form_url;\nif (!feedbackFormBase) throw new Error('Missing env: feedback_form_url');\n\nconst feedbackUrl = feedbackFormBase\n  + `?order_id=${encodeURIComponent(deliveryData.order_id)}`\n  + `&email=${encodeURIComponent(deliveryData.child_email)}`;\n\nconst branch  = env.is_live ? 'main' : 'develop';\nconst logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\n\nconst template = $('Fetch Feedback Request Email Template').first().json.data;\n\nconst html = template\n  .replace(/\\{\\{logo_url\\}\\}/g,     logoUrl)\n  .replace(/\\{\\{child_name\\}\\}/g,   deliveryData.child_name)\n  .replace(/\\{\\{feedback_url\\}\\}/g, feedbackUrl);\n\nreturn [{\n  json: {\n    to:      deliveryData.child_email,\n    subject: `${deliveryData.child_name}'s files are ready — quick feedback? Taras`,\n    html,\n  }\n}];\n"
+        },
+        "id": "ef9e0577-0510-4274-9cf6-234e423e9108",
+        "name": "Build UAT Feedback Request Email",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          5120,
+          1008
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "={{ $json.to }}",
+          "subject": "={{ $json.subject }}",
+          "html": "={{ $json.html }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "119bef13-5231-4168-8193-6a57e5d2227b",
+        "name": "Send UAT Feedback Request",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          5360,
+          1008
+        ],
+        "webhookId": "f17ffe03-a5b2-4dc6-9a81-3588d92dfa00",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "f4c017b3-4035-4977-a553-cdb3575f83ed",
+        "name": "Wait 5 min",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          4640,
+          1008
+        ],
+        "webhookId": "uat-wait-webhook"
       }
     ],
     "connections": {
@@ -1653,10 +1993,76 @@
             }
           ]
         ]
+      },
+      "Fetch Order Source": {
+        "main": [
+          [
+            {
+              "node": "Is UAT?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is UAT?": {
+        "main": [
+          [
+            {
+              "node": "Wait 5 min",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Feedback Request Email Template": {
+        "main": [
+          [
+            {
+              "node": "Build UAT Feedback Request Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build UAT Feedback Request Email": {
+        "main": [
+          [
+            {
+              "node": "Send UAT Feedback Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Order Status: PDFs delivered": {
+        "main": [
+          [
+            {
+              "node": "Fetch Order Source",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 5 min": {
+        "main": [
+          [
+            {
+              "node": "Fetch Feedback Request Email Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 515119b9",
+    "name": "Version c8f7af04",
     "description": "",
     "autosaved": true
   },
