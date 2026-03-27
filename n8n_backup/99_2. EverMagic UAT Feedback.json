@@ -1,0 +1,1234 @@
+{
+  "updatedAt": "2026-03-27T21:14:48.092Z",
+  "createdAt": "2026-03-27T20:35:58.922Z",
+  "id": "PZirrfi1koSTKXzw",
+  "name": "99_2. EverMagic UAT Feedback",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "evermagic/uat-feedback",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "bef5496d-9915-4a85-a96f-bcdf61f37634",
+      "name": "Feedback Form Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "uat-feedback-form-get"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "envs"
+      },
+      "id": "abb5810a-4990-4e46-bd4c-3c7b05a0df04",
+      "name": "Load Envs",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\nconst env = {\n  mode:    raw.mode,\n  is_live: raw.mode === 'live',\n};\nreturn [{ json: { env } }];"
+      },
+      "id": "b242cfc4-b2a1-4037-b564-f83b4adf6bba",
+      "name": "Envs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const query      = $('Feedback Form Webhook').first().json.query || {};\nconst orderId    = query.order_id    || '';\nconst email      = query.email       || '';\nconst friendName = query.friend_name || '';\n\nconst env        = $('Envs').first().json.env;\nconst submitBase = `https://evermagic.app.n8n.cloud/webhook${env.is_live ? '' : '-test'}`;\nconst submitUrl  = `${submitBase}/evermagic/uat-feedback-submit`;\n\nconst html = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Quick feedback — EverMagic</title>\n  <style>\n    *, *::before, *::after { box-sizing: border-box; }\n    body { margin:0; padding:32px 16px; background:#0f0f1a; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#e8e8f5; }\n    .card { max-width:520px; margin:0 auto; background:#16213e; border-radius:16px; padding:36px 32px; }\n    h1 { margin:0 0 6px; font-size:22px; color:#fff; }\n    .sub { margin:0 0 28px; font-size:14px; color:#8b8ba3; }\n    label { display:block; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#b0b0cc; margin:20px 0 6px; }\n    label:first-of-type { margin-top:0; }\n    select, textarea {\n      width:100%; background:#1e2a45; border:1px solid #2a3a5c;\n      border-radius:8px; color:#e8e8f5; font-size:15px; padding:12px 14px;\n      outline:none; font-family:inherit;\n    }\n    select { height:46px; }\n    textarea { resize:vertical; min-height:88px; }\n    select:focus, textarea:focus { border-color:#7c3aed; }\n    .hint { font-size:12px; color:#8b8ba3; margin:4px 0 0; }\n    button {\n      display:block; width:100%; margin-top:28px;\n      padding:14px; background:#7c3aed; color:#fff;\n      font-size:16px; font-weight:700; border:none;\n      border-radius:10px; cursor:pointer;\n    }\n    button:hover { background:#6d28d9; }\n    .note { margin-top:16px; font-size:12px; color:#8b8ba3; text-align:center; }\n    @media (max-width:560px) { .card { padding:28px 20px; } }\n  </style>\n</head>\n<body>\n  <div class=\"card\">\n    <h1>Quick feedback</h1>\n    <p class=\"sub\">5 questions — 2 minutes. Only Taras will see this.</p>\n    <form method=\"POST\" action=\"${submitUrl}\">\n      <input type=\"hidden\" name=\"order_id\"    value=\"${orderId}\">\n      <input type=\"hidden\" name=\"email\"        value=\"${email}\">\n      <input type=\"hidden\" name=\"friend_name\"  value=\"${friendName}\">\n      \n      <label for=\"process_feedback\">How was the process — ordering, waiting, receiving?</label>\n      <textarea id=\"process_feedback\" name=\"process_feedback\" placeholder=\"Honest take on the experience...\"></textarea>\n\n      <label for=\"result_feedback\">What did you think of the result — the PDFs?</label>\n      <textarea id=\"result_feedback\" name=\"result_feedback\" placeholder=\"Story quality, illustrations, layout...\"></textarea>\n\n      <label for=\"open_feedback\">Anything else — broken, missing, loved?</label>\n      <textarea id=\"open_feedback\" name=\"open_feedback\" placeholder=\"Anything at all...\"></textarea>\n\n      <label for=\"would_buy\">Would you buy this for a kid?</label>\n      <textarea id=\"would_buy\" name=\"would_buy\">\n              </textarea>\n\n      <label for=\"price_expectation\">What would you pay for this?</label>\n      <textarea id=\"price_expectation\" name=\"price_expectation\" placeholder=\"\"></textarea>\n      \n\n      <button type=\"submit\">Send feedback</button>\n    </form>\n    <p class=\"note\">Made with ❤️ by EverMagic — Taras</p>\n  </div>\n</body>\n</html>`;\n\nreturn [{ json: { html } }];"
+      },
+      "id": "41e64aec-db8c-48c6-a674-c4f6deeb5132",
+      "name": "Build Feedback Form",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "920d74d0-6ed9-4d25-9d21-2323e724f8bb",
+      "name": "Respond Feedback Form",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evermagic/uat-feedback-submit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "82574a2e-bd76-4570-8375-3c9696f99fbf",
+      "name": "Feedback Submit Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        400
+      ],
+      "webhookId": "uat-feedback-form-post"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "envs"
+      },
+      "id": "209c9647-3839-4b45-b6c0-80f602c866e8",
+      "name": "Load Envs Submit",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        240,
+        400
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\nconst env = {\n  mode:    raw.mode,\n  is_live: raw.mode === 'live',\n};\nreturn [{ json: { env } }];"
+      },
+      "id": "6676cefe-1c2a-4820-aef0-6407c069dd43",
+      "name": "Envs Submit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs Submit').first().json.env.is_live ? 'main' : 'develop' }}/emails/uat-thankyou.html",
+        "options": {}
+      },
+      "id": "1b411b34-16af-41c9-bd6d-cc9eb25ab2e4",
+      "name": "Fetch Thank-you Email Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        720,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body =  $('Feedback Submit Webhook').first().json.body || $('Feedback Submit Webhook').first().json.body.json;\n\nconst feedback = {\n  order_id:          body.order_id          || null,\n  email:             body.email             || null,\n  would_buy:         body.would_buy         || null,\n  price_expectation: body.price_expectation || null,\n  process_feedback:  body.process_feedback  || null,\n  result_feedback:   body.result_feedback   || null,\n  open_feedback:     body.open_feedback     || null,\n};\n\nconst env      = $('Envs Submit').first().json.env;\nconst branch   = env.is_live ? 'main' : 'develop';\nconst logoUrl  = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\nconst friendName = body.friend_name || 'there';\n\nconst thankyouTemplate = $('Fetch Thank-you Email Template').first().json.data;\nconst thankyouHtml = thankyouTemplate\n  .replace(/\\{\\{logo_url\\}\\}/g,    logoUrl)\n  .replace(/\\{\\{friend_name\\}\\}/g, friendName);\n\nreturn [{\n  json: {\n    feedback,\n    participant_email: feedback.email,\n    to:      feedback.email,\n    subject: `Got it, ${friendName} — thank you. Taras`,\n    html:    thankyouHtml,\n  }\n}];"
+      },
+      "id": "9f3c2d9f-7e5e-4fdf-b708-25cc623b8803",
+      "name": "Parse UAT Feedback",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        400
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "tableId": "uat_feedback",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{ $json.feedback.order_id }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $json.feedback.email }}"
+            },
+            {
+              "fieldId": "would_buy",
+              "fieldValue": "={{ $json.feedback.would_buy }}"
+            },
+            {
+              "fieldId": "price_expectation",
+              "fieldValue": "={{ $json.feedback.price_expectation }}"
+            },
+            {
+              "fieldId": "process_feedback",
+              "fieldValue": "={{ $json.feedback.process_feedback }}"
+            },
+            {
+              "fieldId": "result_feedback",
+              "fieldValue": "={{ $json.feedback.result_feedback }}"
+            },
+            {
+              "fieldId": "open_feedback",
+              "fieldValue": "={{ $json.feedback.open_feedback }}"
+            }
+          ]
+        }
+      },
+      "id": "1b1e1ad2-1303-4db0-8104-db8b550907e8",
+      "name": "Insert UAT Feedback",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        400
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "={{ $('Parse UAT Feedback').first().json.to }}",
+        "subject": "={{ $('Parse UAT Feedback').first().json.subject }}",
+        "html": "={{ $('Parse UAT Feedback').first().json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4ad53183-6806-4c04-a66f-159f195debde",
+      "name": "Send Thank-you Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1776,
+        400
+      ],
+      "webhookId": "e009e6c8-80db-4c8c-905b-15bff12479df",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Thank you!</title>\n  <style>\n    body { margin:0; padding:60px 20px; background:#0f0f1a;\n           font-family:'Segoe UI',Roboto,sans-serif; color:#e8e8f5; text-align:center; }\n    h1 { font-size:28px; color:#fff; margin:16px 0 8px; }\n    p  { font-size:16px; color:#b0b0cc; }\n  </style>\n</head>\n<body>\n  <div style=\"font-size:48px;\">🙏</div>\n  <h1>Got it. Thank you.</h1>\n  <p>Your feedback is on its way to Taras.</p>\n</body>\n</html>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "cb47d96f-6ca9-4c8f-9bbc-6e800b79f651",
+      "name": "Respond Thank You",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2016,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "uat_feedback",
+        "returnAll": true
+      },
+      "id": "ff7164a1-1925-4dfd-b1d6-4df214c7adee",
+      "name": "Fetch All Feedback",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        608
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $('Fetch All Feedback').all().map(item => item.json);\n\nif (rows.length === 0) throw new Error('No UAT feedback rows yet.');\n\nconst formatted = rows.map((r, i) => `\n--- Respondent ${i + 1} (${r.email || 'unknown'}) ---\nWould buy: ${r.would_buy || '(no answer)'}\nPrice expectation: ${r.price_expectation || '(no answer)'}\nProcess feedback: ${r.process_feedback || '(no answer)'}\nResult feedback: ${r.result_feedback || '(no answer)'}\nOpen feedback: ${r.open_feedback || '(no answer)'}\n`.trim()).join('\\n\\n');\n\nconst prompt = `\nYou are analyzing UAT feedback for EverMagic — an AI service that creates personalised storybooks for children (custom story, illustrations, coloring book, certificate). Sent free to ${rows.length} friends before a commercial Etsy launch.\n\nFeedback from all respondents:\n\n${formatted}\n\nProduce a structured analysis:\n1. **Overall sentiment** — 2–3 sentences.\n2. **Would-buy breakdown** — count Yes/No/Maybe and what it signals.\n3. **Price signal** — range mentioned and pricing implication.\n4. **Top positives** — bullet list, max 5.\n5. **Top problems / concerns** — bullet list, max 5.\n6. **Top 5 improvements before launch** — ranked by impact, one-sentence rationale each.\n7. **One-line launch recommendation** — go / go with caveats / hold, and why.\n\nBe direct. Skip filler. Flag if feedback is thin or contradictory.\n`.trim();\n\nreturn [{ json: { prompt, respondent_count: rows.length } }];"
+      },
+      "id": "f347090c-17fc-4c1f-b761-96a23011af79",
+      "name": "Build Synthesis Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a product analyst helping an\n  early-stage founder validate a B2C product\n  called EverMagic.                            \n                   \n  EverMagic generates personalised illustrated \n  storybooks, coloring books, and hero         \n  certificates for children — fully automated  \n  by AI. A parent fills a short form (child's  \n  name, age, hobby, photo), and the system   \n  delivers three PDF files in ~15 minutes. No\n  human involvement.                         \n                    \n  The founder is testing with a small group of\n  friends before a public launch. Your job is  \n  to turn their raw feedback into clear,     \n  founder-actionable insight.                  \n                                             \n  When analysing responses:\n  - Be direct and honest — do not soften\n  problems                              \n  - Prioritise signal over noise (ignore polite\n   noise, surface real concerns)               \n  - Distinguish between UX friction (fixable   \n  fast) and value perception issues (harder to\n  fix)                                         \n  - Flag any pattern that appears in 2+      \n  responses as a trend                         \n  - Focus on: willingness to pay, perceived    \n  value vs. price, process pain points, and\n  overall delight                              \n                                             \n  Output format:                               \n  1. **Overall sentiment** — one sentence    \n  2. **Key strengths** (what people actually\n  liked, with evidence)                        \n  3. **Key concerns** (ranked by severity)     \n  4. **Price signal** — what the responses     \n  suggest about pricing                        \n  5. **Top 2–3 actions** the founder should    \n  consider based on all responses so far   \n  6. **Watch for** — one thing that might      \n  emerge as more responses come in           \n                                               \n  Be concise. The founder will read this on  \n  their phone after each new submission.  "
+            },
+            {
+              "content": "={{ $json.prompt }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "02c88505-bc63-4a4f-8e93-13c637db7685",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        2176,
+        608
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bkm4C85zHfe8HSHa",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const gptResponse = $input.first().json?.output[0]?.content[0]?.text\n  || $('OpenAI').first().json.message?.content\n                 || $('OpenAI').first().json.choices?.[0]?.message?.content\n                 || '(no response)';\n\nconst latestFeedback  = $('Parse UAT Feedback').first().json.feedback;\nconst respondentCount = $('Build Synthesis Prompt').first().json.respondent_count;\nconst submitterEmail  = latestFeedback.email || 'unknown';\n\nfunction row(label, value) {\n  return `<tr>\n    <td style=\"padding:5px 0;font-size:13px;color:#888;width:40%;vertical-align:top;\">${label}</td>\n    <td style=\"padding:5px 0;font-size:13px;color:#111;vertical-align:top;\">${value || '<em style=\"color:#bbb\">no answer</em>'}</td>\n  </tr>`;\n}\n\nconst individualHtml = `<table style=\"width:100%;border-collapse:collapse;\">\n  ${row('Would buy', latestFeedback.would_buy)}\n  ${row('Price', latestFeedback.price_expectation)}\n  ${row('Process', latestFeedback.process_feedback)}\n  ${row('Result (PDFs)', latestFeedback.result_feedback)}\n  ${row('Anything else', latestFeedback.open_feedback)}\n</table>`;\n\nfunction mdToHtml(text) {\n  return text\n    .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/^#{1,3}\\s+(.+)/gm, '<strong style=\"font-size:14px;\">$1</strong>')\n    .replace(/^(\\d+)\\.\\s+/gm, '<br><strong>$1.</strong> ')\n    .replace(/^[-•]\\s+/gm, '<br>• ')\n    .replace(/\\n{2,}/g, '</p><p style=\"margin:0 0 10px;font-size:14px;line-height:1.7;color:#333;\">')\n    .replace(/\\n/g, '<br>');\n}\n\nconst html = `\n<div style=\"font-family:'Segoe UI',Roboto,sans-serif;max-width:680px;margin:0 auto;padding:32px 24px;color:#111;\">\n  <h2 style=\"margin:0 0 4px;font-size:20px;\">🧪 UAT Feedback #${respondentCount}</h2>\n  <p style=\"margin:0 0 24px;font-size:13px;color:#888;\">From: ${submitterEmail} · ${new Date().toISOString().slice(0,10)}</p>\n  <div style=\"background:#f9f9f9;border:1px solid #e5e7eb;border-radius:8px;padding:20px 24px;margin-bottom:28px;\">\n    <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:12px;\">This response</div>\n    ${individualHtml}\n  </div>\n  <div style=\"border-left:3px solid #7c3aed;padding-left:20px;\">\n    <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#7c3aed;margin-bottom:12px;\">\n      AI summary — ${respondentCount} response${respondentCount !== 1 ? 's' : ''} so far\n    </div>\n    <p style=\"margin:0 0 10px;font-size:14px;line-height:1.7;color:#333;\">${mdToHtml(gptResponse)}</p>\n  </div>\n</div>`.trim();\n\nreturn [{\n  json: {\n    to:      'taras.evermagic@gmail.com',\n    subject: `🧪 UAT #${respondentCount} — ${submitterEmail}`,\n    html,\n  }\n}];"
+      },
+      "id": "eba0c8c3-e062-49d1-9919-e5b082fe9cc9",
+      "name": "Build Admin Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2496,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d387548b-d21d-4bfa-8eb9-575d06de290e",
+      "name": "Send Admin Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2736,
+        608
+      ],
+      "webhookId": "2351cc4d-6e40-4fac-85b1-f2619de1242d",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uat_participants",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "contact",
+              "condition": "eq",
+              "keyValue": "={{ $('Parse UAT Feedback').item.json.feedback.email }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "feedback_provided"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        400
+      ],
+      "id": "ccfa4ca0-7361-48cc-9c54-c45617932649",
+      "name": "Update UAT Patricipant",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Feedback Form Webhook": {
+      "main": [
+        [
+          {
+            "node": "Load Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Envs": {
+      "main": [
+        [
+          {
+            "node": "Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envs": {
+      "main": [
+        [
+          {
+            "node": "Build Feedback Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Feedback Form": {
+      "main": [
+        [
+          {
+            "node": "Respond Feedback Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback Submit Webhook": {
+      "main": [
+        [
+          {
+            "node": "Load Envs Submit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Envs Submit": {
+      "main": [
+        [
+          {
+            "node": "Envs Submit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envs Submit": {
+      "main": [
+        [
+          {
+            "node": "Fetch Thank-you Email Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Thank-you Email Template": {
+      "main": [
+        [
+          {
+            "node": "Parse UAT Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse UAT Feedback": {
+      "main": [
+        [
+          {
+            "node": "Insert UAT Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert UAT Feedback": {
+      "main": [
+        [
+          {
+            "node": "Update UAT Patricipant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Thank-you Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Thank You",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch All Feedback": {
+      "main": [
+        [
+          {
+            "node": "Build Synthesis Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Synthesis Prompt": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Build Admin Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Admin Email": {
+      "main": [
+        [
+          {
+            "node": "Send Admin Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update UAT Patricipant": {
+      "main": [
+        [
+          {
+            "node": "Send Thank-you Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch All Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "00ab22ac-5897-49bf-b78f-1eb96caee6d2",
+  "activeVersionId": "00ab22ac-5897-49bf-b78f-1eb96caee6d2",
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-03-27T20:35:58.924Z",
+      "createdAt": "2026-03-27T20:35:58.924Z",
+      "role": "workflow:owner",
+      "workflowId": "PZirrfi1koSTKXzw",
+      "projectId": "Ez9yaDRraIYPeCTc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-03-27T21:37:05.000Z",
+    "createdAt": "2026-03-27T21:14:48.093Z",
+    "versionId": "00ab22ac-5897-49bf-b78f-1eb96caee6d2",
+    "workflowId": "PZirrfi1koSTKXzw",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "evermagic/uat-feedback",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "bef5496d-9915-4a85-a96f-bcdf61f37634",
+        "name": "Feedback Form Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "webhookId": "uat-feedback-form-get"
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "envs"
+        },
+        "id": "abb5810a-4990-4e46-bd4c-3c7b05a0df04",
+        "name": "Load Envs",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          240,
+          0
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\nconst env = {\n  mode:    raw.mode,\n  is_live: raw.mode === 'live',\n};\nreturn [{ json: { env } }];"
+        },
+        "id": "b242cfc4-b2a1-4037-b564-f83b4adf6bba",
+        "name": "Envs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          480,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const query      = $('Feedback Form Webhook').first().json.query || {};\nconst orderId    = query.order_id    || '';\nconst email      = query.email       || '';\nconst friendName = query.friend_name || '';\n\nconst env        = $('Envs').first().json.env;\nconst submitBase = `https://evermagic.app.n8n.cloud/webhook${env.is_live ? '' : '-test'}`;\nconst submitUrl  = `${submitBase}/evermagic/uat-feedback-submit`;\n\nconst html = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Quick feedback — EverMagic</title>\n  <style>\n    *, *::before, *::after { box-sizing: border-box; }\n    body { margin:0; padding:32px 16px; background:#0f0f1a; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#e8e8f5; }\n    .card { max-width:520px; margin:0 auto; background:#16213e; border-radius:16px; padding:36px 32px; }\n    h1 { margin:0 0 6px; font-size:22px; color:#fff; }\n    .sub { margin:0 0 28px; font-size:14px; color:#8b8ba3; }\n    label { display:block; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#b0b0cc; margin:20px 0 6px; }\n    label:first-of-type { margin-top:0; }\n    select, textarea {\n      width:100%; background:#1e2a45; border:1px solid #2a3a5c;\n      border-radius:8px; color:#e8e8f5; font-size:15px; padding:12px 14px;\n      outline:none; font-family:inherit;\n    }\n    select { height:46px; }\n    textarea { resize:vertical; min-height:88px; }\n    select:focus, textarea:focus { border-color:#7c3aed; }\n    .hint { font-size:12px; color:#8b8ba3; margin:4px 0 0; }\n    button {\n      display:block; width:100%; margin-top:28px;\n      padding:14px; background:#7c3aed; color:#fff;\n      font-size:16px; font-weight:700; border:none;\n      border-radius:10px; cursor:pointer;\n    }\n    button:hover { background:#6d28d9; }\n    .note { margin-top:16px; font-size:12px; color:#8b8ba3; text-align:center; }\n    @media (max-width:560px) { .card { padding:28px 20px; } }\n  </style>\n</head>\n<body>\n  <div class=\"card\">\n    <h1>Quick feedback</h1>\n    <p class=\"sub\">5 questions — 2 minutes. Only Taras will see this.</p>\n    <form method=\"POST\" action=\"${submitUrl}\">\n      <input type=\"hidden\" name=\"order_id\"    value=\"${orderId}\">\n      <input type=\"hidden\" name=\"email\"        value=\"${email}\">\n      <input type=\"hidden\" name=\"friend_name\"  value=\"${friendName}\">\n      \n      <label for=\"process_feedback\">How was the process — ordering, waiting, receiving?</label>\n      <textarea id=\"process_feedback\" name=\"process_feedback\" placeholder=\"Honest take on the experience...\"></textarea>\n\n      <label for=\"result_feedback\">What did you think of the result — the PDFs?</label>\n      <textarea id=\"result_feedback\" name=\"result_feedback\" placeholder=\"Story quality, illustrations, layout...\"></textarea>\n\n      <label for=\"open_feedback\">Anything else — broken, missing, loved?</label>\n      <textarea id=\"open_feedback\" name=\"open_feedback\" placeholder=\"Anything at all...\"></textarea>\n\n      <label for=\"would_buy\">Would you buy this for a kid?</label>\n      <textarea id=\"would_buy\" name=\"would_buy\">\n              </textarea>\n\n      <label for=\"price_expectation\">What would you pay for this?</label>\n      <textarea id=\"price_expectation\" name=\"price_expectation\" placeholder=\"\"></textarea>\n      \n\n      <button type=\"submit\">Send feedback</button>\n    </form>\n    <p class=\"note\">Made with ❤️ by EverMagic — Taras</p>\n  </div>\n</body>\n</html>`;\n\nreturn [{ json: { html } }];"
+        },
+        "id": "41e64aec-db8c-48c6-a674-c4f6deeb5132",
+        "name": "Build Feedback Form",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          720,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "={{ $json.html }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html"
+                }
+              ]
+            }
+          }
+        },
+        "id": "920d74d0-6ed9-4d25-9d21-2323e724f8bb",
+        "name": "Respond Feedback Form",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          960,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "evermagic/uat-feedback-submit",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "82574a2e-bd76-4570-8375-3c9696f99fbf",
+        "name": "Feedback Submit Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          400
+        ],
+        "webhookId": "uat-feedback-form-post"
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "envs"
+        },
+        "id": "209c9647-3839-4b45-b6c0-80f602c866e8",
+        "name": "Load Envs Submit",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          240,
+          400
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\nconst env = {\n  mode:    raw.mode,\n  is_live: raw.mode === 'live',\n};\nreturn [{ json: { env } }];"
+        },
+        "id": "6676cefe-1c2a-4820-aef0-6407c069dd43",
+        "name": "Envs Submit",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          480,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs Submit').first().json.env.is_live ? 'main' : 'develop' }}/emails/uat-thankyou.html",
+          "options": {}
+        },
+        "id": "1b411b34-16af-41c9-bd6d-cc9eb25ab2e4",
+        "name": "Fetch Thank-you Email Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          720,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const body =  $('Feedback Submit Webhook').first().json.body || $('Feedback Submit Webhook').first().json.body.json;\n\nconst feedback = {\n  order_id:          body.order_id          || null,\n  email:             body.email             || null,\n  would_buy:         body.would_buy         || null,\n  price_expectation: body.price_expectation || null,\n  process_feedback:  body.process_feedback  || null,\n  result_feedback:   body.result_feedback   || null,\n  open_feedback:     body.open_feedback     || null,\n};\n\nconst env      = $('Envs Submit').first().json.env;\nconst branch   = env.is_live ? 'main' : 'develop';\nconst logoUrl  = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\nconst friendName = body.friend_name || 'there';\n\nconst thankyouTemplate = $('Fetch Thank-you Email Template').first().json.data;\nconst thankyouHtml = thankyouTemplate\n  .replace(/\\{\\{logo_url\\}\\}/g,    logoUrl)\n  .replace(/\\{\\{friend_name\\}\\}/g, friendName);\n\nreturn [{\n  json: {\n    feedback,\n    participant_email: feedback.email,\n    to:      feedback.email,\n    subject: `Got it, ${friendName} — thank you. Taras`,\n    html:    thankyouHtml,\n  }\n}];"
+        },
+        "id": "9f3c2d9f-7e5e-4fdf-b708-25cc623b8803",
+        "name": "Parse UAT Feedback",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          960,
+          400
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "tableId": "uat_feedback",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $json.feedback.order_id }}"
+              },
+              {
+                "fieldId": "email",
+                "fieldValue": "={{ $json.feedback.email }}"
+              },
+              {
+                "fieldId": "would_buy",
+                "fieldValue": "={{ $json.feedback.would_buy }}"
+              },
+              {
+                "fieldId": "price_expectation",
+                "fieldValue": "={{ $json.feedback.price_expectation }}"
+              },
+              {
+                "fieldId": "process_feedback",
+                "fieldValue": "={{ $json.feedback.process_feedback }}"
+              },
+              {
+                "fieldId": "result_feedback",
+                "fieldValue": "={{ $json.feedback.result_feedback }}"
+              },
+              {
+                "fieldId": "open_feedback",
+                "fieldValue": "={{ $json.feedback.open_feedback }}"
+              }
+            ]
+          }
+        },
+        "id": "1b1e1ad2-1303-4db0-8104-db8b550907e8",
+        "name": "Insert UAT Feedback",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1200,
+          400
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "={{ $('Parse UAT Feedback').first().json.to }}",
+          "subject": "={{ $('Parse UAT Feedback').first().json.subject }}",
+          "html": "={{ $('Parse UAT Feedback').first().json.html }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "4ad53183-6806-4c04-a66f-159f195debde",
+        "name": "Send Thank-you Email",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          1776,
+          400
+        ],
+        "webhookId": "e009e6c8-80db-4c8c-905b-15bff12479df",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Thank you!</title>\n  <style>\n    body { margin:0; padding:60px 20px; background:#0f0f1a;\n           font-family:'Segoe UI',Roboto,sans-serif; color:#e8e8f5; text-align:center; }\n    h1 { font-size:28px; color:#fff; margin:16px 0 8px; }\n    p  { font-size:16px; color:#b0b0cc; }\n  </style>\n</head>\n<body>\n  <div style=\"font-size:48px;\">🙏</div>\n  <h1>Got it. Thank you.</h1>\n  <p>Your feedback is on its way to Taras.</p>\n</body>\n</html>",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html"
+                }
+              ]
+            }
+          }
+        },
+        "id": "cb47d96f-6ca9-4c8f-9bbc-6e800b79f651",
+        "name": "Respond Thank You",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          2016,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "uat_feedback",
+          "returnAll": true
+        },
+        "id": "ff7164a1-1925-4dfd-b1d6-4df214c7adee",
+        "name": "Fetch All Feedback",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1712,
+          608
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const rows = $('Fetch All Feedback').all().map(item => item.json);\n\nif (rows.length === 0) throw new Error('No UAT feedback rows yet.');\n\nconst formatted = rows.map((r, i) => `\n--- Respondent ${i + 1} (${r.email || 'unknown'}) ---\nWould buy: ${r.would_buy || '(no answer)'}\nPrice expectation: ${r.price_expectation || '(no answer)'}\nProcess feedback: ${r.process_feedback || '(no answer)'}\nResult feedback: ${r.result_feedback || '(no answer)'}\nOpen feedback: ${r.open_feedback || '(no answer)'}\n`.trim()).join('\\n\\n');\n\nconst prompt = `\nYou are analyzing UAT feedback for EverMagic — an AI service that creates personalised storybooks for children (custom story, illustrations, coloring book, certificate). Sent free to ${rows.length} friends before a commercial Etsy launch.\n\nFeedback from all respondents:\n\n${formatted}\n\nProduce a structured analysis:\n1. **Overall sentiment** — 2–3 sentences.\n2. **Would-buy breakdown** — count Yes/No/Maybe and what it signals.\n3. **Price signal** — range mentioned and pricing implication.\n4. **Top positives** — bullet list, max 5.\n5. **Top problems / concerns** — bullet list, max 5.\n6. **Top 5 improvements before launch** — ranked by impact, one-sentence rationale each.\n7. **One-line launch recommendation** — go / go with caveats / hold, and why.\n\nBe direct. Skip filler. Flag if feedback is thin or contradictory.\n`.trim();\n\nreturn [{ json: { prompt, respondent_count: rows.length } }];"
+        },
+        "id": "f347090c-17fc-4c1f-b761-96a23011af79",
+        "name": "Build Synthesis Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1936,
+          608
+        ]
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-4o",
+            "mode": "list",
+            "cachedResultName": "GPT-4O"
+          },
+          "responses": {
+            "values": [
+              {
+                "role": "system",
+                "content": "You are a product analyst helping an\n  early-stage founder validate a B2C product\n  called EverMagic.                            \n                   \n  EverMagic generates personalised illustrated \n  storybooks, coloring books, and hero         \n  certificates for children — fully automated  \n  by AI. A parent fills a short form (child's  \n  name, age, hobby, photo), and the system   \n  delivers three PDF files in ~15 minutes. No\n  human involvement.                         \n                    \n  The founder is testing with a small group of\n  friends before a public launch. Your job is  \n  to turn their raw feedback into clear,     \n  founder-actionable insight.                  \n                                             \n  When analysing responses:\n  - Be direct and honest — do not soften\n  problems                              \n  - Prioritise signal over noise (ignore polite\n   noise, surface real concerns)               \n  - Distinguish between UX friction (fixable   \n  fast) and value perception issues (harder to\n  fix)                                         \n  - Flag any pattern that appears in 2+      \n  responses as a trend                         \n  - Focus on: willingness to pay, perceived    \n  value vs. price, process pain points, and\n  overall delight                              \n                                             \n  Output format:                               \n  1. **Overall sentiment** — one sentence    \n  2. **Key strengths** (what people actually\n  liked, with evidence)                        \n  3. **Key concerns** (ranked by severity)     \n  4. **Price signal** — what the responses     \n  suggest about pricing                        \n  5. **Top 2–3 actions** the founder should    \n  consider based on all responses so far   \n  6. **Watch for** — one thing that might      \n  emerge as more responses come in           \n                                               \n  Be concise. The founder will read this on  \n  their phone after each new submission.  "
+              },
+              {
+                "content": "={{ $json.prompt }}"
+              }
+            ]
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "id": "02c88505-bc63-4a4f-8e93-13c637db7685",
+        "name": "OpenAI",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 2.1,
+        "position": [
+          2176,
+          608
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "bkm4C85zHfe8HSHa",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const gptResponse = $input.first().json?.output[0]?.content[0]?.text\n  || $('OpenAI').first().json.message?.content\n                 || $('OpenAI').first().json.choices?.[0]?.message?.content\n                 || '(no response)';\n\nconst latestFeedback  = $('Parse UAT Feedback').first().json.feedback;\nconst respondentCount = $('Build Synthesis Prompt').first().json.respondent_count;\nconst submitterEmail  = latestFeedback.email || 'unknown';\n\nfunction row(label, value) {\n  return `<tr>\n    <td style=\"padding:5px 0;font-size:13px;color:#888;width:40%;vertical-align:top;\">${label}</td>\n    <td style=\"padding:5px 0;font-size:13px;color:#111;vertical-align:top;\">${value || '<em style=\"color:#bbb\">no answer</em>'}</td>\n  </tr>`;\n}\n\nconst individualHtml = `<table style=\"width:100%;border-collapse:collapse;\">\n  ${row('Would buy', latestFeedback.would_buy)}\n  ${row('Price', latestFeedback.price_expectation)}\n  ${row('Process', latestFeedback.process_feedback)}\n  ${row('Result (PDFs)', latestFeedback.result_feedback)}\n  ${row('Anything else', latestFeedback.open_feedback)}\n</table>`;\n\nfunction mdToHtml(text) {\n  return text\n    .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/^#{1,3}\\s+(.+)/gm, '<strong style=\"font-size:14px;\">$1</strong>')\n    .replace(/^(\\d+)\\.\\s+/gm, '<br><strong>$1.</strong> ')\n    .replace(/^[-•]\\s+/gm, '<br>• ')\n    .replace(/\\n{2,}/g, '</p><p style=\"margin:0 0 10px;font-size:14px;line-height:1.7;color:#333;\">')\n    .replace(/\\n/g, '<br>');\n}\n\nconst html = `\n<div style=\"font-family:'Segoe UI',Roboto,sans-serif;max-width:680px;margin:0 auto;padding:32px 24px;color:#111;\">\n  <h2 style=\"margin:0 0 4px;font-size:20px;\">🧪 UAT Feedback #${respondentCount}</h2>\n  <p style=\"margin:0 0 24px;font-size:13px;color:#888;\">From: ${submitterEmail} · ${new Date().toISOString().slice(0,10)}</p>\n  <div style=\"background:#f9f9f9;border:1px solid #e5e7eb;border-radius:8px;padding:20px 24px;margin-bottom:28px;\">\n    <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:12px;\">This response</div>\n    ${individualHtml}\n  </div>\n  <div style=\"border-left:3px solid #7c3aed;padding-left:20px;\">\n    <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#7c3aed;margin-bottom:12px;\">\n      AI summary — ${respondentCount} response${respondentCount !== 1 ? 's' : ''} so far\n    </div>\n    <p style=\"margin:0 0 10px;font-size:14px;line-height:1.7;color:#333;\">${mdToHtml(gptResponse)}</p>\n  </div>\n</div>`.trim();\n\nreturn [{\n  json: {\n    to:      'taras.evermagic@gmail.com',\n    subject: `🧪 UAT #${respondentCount} — ${submitterEmail}`,\n    html,\n  }\n}];"
+        },
+        "id": "eba0c8c3-e062-49d1-9919-e5b082fe9cc9",
+        "name": "Build Admin Email",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2496,
+          608
+        ]
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "={{ $json.to }}",
+          "subject": "={{ $json.subject }}",
+          "html": "={{ $json.html }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "d387548b-d21d-4bfa-8eb9-575d06de290e",
+        "name": "Send Admin Email",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          2736,
+          608
+        ],
+        "webhookId": "2351cc4d-6e40-4fac-85b1-f2619de1242d",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "uat_participants",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "contact",
+                "condition": "eq",
+                "keyValue": "={{ $('Parse UAT Feedback').item.json.feedback.email }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "feedback_provided"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1408,
+          400
+        ],
+        "id": "ccfa4ca0-7361-48cc-9c54-c45617932649",
+        "name": "Update UAT Patricipant",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Feedback Form Webhook": {
+        "main": [
+          [
+            {
+              "node": "Load Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Envs": {
+        "main": [
+          [
+            {
+              "node": "Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envs": {
+        "main": [
+          [
+            {
+              "node": "Build Feedback Form",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Feedback Form": {
+        "main": [
+          [
+            {
+              "node": "Respond Feedback Form",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Feedback Submit Webhook": {
+        "main": [
+          [
+            {
+              "node": "Load Envs Submit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Envs Submit": {
+        "main": [
+          [
+            {
+              "node": "Envs Submit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envs Submit": {
+        "main": [
+          [
+            {
+              "node": "Fetch Thank-you Email Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Thank-you Email Template": {
+        "main": [
+          [
+            {
+              "node": "Parse UAT Feedback",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse UAT Feedback": {
+        "main": [
+          [
+            {
+              "node": "Insert UAT Feedback",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Insert UAT Feedback": {
+        "main": [
+          [
+            {
+              "node": "Update UAT Patricipant",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Thank-you Email": {
+        "main": [
+          [
+            {
+              "node": "Respond Thank You",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch All Feedback": {
+        "main": [
+          [
+            {
+              "node": "Build Synthesis Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Synthesis Prompt": {
+        "main": [
+          [
+            {
+              "node": "OpenAI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI": {
+        "main": [
+          [
+            {
+              "node": "Build Admin Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Admin Email": {
+        "main": [
+          [
+            {
+              "node": "Send Admin Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update UAT Patricipant": {
+        "main": [
+          [
+            {
+              "node": "Send Thank-you Email",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Fetch All Feedback",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Taras Holub",
+    "name": "Version 00ab22ac",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}

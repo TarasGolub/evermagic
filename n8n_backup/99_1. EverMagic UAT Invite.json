@@ -1,0 +1,414 @@
+{
+  "updatedAt": "2026-03-27T18:16:12.453Z",
+  "createdAt": "2026-03-26T23:54:22.450Z",
+  "id": "r6iEV0vcLQNamSu5",
+  "name": "99_1. EverMagic UAT Invite",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "72e5d996-894d-4ebc-81cd-9580942b3c3b",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "envs"
+      },
+      "id": "62ef4ef6-fd97-45cc-80a9-ab860f92940c",
+      "name": "Load Envs",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -112
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\n\nconst env = {\n  mode:          raw.mode,\n  is_live:       raw.mode === 'live',\n  tally_form_id: raw.tally_form_id,\n};\n\nreturn [{ json: { env } }];\n"
+      },
+      "id": "3f390c18-53ed-4f18-8742-0432fe4f2a3e",
+      "name": "Envs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "uat_participants",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "ready"
+            }
+          ]
+        }
+      },
+      "id": "0fe75c12-65dd-4d2d-9ddc-3687d4f074fa",
+      "name": "Fetch UAT Participants",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        672,
+        -112
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "intake_tokens",
+        "limit": 1,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "source",
+              "condition": "eq",
+              "keyValue": "UAT"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "unused"
+            }
+          ]
+        }
+      },
+      "id": "c9044505-08b9-4716-b920-326b48a8b7f8",
+      "name": "Fetch Unused Token",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -96
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/uat-invite.html",
+        "options": {}
+      },
+      "id": "44ee1cbf-fc17-4ca7-a72d-76f8a5990d92",
+      "name": "Fetch Invite Email Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1392,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const participant = $('Loop Over Participants').first().json;\nconst tokenRow    = $('Fetch Unused Token').first().json;\nconst template    = $('Fetch Invite Email Template').first().json.data;\nconst env         = $('Envs').first().json.env;\n\nif (!tokenRow || !tokenRow.token) {\n  throw new Error('No unused UAT tokens available — run the seed SQL to generate more.');\n}\n\nconst tallyFormId = env.tally_form_id;\nif (!tallyFormId) throw new Error('Missing env: tally_form_id — add it to the envs table in Supabase.');\n\n// Build personalised Tally URL\n// source=UAT  → copied to orders.source, triggers feedback email after delivery\n// orderNo     → friend's name, used for tracking in Supabase\nconst tallyUrl =\n  `https://tally.so/r/${tallyFormId}` +\n  `?source=UAT` +\n  `&orderNo=${encodeURIComponent(participant.name)}` +\n  `&token=${tokenRow.token}`;\n\nconst branch  = env.is_live ? 'main' : 'develop';\nconst logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\n\nconst html = template\n  .replace(/\\{\\{logo_url\\}\\}/g,    logoUrl)\n  .replace(/\\{\\{friend_name\\}\\}/g, participant.name)\n  .replace(/\\{\\{tally_url\\}\\}/g,   tallyUrl);\n\nreturn [{\n  json: {\n    participant_id: participant.id,\n    participant_name: participant.name,\n    token: tokenRow.token,\n    tally_url: tallyUrl,\n    to:      participant.contact,\n    subject: `${participant.name}, early tester invite — your honest feedback would mean a lot. Taras`,\n    html,\n  }\n}];\n"
+      },
+      "id": "2e2186b1-8281-4c23-8eb9-aa2c2f3b3b70",
+      "name": "Build Invite Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        -96
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a738f74c-3466-4a49-b8dc-14d7142682e5",
+      "name": "Send Invite Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        -96
+      ],
+      "webhookId": "297461f3-dfb4-4c05-82a1-57cd54d5d21b",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uat_participants",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Build Invite Email').first().json.participant_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "invited"
+            },
+            {
+              "fieldId": "token",
+              "fieldValue": "={{ $('Build Invite Email').first().json.token }}"
+            }
+          ]
+        }
+      },
+      "id": "c9b36c35-0692-47f9-b05f-88312e5417b7",
+      "name": "Update Participant Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        -96
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "intake_tokens",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "token",
+              "condition": "eq",
+              "keyValue": "={{ $('Fetch Unused Token').item.json.token }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "pending"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2352,
+        -96
+      ],
+      "id": "47fe7760-6415-4f76-9dae-4204201d492d",
+      "name": "Update token",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        880,
+        -112
+      ],
+      "id": "bd5b0e8e-1e5b-4c2c-b21f-bd6c0796e202",
+      "name": "Loop Over Participants"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Load Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Envs": {
+      "main": [
+        [
+          {
+            "node": "Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envs": {
+      "main": [
+        [
+          {
+            "node": "Fetch UAT Participants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch UAT Participants": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Participants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Unused Token": {
+      "main": [
+        [
+          {
+            "node": "Fetch Invite Email Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Invite Email Template": {
+      "main": [
+        [
+          {
+            "node": "Build Invite Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Invite Email": {
+      "main": [
+        [
+          {
+            "node": "Send Invite Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Invite Email": {
+      "main": [
+        [
+          {
+            "node": "Update Participant Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Participant Status": {
+      "main": [
+        [
+          {
+            "node": "Update token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update token": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Participants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Participants": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Fetch Unused Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a3b46fc7-098c-4170-96aa-27bc81ca1327",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-03-26T23:54:22.452Z",
+      "createdAt": "2026-03-26T23:54:22.452Z",
+      "role": "workflow:owner",
+      "workflowId": "r6iEV0vcLQNamSu5",
+      "projectId": "Ez9yaDRraIYPeCTc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
