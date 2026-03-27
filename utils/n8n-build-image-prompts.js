@@ -41,6 +41,78 @@ const THEMES = {
       output_compression: 90,
     },
   },
+  FANTASY_HERO: {
+    stylePrefix: '3D CGI animated character, Pixar-style render, enchanted fantasy setting, warm magical lighting, soft subsurface scattering',
+    coverBackground: 'Enchanted kingdom with glowing castle spires, twilight sky with floating lanterns and magical stars',
+    coverPose: 'Standing in a heroic pose with one arm raised, dragon companion beside them',
+    sceneStyle: {
+      1: { lighting: 'Warm bedroom glow with mysterious blue-green magical shimmer emanating from a glowing artifact', camera: 'Close-up on child\'s face and magical artifact, warm-cool contrast' },
+      2: { lighting: 'Lush enchanted forest with dappled golden-green light, soft magic sparkle particles in the air', camera: 'Wide establishing shot — scale of kingdom revealed, deep background bokeh' },
+      3: { lighting: 'Dramatic cool-toned cave or ruined castle, single warm hero spotlight on the child', camera: 'Medium tracking shot with tension in the framing, slight dutch angle' },
+      4: { lighting: 'Epic golden burst — warm amber and gold flooding the scene, dragon silhouette overhead', camera: 'Epic wide panoramic, low angle, sky visible above' },
+      5: { lighting: 'Soft warm evening bedroom light, a single bright star visible through the window', camera: 'Intimate close-up on child\'s face, gentle smile' },
+    },
+    coloring: {
+      backgroundElements: 'enchanted trees, a castle tower, stars, a small friendly dragon, magical floating lanterns',
+      pose: 'heroic stance with one arm outstretched toward the sky',
+    },
+    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'webp', input_fidelity: 'low', number_of_images: 1, output_compression: 90 },
+  },
+
+  ENCHANTED_PRINCESS: {
+    stylePrefix: '3D CGI animated character, Pixar-style render, soft pastel fantasy world, warm sparkle and magical light, soft subsurface scattering',
+    coverBackground: 'Enchanted meadow with a rainbow arch overhead, glowing flower fields, and a fairy castle glowing in the distance',
+    coverPose: 'Standing gracefully with one hand resting on the unicorn companion\'s mane, looking forward with confidence',
+    sceneStyle: {
+      1: { lighting: 'Warm golden bedroom glow with soft magical shimmer and sparkle particles around a glowing object', camera: 'Close-up on child and glowing magical item, warm bokeh background' },
+      2: { lighting: 'Soft pastel rainbow sky — pinks, lavenders, and aqua tones, gentle magical light', camera: 'Wide shot — kingdom scale revealed, rainbow arch dominant in background' },
+      3: { lighting: 'Muted, slightly desaturated pastels — colors drained from the world, cooler and dimmer than other scenes', camera: 'Medium shot, sky visibly dimmer, slight melancholy framing' },
+      4: { lighting: 'Vibrant burst of pastels and rainbow light — most colorful and luminous scene in the story', camera: 'Epic wide panoramic, rainbow restored overhead, celebrating creatures visible' },
+      5: { lighting: 'Soft lavender evening bedroom light, a rainbow shimmer or single star outside the window', camera: 'Intimate close-up on child\'s face, warm and peaceful expression' },
+    },
+    coloring: {
+      backgroundElements: 'unicorn, rainbow arch, castle towers, flowers, stars, butterfly',
+      pose: 'graceful pose with arms open wide, looking up joyfully',
+    },
+    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'webp', input_fidelity: 'low', number_of_images: 1, output_compression: 90 },
+  },
+
+  ANIMAL_GUARDIAN: {
+    stylePrefix: '3D CGI animated character, Pixar-style render, magical nature setting, warm natural light, lush greens and soft gold, soft subsurface scattering',
+    coverBackground: 'Magical forest clearing with glowing plants, soft golden light filtering through ancient trees, small magical creatures visible',
+    coverPose: 'Kneeling gently with cupped hands, glowing animal companion resting in their hands',
+    sceneStyle: {
+      1: { lighting: 'Soft warm dawn light — amber and sage greens, natural real-world setting with a single faint magical glow', camera: 'Medium wide shot, child\'s home or garden framing, sense of the ordinary world' },
+      2: { lighting: 'Rich lush emerald forest, dappled golden magical light, deep rich shadows, magic sparkle in the air', camera: 'Wide establishing shot — forest scale and beauty, sense of wonder' },
+      3: { lighting: 'Cool blue-green tones, slight desaturation — nature in imbalance, quieter and stiller than other scenes', camera: 'Closer tracking shot, tension in the stillness of the forest' },
+      4: { lighting: 'Warm golden burst — animals emerging, forest glowing restored, bright and joyful natural light', camera: 'Wide panoramic, celebration scene with magical animals visible' },
+      5: { lighting: 'Soft warm evening home light, a faint magical shimmer near the window or in a flower pot', camera: 'Intimate close-up, child holding a small glowing gift from the companion' },
+    },
+    coloring: {
+      backgroundElements: 'forest trees, flowers, butterflies, a winding path, small woodland animals, a glowing plant',
+      pose: 'kneeling gently with arms open, welcoming expression',
+    },
+    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'webp', input_fidelity: 'low', number_of_images: 1, output_compression: 90 },
+  },
+
+  HOME_HELPER: {
+    stylePrefix: '3D CGI animated character, Pixar-style render, cozy warm home interior, soft amber light, intimate scale, soft subsurface scattering',
+    coverBackground: 'Cozy warm home interior — kitchen, living room or garden — with tiny glowing lights visible in the baseboards and flower pots, hinting at a tiny hidden world',
+    coverPose: 'Kneeling down with cupped hands held out, a tiny glowing sprite visible in their palms',
+    sceneStyle: {
+      1: { lighting: 'Warm amber home interior — natural everyday lighting, a single tiny shimmer or pinprick of light visible near the baseboards or flower pot', camera: 'Wide-medium home shot showing child doing chores, ordinary and cozy' },
+      2: { lighting: 'Same home setting revealed — warm amber with a soft green magical glow, tiny lights twinkling in the walls', camera: 'Low angle (child\'s eye-level or lower) to emphasise tiny village scale, create sense of wonder' },
+      3: { lighting: 'Slightly dimmer, cooler warm tones — the cozy magic slightly reduced, quiet sense of urgency', camera: 'Close-up medium shot, intimate tension, child focused on the problem' },
+      4: { lighting: 'Warm golden glow restored — sparkles, tiny lights, amber and soft gold fill the scene', camera: 'Low angle wide — tiny celebration fully visible, child towering warmly above the tiny world' },
+      5: { lighting: 'Softest, warmest evening light — home at its most cozy and golden, a faint shimmer at the edge of frame', camera: 'Intimate close-up on child\'s face, content and knowing smile' },
+    },
+    coloring: {
+      backgroundElements: 'cozy home interior, flower pots with flowers, a bookshelf, tiny doors in the baseboard, stars, small glowing lights',
+      pose: 'child holding out cupped hands gently, looking down with wonder',
+    },
+    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'webp', input_fidelity: 'low', number_of_images: 1, output_compression: 90 },
+  },
+
   // ─── Add new themes below ───
   // PRINCESS: { stylePrefix: '...', coverBackground: '...', ... },
   // SPORT_CHAMPION: { ... },
@@ -170,7 +242,7 @@ for (const payloadItem of allPayloads) {
       image_type: `coloring_${num}`,
       scene_title: `Coloring: ${scene.scene_title}`,
       generation_params: { ...genParams, quality: theme.model.coloringQuality || 'low' },
-      prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc}. ${scene.visual_description}. Very wide shot — full body visible from head to toe with at least 25% white margin on every side. Character occupies no more than 50% of the image height, clearly zoomed out so nothing is cropped. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+      prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc}. ${scene.visual_description}. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
     });
   }
 
@@ -180,7 +252,7 @@ for (const payloadItem of allPayloads) {
     image_type: 'coloring',
     scene_title: 'Coloring Page',
     generation_params: { ...genParams, quality: 'low' },
-    prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc} in ${theme.coloring.pose}. Very wide shot — full body visible from head to toe with at least 25% white margin on every side. Character occupies no more than 50% of the image height, clearly zoomed out so nothing is cropped. Simple background: outline ${theme.coloring.backgroundElements}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+    prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc} in ${theme.coloring.pose}. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Simple background: outline ${theme.coloring.backgroundElements}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
   });
 
   console.log(`✅ ${order.order_id} — ${child.name} — theme:${themeKey} — "${scriptData.title}"`);
