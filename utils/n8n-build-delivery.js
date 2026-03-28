@@ -38,9 +38,9 @@ const bucket = env.storage_bucket || 'pdfs';
 
 // PDF public URLs — constructed from known storage paths
 const pdfBase = `${storageBase}/${bucket}/pdfs/${order.order_id}`;
-const storybookUrl = `${pdfBase}/storybook.pdf`;
-const coloringBookUrl = `${pdfBase}/coloring_book.pdf`;
-const certificateUrl = `${pdfBase}/certificate.pdf`;
+const storybookUrl = `${pdfBase}/storybook.pdf?download=EverMagic-Storybook.pdf`;
+const coloringBookUrl = `${pdfBase}/coloring_book.pdf?download=EverMagic-Coloring-Book.pdf`;
+const certificateUrl = `${pdfBase}/certificate.pdf?download=EverMagic-Certificate.pdf`;
 
 // Story title
 const storyTitle = scriptContent.title || `${child.name}'s Space Adventure`;
