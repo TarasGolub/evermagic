@@ -236,23 +236,29 @@ for (const payloadItem of allPayloads) {
       prompt: `${theme.stylePrefix}. ${characterDesc}${outfitDesc}. ${scene.visual_description}. ${style.lighting}. ${style.camera}.`,
     });
 
-    // Scene coloring page (low quality to save cost)
+    // Scene coloring page
+    // - No face photos: switches API to /images/generations, giving model freedom for clean line art
+    // - No scene.visual_description: avoids color words and camera angles that cause cropping
+    // - quality: medium — 'low' produces sketchy pencil-like results
+    const coloringGenParams = { ...genParams, quality: 'medium', face_photos: [] };
     results.push({
       ...shared,
       image_type: `coloring_${num}`,
       scene_title: `Coloring: ${scene.scene_title}`,
-      generation_params: { ...genParams, quality: theme.model.coloringQuality || 'low' },
-      prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc}. ${scene.visual_description}. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+      generation_params: coloringGenParams,
+      prompt: `Children's printable coloring book page. Pure black outlines on pure white background only. No color, no grey, no shading, no gradients, no fills whatsoever — only crisp black lines on white. A ${age}-year-old ${genderWord} in a fun adventure pose related to "${scene.scene_title}". Full body from head to toe fully visible inside the frame — top of head with hat visible, feet and shoes visible at bottom, generous white margin on all four sides, never cropped or cut off at any edge. Bold thick uniform black outlines, published coloring book quality — not sketchy, not pencil-like, not shaded. Simple background elements as clean outlines only: ${theme.coloring.backgroundElements}. Easy for a child to color with crayons.`,
     });
   }
 
-  // Generic coloring page (low quality)
+  // Generic coloring page
+  // - No face photos: switches API to /images/generations for clean line art
+  // - quality: medium — 'low' produces sketchy pencil-like results
   results.push({
     ...shared,
     image_type: 'coloring',
     scene_title: 'Coloring Page',
-    generation_params: { ...genParams, quality: 'low' },
-    prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc} in ${theme.coloring.pose}. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Simple background: outline ${theme.coloring.backgroundElements}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+    generation_params: { ...genParams, quality: 'medium', face_photos: [] },
+    prompt: `Children's printable coloring book page. Pure black outlines on pure white background only. No color, no grey, no shading, no gradients, no fills whatsoever — only crisp black lines on white. A ${age}-year-old ${genderWord} in ${theme.coloring.pose}. Full body from head to toe fully visible inside the frame — top of head fully visible, feet and shoes fully visible at bottom, generous white margin on all four sides, never cropped or cut off at any edge. Bold thick uniform black outlines, published coloring book quality — not sketchy, not pencil-like, not shaded. Simple background elements as clean outlines only: ${theme.coloring.backgroundElements}. Easy for a child to color with crayons.`,
   });
 
   console.log(`✅ ${order.order_id} — ${child.name} — theme:${themeKey} — "${scriptData.title}"`);
