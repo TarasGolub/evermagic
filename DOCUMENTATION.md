@@ -111,7 +111,7 @@ EverMagic is an **AI-first content production engine** that creates personalized
                     ┌─────────────────────▼───────────────────────────────────────────────┐
                     │                      SUPABASE                                       │
                     │  Tables: orders, order_payloads, scripts, images, envs              │
-                    │  Storage: images/{order_id}/{image_type}.webp                       │
+                    │  Storage: images/{order_id}/{image_type}.jpeg                       │
                     └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -337,7 +337,7 @@ Manual Trigger
 - **Coloring pages:** Use `/images/generations` (text-only, no face reference), lower quality to save cost
 - **Rate limiting:** 14-second wait between API calls to respect OpenAI limits
 - **Theme-aware:** Image prompts configured per theme via `THEMES` object in `Parse + Build Prompts` node. All 5 themes active: `SPACE_HERO`, `FANTASY_HERO`, `ENCHANTED_PRINCESS`, `ANIMAL_GUARDIAN`, `HOME_HELPER`
-- **Storage:** Images saved as `.webp` to `Supabase Storage` bucket at path `images/{order_id}/{image_type}.webp`
+- **Storage:** Images saved as `.jpeg` to `Supabase Storage` bucket at path `images/{order_id}/{image_type}.jpeg`
 
 ---
 

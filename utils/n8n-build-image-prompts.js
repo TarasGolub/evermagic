@@ -35,10 +35,10 @@ const THEMES = {
       background: 'auto',
       moderation: 'auto',
       aspect_ratio: '1:1',
-      output_format: 'webp',
+      output_format: 'jpeg',
       input_fidelity: 'low',
       number_of_images: 1,
-      output_compression: 90,
+      output_compression: 80,
     },
   },
   FANTASY_HERO: {
@@ -56,7 +56,7 @@ const THEMES = {
       backgroundElements: 'enchanted trees, a castle tower, stars, a small friendly dragon, magical floating lanterns',
       pose: 'heroic stance with one arm outstretched toward the sky',
     },
-    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'webp', input_fidelity: 'low', number_of_images: 1, output_compression: 90 },
+    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'jpeg', input_fidelity: 'low', number_of_images: 1, output_compression: 80 },
   },
 
   ENCHANTED_PRINCESS: {
@@ -74,7 +74,7 @@ const THEMES = {
       backgroundElements: 'unicorn, rainbow arch, castle towers, flowers, stars, butterfly',
       pose: 'graceful pose with arms open wide, looking up joyfully',
     },
-    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'webp', input_fidelity: 'low', number_of_images: 1, output_compression: 90 },
+    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'jpeg', input_fidelity: 'low', number_of_images: 1, output_compression: 80 },
   },
 
   ANIMAL_GUARDIAN: {
@@ -92,7 +92,7 @@ const THEMES = {
       backgroundElements: 'forest trees, flowers, butterflies, a winding path, small woodland animals, a glowing plant',
       pose: 'kneeling gently with arms open, welcoming expression',
     },
-    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'webp', input_fidelity: 'low', number_of_images: 1, output_compression: 90 },
+    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'jpeg', input_fidelity: 'low', number_of_images: 1, output_compression: 80 },
   },
 
   HOME_HELPER: {
@@ -110,7 +110,7 @@ const THEMES = {
       backgroundElements: 'cozy home interior, flower pots with flowers, a bookshelf, tiny doors in the baseboard, stars, small glowing lights',
       pose: 'child holding out cupped hands gently, looking down with wonder',
     },
-    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'webp', input_fidelity: 'low', number_of_images: 1, output_compression: 90 },
+    model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'jpeg', input_fidelity: 'low', number_of_images: 1, output_compression: 80 },
   },
 
   // ─── Add new themes below ───

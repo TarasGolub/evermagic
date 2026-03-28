@@ -35,7 +35,7 @@
         "name": "gpt-image-1",
         "quality": "high",
         "coloringQuality": "low",
-        "output_format": "webp",
-        "output_compression": 90
+        "output_format": "jpeg",
+        "output_compression": 80
     }
 }
