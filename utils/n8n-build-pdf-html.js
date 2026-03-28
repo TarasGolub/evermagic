@@ -30,6 +30,9 @@ const env = $('Envs').first().json.env;
 const qrCodeUrl = env.qr_code_url || '';
 const logoPdfUrl = 'https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/public/logo/logo_pdf.png';
 
+// Theme styles — fetched from GitHub by 'Fetch Theme Styles' HTTP Request node
+const themeStyles = $('Fetch Theme Styles').first().json.data || '';
+
 // ─────────────────────────────────────────────────────────────
 // 2. Build variable map
 // ─────────────────────────────────────────────────────────────
@@ -80,6 +83,7 @@ const vars = {
     'order.order_id': order.order_id,
     'qr_code_url': qrCodeUrl,
     'logo_pdf_url': logoPdfUrl,
+    'theme_styles': themeStyles,
 
     // Images — scene images
     'cover.image_url': images['cover'] || '',
@@ -142,9 +146,11 @@ function buildTextPages(sceneNumber) {
 
     const page1 =
         '\n  <div class="page fixed-height scene-text-page">'
-        + '\n    <h2 class="scene-title">' + title + '</h2>'
-        + '\n    <div class="gold-rule"></div>'
-        + '\n    <div class="narration">' + p1Html + '</div>'
+        + '\n    <div class="page-content">'
+        + '\n      <h2 class="scene-title">' + title + '</h2>'
+        + '\n      <div class="gold-rule"></div>'
+        + '\n      <div class="narration">' + p1Html + '</div>'
+        + '\n    </div>'
         + '\n    <div class="page-branding">EverMagic</div>'
         + '\n  </div>';
 
@@ -152,7 +158,9 @@ function buildTextPages(sceneNumber) {
 
     const page2 =
         '\n  <div class="page fixed-height scene-text-page">'
-        + '\n    <div class="narration">' + p2Html + '</div>'
+        + '\n    <div class="page-content">'
+        + '\n      <div class="narration">' + p2Html + '</div>'
+        + '\n    </div>'
         + '\n    <div class="page-branding">EverMagic</div>'
         + '\n  </div>';
 

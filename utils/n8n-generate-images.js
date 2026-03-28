@@ -56,9 +56,6 @@ try {
 
 for (const item of items) {
     const row = item.json;
-    if (row.db_action && row.db_action === 'none') {
-        continue;
-    }
     const params = row.generation_params || {};
     const isColoring = row.image_type.startsWith('coloring');
     const hasFacePhoto = facePhotoBase64;
@@ -72,7 +69,7 @@ for (const item of items) {
         prompt: row.prompt,
         size: '1024x1024',
         quality: quality,
-        output_format: 'webp',
+        output_format: 'jpeg',
     };
 
     let apiEndpoint;
@@ -97,8 +94,8 @@ for (const item of items) {
         openaiRequest = baseRequest;
     }
 
-    // Storage path: {order_id}/{image_type}.webp
-    const storagePath = `${row.order_id}/${row.image_type}.webp`;
+    // Storage path: {order_id}/{image_type}.jpeg
+    const storagePath = `${row.order_id}/${row.image_type}.jpeg`;
 
     results.push({
         json: {

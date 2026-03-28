@@ -54,8 +54,8 @@ return [{
     binary: {
         data: await this.helpers.prepareBinaryData(
             buffer,
-            `${prevData.image_type || 'image'}.webp`,
-            'image/webp'
+            `${prevData.image_type || 'image'}.jpeg`,
+            'image/jpeg'
         ),
     },
 }];
