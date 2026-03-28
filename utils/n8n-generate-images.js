@@ -58,10 +58,10 @@ for (const item of items) {
     const row = item.json;
     const params = row.generation_params || {};
     const isColoring = row.image_type.startsWith('coloring');
-    const hasFacePhoto = facePhotoBase64;
-    const quality = isColoring
-        ? (params.coloringQuality || 'low')
-        : (params.quality || 'medium');
+    // Coloring pages always use /images/generations (no face photo) — better line art quality
+    const hasFacePhoto = !isColoring && facePhotoBase64;
+    // Use params.quality if set; fall back to 'medium' for scenes, 'low' for coloring
+    const quality = params.quality || (isColoring ? 'low' : 'medium');
 
     // Common fields
     const baseRequest = {
