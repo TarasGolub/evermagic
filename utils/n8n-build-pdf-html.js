@@ -30,6 +30,9 @@ const env = $('Envs').first().json.env;
 const qrCodeUrl = env.qr_code_url || '';
 const logoPdfUrl = 'https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/public/logo/logo_pdf.png';
 
+// Theme styles — fetched from GitHub by 'Fetch Theme Styles' HTTP Request node
+const themeStyles = $('Fetch Theme Styles').first().json.data || '';
+
 // ─────────────────────────────────────────────────────────────
 // 2. Build variable map
 // ─────────────────────────────────────────────────────────────
@@ -80,6 +83,7 @@ const vars = {
     'order.order_id': order.order_id,
     'qr_code_url': qrCodeUrl,
     'logo_pdf_url': logoPdfUrl,
+    'theme_styles': themeStyles,
 
     // Images — scene images
     'cover.image_url': images['cover'] || '',
