@@ -146,9 +146,11 @@ function buildTextPages(sceneNumber) {
 
     const page1 =
         '\n  <div class="page fixed-height scene-text-page">'
-        + '\n    <h2 class="scene-title">' + title + '</h2>'
-        + '\n    <div class="gold-rule"></div>'
-        + '\n    <div class="narration">' + p1Html + '</div>'
+        + '\n    <div class="page-content">'
+        + '\n      <h2 class="scene-title">' + title + '</h2>'
+        + '\n      <div class="gold-rule"></div>'
+        + '\n      <div class="narration">' + p1Html + '</div>'
+        + '\n    </div>'
         + '\n    <div class="page-branding">EverMagic</div>'
         + '\n  </div>';
 
@@ -156,7 +158,9 @@ function buildTextPages(sceneNumber) {
 
     const page2 =
         '\n  <div class="page fixed-height scene-text-page">'
-        + '\n    <div class="narration">' + p2Html + '</div>'
+        + '\n    <div class="page-content">'
+        + '\n      <div class="narration">' + p2Html + '</div>'
+        + '\n    </div>'
         + '\n    <div class="page-branding">EverMagic</div>'
         + '\n  </div>';
 
