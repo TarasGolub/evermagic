@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-26T05:12:28.464Z",
+  "updatedAt": "2026-03-29T22:19:35.015Z",
   "createdAt": "2026-03-26T05:02:03.914Z",
   "id": "X8i8vvopGj9AvYk6",
   "name": "0. EverMagic Error Notifier",
@@ -11,23 +11,448 @@
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        0
+        -4352,
+        2224
       ],
       "id": "b8d41e0c-bce1-4a21-be03-63b447873d88",
       "name": "Error Trigger"
     },
     {
       "parameters": {
-        "jsCode": "// n8n Code node — \"Build Error Email\"\n// Receives error context from the Error Trigger\n// Builds a plain HTML notification email\n\nconst error = $input.first().json;\n\nconst workflowName  = error.workflow?.name   || 'Unknown Workflow';\nconst workflowId    = error.workflow?.id     || '';\nconst executionId   = error.execution?.id    || 'N/A';\nconst errorMessage  = error.execution?.error?.message || 'Unknown error';\nconst lastNode      = error.execution?.lastNodeExecuted || 'N/A';\nconst mode          = error.execution?.mode  || 'unknown';\n\nconst n8nBase      = 'https://evermagic.app.n8n.cloud';\nconst executionUrl = `${n8nBase}/workflow/${workflowId}/executions/${executionId}`;\n\nconst subject = `🚨 EverMagic flow failed: ${workflowName}`;\n\nconst html = `<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\"></head>\n<body style=\"margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f4f4f4;padding:32px 0;\">\n    <tr><td align=\"center\">\n      <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;\">\n\n        <!-- Header -->\n        <tr><td style=\"background:#c0392b;padding:20px 32px;\">\n          <div style=\"font-size:20px;font-weight:bold;color:#ffffff;\">🚨 Workflow Failed</div>\n          <div style=\"font-size:13px;color:#f5b7b1;margin-top:4px;\">${workflowName}</div>\n        </td></tr>\n\n        <!-- Details -->\n        <tr><td style=\"padding:24px 32px;\">\n          <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;width:140px;\">Workflow</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;font-weight:bold;color:#222;\">${workflowName}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Execution ID</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${executionId}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Last Node</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${lastNode}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Mode</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${mode}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:12px 0 0;color:#888;font-size:13px;vertical-align:top;\">Error</td>\n              <td style=\"padding:12px 0 0;font-size:13px;color:#c0392b;font-weight:bold;\">${errorMessage}</td>\n            </tr>\n          </table>\n        </td></tr>\n\n        <!-- CTA -->\n        <tr><td style=\"padding:0 32px 28px;\">\n          <a href=\"${executionUrl}\" style=\"display:inline-block;padding:12px 24px;background:#1a1a2e;color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;border-radius:6px;\">View Execution →</a>\n        </td></tr>\n\n        <!-- Footer -->\n        <tr><td style=\"background:#f9f9f9;padding:14px 32px;border-top:1px solid #eee;\">\n          <div style=\"font-size:11px;color:#aaa;letter-spacing:0.08em;text-transform:uppercase;\">EverMagic · Error Notifier</div>\n        </td></tr>\n\n      </table>\n    </td></tr>\n  </table>\n</body>\n</html>`;\n\nreturn [{ json: { subject, html } }];\n"
+        "operation": "getAll",
+        "tableId": "execution_log",
+        "filterType": "string",
+        "filterString": "=execution_id=eq.{{ $json.execution.id.toString().trim() }}"
       },
-      "id": "95065b50-cbf3-4a41-ab21-d0226aaa304d",
-      "name": "Build Error Email",
+      "id": "81c8f209-6806-474a-8d3b-f806abd680da",
+      "name": "Lookup Execution Log",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -4048,
+        2224
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const errorCtx = $('Error Trigger').first().json;\nconst logRow   = $input.first().json;\n\nconst workflowName     = errorCtx.workflow?.name  || 'Unknown Workflow';\nconst executionId      = errorCtx.execution?.id   || '';\nconst executionUrl     = errorCtx.execution?.url  || '';\nconst errorMessage     = errorCtx.execution?.error?.message     || 'Unknown error';\nconst errorDescription = errorCtx.execution?.error?.description || null;\nconst lastNode         = errorCtx.execution?.lastNodeExecuted   || 'N/A';\nconst httpCode         = errorCtx.execution?.error?.httpCode    || null;\n\n// Extract prompt from request context — available when an HTTP node (e.g. OpenAI) failed\nconst reqBody      = errorCtx.execution?.error?.context?.request?.body || null;\nconst requestPrompt = reqBody?.prompt || null;\n\nconst hasOrder = !!(logRow && logRow.order_id);\nconst orderId  = logRow.order_id || null;\nconst stage    = logRow.stage    || 'unknown';\n\nconsole.log(`Execution ${executionId} — order: ${orderId}, found: ${hasOrder}`);\n\nreturn [{\n  json: {\n    has_order:         hasOrder,\n    order_id:          orderId,\n    error_stage:       stage,\n    error_message:     errorMessage,\n    error_description: errorDescription,\n    request_prompt:    requestPrompt,\n    http_code:         httpCode,\n    last_node:         lastNode,\n    workflow_name:     workflowName,\n    execution_id:      executionId,\n    execution_url:     executionUrl,\n  }\n}];"
+      },
+      "id": "6ae1b1a9-b74c-4180-9d38-6c5d2de0074c",
+      "name": "Extract Context",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        224,
-        0
+        -3808,
+        2224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "envs"
+      },
+      "id": "295ba356-bd19-42c0-9d11-c82c56d9fa44",
+      "name": "Load Envs",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3568,
+        2224
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  tally_form_url: raw.tally_form_url || '',\n};\nreturn [{ json: { env } }];"
+      },
+      "id": "956a142d-730e-49c6-b4e3-29578a65a241",
+      "name": "Envs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3328,
+        2224
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-has-order",
+              "leftValue": "={{ $('Extract Context').first().json.has_order }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d4e12003-545d-4f70-90bb-4070d45866d8",
+      "name": "IF Has Order",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -3088,
+        2224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "orders",
+        "filterType": "string",
+        "filterString": "=order_id=eq.{{ $('Extract Context').first().json.order_id }}"
+      },
+      "id": "360726d9-f1fc-4aa9-ba54-e595c96aa1b0",
+      "name": "Fetch Order",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2848,
+        2032
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/customer-error-retry.html",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "960d90bc-d44c-4896-8b53-bbc04c22fc9b",
+      "name": "Fetch Error Email Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2608,
+        2032
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/customer-error-manual-review.html",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "e1bb8cb8-5c95-435c-bdc5-0b42a18edfac",
+      "name": "Fetch Manual Review Email Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2352,
+        2032
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — \"Build AI Prompt\"\n// ─────────────────────────────────────────────────────────────\n// Placed in \"0. EverMagic Error Notifier\", AFTER:\n//   - 'Fetch Error Email Template'\n//   - 'Fetch Manual Review Email Template'\n// Feeds into: 'Get AI Recommendation' (HTTP POST → OpenAI)\n//\n// Deliberately does NOT send the internal generation prompt to OpenAI —\n// the customer only submitted a photo, name, age, and hobby, so\n// recommendations must stay in those terms only.\n// ─────────────────────────────────────────────────────────────\n\nconst ctx      = $('Extract Context').first().json;\nconst orderRow = $('Fetch Order').first().json;\n\nconst stage       = ctx.error_stage || 'unknown';\nconst description = ctx.error_description || ctx.error_message || 'Unknown error';\nconst childAge    = orderRow.child_age  || '';\nconst childName   = orderRow.child_name || 'the child';\n\nconst stageLabels = {\n    image_generation:   'generating the illustrations',\n    scenario_expansion: 'writing the story',\n    pdf_assembly:       'assembling the book',\n    script_generation:  'writing the story outline',\n};\nconst stageLabel = stageLabels[stage] || stage;\n\nlet userMsg = `An order failed while ${stageLabel} for a ${childAge}-year-old child named ${childName}.\\n\\n`;\nuserMsg += `Error details: ${description}\\n`;\nuserMsg += `\\nGive 2–3 short bullet points (starting with •) advising the customer what to check or change before resubmitting. The customer only provided their child's photo, name, age, and hobby — do NOT reference any technical generation details. Focus only on: photo quality, photo content, and how they described their child. Be specific and friendly. Do not use the words \"moderation\", \"safety system\", or \"content policy\" — say \"our image guidelines\" instead if needed. Output ONLY the bullet points — no intro sentence, no closing sentence, no greeting.`;\n\nreturn [{\n    json: {\n        request_body: {\n            model: 'gpt-4o-mini',\n            messages: [\n                {\n                    role: 'system',\n                    content: 'You are a helpful customer support assistant for EverMagic, an AI-powered personalised storybook service for children. Help customers resolve order issues with practical, friendly advice.',\n                },\n                {\n                    role: 'user',\n                    content: userMsg,\n                },\n            ],\n            max_tokens: 250,\n            temperature: 0.4,\n        },\n    },\n}];\n"
+      },
+      "id": "a9229957-223a-44ee-b974-f1b4dbf17109",
+      "name": "Build AI Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1952,
+        2032
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.request_body) }}",
+        "options": {}
+      },
+      "id": "2211956c-426a-4bd4-b7e1-b23e871e0613",
+      "name": "Get AI Recommendation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1712,
+        2032
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bkm4C85zHfe8HSHa",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx      = $('Extract Context').first().json;\nconst env      = $('Envs').first().json.env;\nconst orderRow = $('Fetch Order').first().json;\n\nconst orderId          = ctx.order_id;\nconst errorStage       = ctx.error_stage;\nconst errorMessage     = ctx.error_message;\nconst errorDescription = ctx.error_description || errorMessage;\nconst requestPrompt    = ctx.request_prompt;\nconst customerEmail    = orderRow.email      || '';\nconst childName        = orderRow.child_name || 'your child';\n\nconst retryCount = orderRow.retry_count ?? 0;\nconst isRetry    = orderRow.is_retry    ?? false;\n\nconst canRetry = !isRetry && retryCount === 0;\n\n// ── AI recommendation ─────────────────────────────────────────\nlet aiRecommendation = null;\ntry {\n    const aiResponse = $('Get AI Recommendation').first().json;\n    aiRecommendation = aiResponse.choices?.[0]?.message?.content?.trim() || null;\n} catch (_) {}\n\n// ── Token + retry URL ─────────────────────────────────────────\nfunction generateToken() {\n    return 'EVRM-' + Array.from({ length: 8 }, () =>\n        Math.floor(Math.random() * 16).toString(16).toUpperCase()\n    ).join('');\n}\nconst newToken  = canRetry ? generateToken() : null;\nconst tallyBase = env.tally_form_url || '';\nconst retryUrl  = canRetry && tallyBase ? `${tallyBase}?token=${newToken}` : null;\n\n// ── Stage label ───────────────────────────────────────────────\nconst stageLabels = {\n    script_generation:  'writing your story outline',\n    image_generation:   'generating the illustrations',\n    scenario_expansion: 'writing the full story',\n    pdf_assembly:       'assembling the book',\n};\nconst errorStageLabel = stageLabels[errorStage] || 'creating your book';\n\n// ── Retry section HTML ────────────────────────────────────────\nconst contactNote = `<p style=\"margin:16px 0 0; font-size:13px; line-height:1.6; color:#b0b0cc !important;\">If the issue repeats after resubmitting, just reply to this email — we'll take it from there.</p>`;\n\nconst retrySection = canRetry\n    ? `<tr><td style=\"padding:0 40px 28px; background-color:#16213e !important;\"><p style=\"margin:0 0 20px; font-size:16px; line-height:1.6; color:#e8e8f5 !important;\"><strong style=\"color:#ffffff !important;\">Good news — you can try again.</strong> We've prepared a fresh personalisation link just for you. Once you've checked the tips above, click below to resubmit:</p><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\"><tr><td style=\"border-radius:8px; background-color:#7c3aed !important;\"><a href=\"${retryUrl}\" style=\"display:inline-block; padding:14px 32px; font-size:15px; font-weight:700; color:#ffffff !important; text-decoration:none;\">Try Again &rarr;</a></td></tr></table><p style=\"margin:16px 0 0; font-size:13px; color:#8b8ba3 !important;\">This link is single-use and valid for your resubmission only.</p>${contactNote}</td></tr>`\n    : `<tr><td style=\"padding:0 40px 28px; background-color:#16213e !important;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#1e2a45 !important; border-radius:12px; border:1px solid #2a3a5c;\"><tr><td style=\"padding:20px 24px;\"><p style=\"margin:0 0 10px; font-size:15px; font-weight:700; color:#ffffff !important;\">Our team is on it</p><p style=\"margin:0; font-size:14px; line-height:1.6; color:#e8e8f5 !important;\">We've flagged your order for manual review. Our team will reach out within 24 hours.</p></td></tr></table></td></tr>`;\n\n// ── AI recommendation section HTML ────────────────────────────\nlet aiRecommendationSection = '';\nif (aiRecommendation) {\n    const bulletHtml = aiRecommendation\n        .split('\\n')\n        .filter(line => line.trim())\n        .map(line => `<p style=\"margin:6px 0; font-size:14px; line-height:1.5; color:#e8e8f5 !important;\">${line.trim()}</p>`)\n        .join('');\n\n    aiRecommendationSection = `\n          <tr>\n            <td style=\"padding:0 40px 28px; background-color:#16213e !important;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0d2218 !important; border-radius:12px; border:1px solid #1a4a2e;\">\n                <tr>\n                  <td style=\"padding:20px 24px;\">\n                    <div style=\"font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:#4ade80 !important; margin-bottom:12px;\">🤖 AI Assistant Tip</div>\n                    <p style=\"margin:0 0 12px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;\">Based on the error details, our AI helper suggests paying attention to:</p>\n                    ${bulletHtml}\n                    <p style=\"margin:14px 0 0; font-size:12px; color:#6b8c7a !important; font-style:italic;\">This is an AI-generated suggestion and may not perfectly apply to your specific case.</p>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>`;\n}\n\n// ── Customer email ────────────────────────────────────────────\nconst emailTpl = canRetry\n    ? $('Fetch Error Email Template').first().json.data\n    : $('Fetch Manual Review Email Template').first().json.data;\nconst branch   = env.is_live ? 'main' : 'develop';\nconst logoUrl  = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\n\nfunction injectVars(html, vars) {\n    let result = html;\n    for (const [key, value] of Object.entries(vars)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value ?? '');\n    }\n    return result;\n}\n\nconst customerEmailHtml = injectVars(emailTpl, {\n    logo_url:                  logoUrl,\n    child_name:                childName,\n    error_stage_label:         errorStageLabel,\n    order_id:                  orderId,\n    retry_section:             retrySection,\n    ai_recommendation_section: aiRecommendationSection,\n});\n\nconst customerEmailSubject = canRetry\n    ? `Action needed — resubmit ${childName}'s story details`\n    : `Update on ${childName}'s EverMagic order`;\n\n// ── Admin email ───────────────────────────────────────────────\nconst newOrderStatus = canRetry ? 'error_retrying' : 'error_admin_review';\n\nconst promptSnippet = requestPrompt\n    ? `<p><strong>Prompt sent:</strong> <em>${requestPrompt.substring(0, 300)}${requestPrompt.length > 300 ? '…' : ''}</em></p>`\n    : '';\n\nconst aiAdminBlock = aiRecommendation\n    ? `<p><strong>AI recommendation:</strong><br>${aiRecommendation.replace(/\\n/g, '<br>')}</p>`\n    : '';\n\nconst adminEmailHtml = `<div style=\"font-family:monospace; padding:20px;\">\n  <h2>${canRetry ? '🔁' : '🚨'} Workflow Error — ${ctx.workflow_name}</h2>\n  <p><strong>Order:</strong> ${orderId}</p>\n  <p><strong>Child:</strong> ${childName}</p>\n  <p><strong>Customer:</strong> ${customerEmail}</p>\n  <p><strong>Stage:</strong> ${errorStage}</p>\n  <p><strong>Last node:</strong> ${ctx.last_node}</p>\n  <p><strong>New status:</strong> ${newOrderStatus}</p>\n  <p><strong>Retry issued:</strong> ${canRetry ? `Yes — token: ${newToken}` : 'No'}</p>\n  <hr>\n  <p><strong>Error message:</strong> ${errorMessage}</p>\n  <p><strong>Error description:</strong> ${errorDescription}</p>\n  ${promptSnippet}\n  ${aiAdminBlock}\n  <hr>\n  <p><a href=\"${ctx.execution_url}\">View execution in n8n →</a></p>\n</div>`;\n\nconst adminEmailSubject = canRetry\n    ? `🔁 Retry issued — ${orderId} — ${childName}`\n    : `🚨 Manual review — ${orderId} — ${childName}`;\n\nreturn [{\n    json: {\n        can_retry:              canRetry,\n        new_token:              newToken,\n        new_order_status:       newOrderStatus,\n        customer_email:         customerEmail,\n        customer_email_html:    customerEmailHtml,\n        customer_email_subject: customerEmailSubject,\n        admin_email_html:       adminEmailHtml,\n        admin_email_subject:    adminEmailSubject,\n        order_id:               orderId,\n        error_stage:            errorStage,\n        error_message:          errorMessage,\n        retry_count:            retryCount,\n    },\n}];"
+      },
+      "id": "eaabe1d9-f3e0-45f0-9b02-619cc8194382",
+      "name": "Build Error Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        2032
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-can-retry",
+              "leftValue": "={{ $json.can_retry }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c9c5299a-762f-494b-90d7-7de432911848",
+      "name": "IF Can Retry",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1232,
+        2032
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "intake_tokens",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "token",
+              "fieldValue": "={{ $json.new_token }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "unused"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "retry"
+            },
+            {
+              "fieldId": "retry_of",
+              "fieldValue": "={{ $json.order_id }}"
+            },
+            {
+              "fieldId": "retry_count_at_issue",
+              "fieldValue": "={{ $json.retry_count }}"
+            }
+          ]
+        }
+      },
+      "id": "5e805e20-f8af-4532-bd3c-eeaf144f2765",
+      "name": "Insert Retry Token",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        1824
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "filterType": "string",
+        "filterString": "=order_id=eq.{{ $('Build Error Handler').first().json.order_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "error_retrying"
+            },
+            {
+              "fieldId": "retry_count",
+              "fieldValue": "={{ $('Build Error Handler').first().json.retry_count + 1 }}"
+            },
+            {
+              "fieldId": "error_stage",
+              "fieldValue": "={{ $('Build Error Handler').first().json.error_stage }}"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ $('Build Error Handler').first().json.error_message }}"
+            },
+            {
+              "fieldId": "error_at",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "ebf7657d-eb70-4bc1-bd84-ac9bd0f55b01",
+      "name": "Update Order — Retrying",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        1824
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "filterType": "string",
+        "filterString": "=order_id=eq.{{ $('Build Error Handler').first().json.order_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "error_admin_review"
+            },
+            {
+              "fieldId": "error_stage",
+              "fieldValue": "={{ $('Build Error Handler').first().json.error_stage }}"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ $('Build Error Handler').first().json.error_message }}"
+            },
+            {
+              "fieldId": "error_at",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "75287639-6139-4c49-bc8b-783b3f42b6fa",
+      "name": "Update Order — Admin Review",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        2128
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "={{ $('Build Error Handler').first().json.customer_email }}",
+        "subject": "={{ $('Build Error Handler').first().json.customer_email_subject }}",
+        "html": "={{ $('Build Error Handler').first().json.customer_email_html }}",
+        "options": {}
+      },
+      "id": "6714abf0-ac88-44ea-961a-6e0fc6b8c66b",
+      "name": "Send Customer Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -512,
+        2032
+      ],
+      "webhookId": "438ec875-4d05-449c-9e6c-1ea1caac3d96",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "taras.evermagic@gmail.com",
+        "subject": "={{ $('Build Error Handler').first().json.admin_email_subject }}",
+        "html": "={{ $('Build Error Handler').first().json.admin_email_html }}",
+        "options": {}
+      },
+      "id": "27d0ad43-ce24-4cc5-a8fc-c5c18cca2c8c",
+      "name": "Send Admin Email — Order",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -272,
+        2032
+      ],
+      "webhookId": "601d37da-862b-4729-a2e4-1c0748e60d13",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Extract Context').first().json;\n\nconst subject = `💥 EverMagic flow failed (no order context): ${ctx.workflow_name}`;\n\nconst html = `<div style=\"font-family:monospace; padding:20px;\"><h2>💥 Workflow Failed — No Order Context</h2><p><strong>Workflow:</strong> ${ctx.workflow_name}</p><p><strong>Execution ID:</strong> ${ctx.execution_id}</p><p><strong>Last node:</strong> ${ctx.last_node}</p><p><strong>Error message:</strong> ${ctx.error_message}</p><p><strong>Error description:</strong> ${ctx.error_description || '—'}</p><hr><p><a href=\"${ctx.execution_url}\">View execution in n8n →</a></p><p style=\"color:#888;font-size:12px;\">No row found in execution_log — check that the Log Execution node runs early in the failed workflow.</p></div>`;\n\nreturn [{ json: { subject, html } }];"
+      },
+      "id": "bc58d681-71ce-4b45-96bd-1e4bf5e6e447",
+      "name": "Build Admin Email — No Order",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2848,
+        2432
       ]
     },
     {
@@ -38,15 +463,15 @@
         "html": "={{ $json.html }}",
         "options": {}
       },
-      "id": "dc58a863-daea-45a9-8dde-83214d856ef4",
-      "name": "Send Error Email",
+      "id": "fd05e832-0cdf-47b5-bf04-5f30f34f2a10",
+      "name": "Send Admin Email — No Order",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        448,
-        0
+        -2608,
+        2432
       ],
-      "webhookId": "36b2c7fb-ac16-408b-b6d5-ff42cd3ca8b4",
+      "webhookId": "062479c6-0647-4e62-8b0e-548bd677387e",
       "credentials": {
         "smtp": {
           "id": "ymjQpdS5fXvpjwjN",
@@ -56,22 +481,212 @@
     }
   ],
   "connections": {
-    "Build Error Email": {
+    "Error Trigger": {
       "main": [
         [
           {
-            "node": "Send Error Email",
+            "node": "Lookup Execution Log",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Error Trigger": {
+    "Lookup Execution Log": {
       "main": [
         [
           {
-            "node": "Build Error Email",
+            "node": "Extract Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Context": {
+      "main": [
+        [
+          {
+            "node": "Load Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Envs": {
+      "main": [
+        [
+          {
+            "node": "Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envs": {
+      "main": [
+        [
+          {
+            "node": "IF Has Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Has Order": {
+      "main": [
+        [
+          {
+            "node": "Fetch Order",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Admin Email — No Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Order": {
+      "main": [
+        [
+          {
+            "node": "Fetch Error Email Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Error Email Template": {
+      "main": [
+        [
+          {
+            "node": "Fetch Manual Review Email Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Manual Review Email Template": {
+      "main": [
+        [
+          {
+            "node": "Build AI Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build AI Prompt": {
+      "main": [
+        [
+          {
+            "node": "Get AI Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get AI Recommendation": {
+      "main": [
+        [
+          {
+            "node": "Build Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Error Handler": {
+      "main": [
+        [
+          {
+            "node": "IF Can Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Can Retry": {
+      "main": [
+        [
+          {
+            "node": "Insert Retry Token",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Order — Admin Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Retry Token": {
+      "main": [
+        [
+          {
+            "node": "Update Order — Retrying",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Order — Retrying": {
+      "main": [
+        [
+          {
+            "node": "Send Customer Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Order — Admin Review": {
+      "main": [
+        [
+          {
+            "node": "Send Customer Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Customer Email": {
+      "main": [
+        [
+          {
+            "node": "Send Admin Email — Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Admin Email — No Order": {
+      "main": [
+        [
+          {
+            "node": "Send Admin Email — No Order",
             "type": "main",
             "index": 0
           }
@@ -85,9 +700,130 @@
   },
   "staticData": null,
   "meta": null,
-  "pinData": {},
-  "versionId": "2231e1a7-8d5b-4008-844a-849d49ade586",
-  "activeVersionId": "2231e1a7-8d5b-4008-844a-849d49ade586",
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "585",
+            "url": "<url — removed>",
+            "error": {
+              "level": "warning",
+              "tags": {},
+              "description": "Your request was rejected by the safety system. If you believe this is an error, contact us at help.openai.com and include the request ID req_c1aae5a0e7e44d61af51bcd252ce7cae.",
+              "timestamp": 1774664346382,
+              "context": {
+                "itemIndex": 0,
+                "request": {
+                  "body": {
+                    "model": "gpt-image-1",
+                    "prompt": "3D CGI animated character, oversized expressive cartoon head with large round eyes, smooth rounded features, cinematic lighting, warm rim light. a 10-year-old boy with dark blonde / light brown hair and light skin. Standing in a confident hero pose with hands on hips. Cosmic space background with nebula and stars.",
+                    "size": "1024x1024",
+                    "quality": "medium",
+                    "output_format": "webp",
+                    "images": [
+                      {
+                        "image_url": "<base64 image/jpeg — removed>"
+                      }
+                    ]
+                  },
+                  "headers": {
+                    "content-type": "application/json",
+                    "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+                    "Authorization": "**hidden**",
+                    "OpenAI-Organization": ""
+                  },
+                  "method": "POST",
+                  "uri": "**hidden**//images/edits",
+                  "gzip": true,
+                  "rejectUnauthorized": true,
+                  "followRedirect": true,
+                  "resolveWithFullResponse": true,
+                  "sendCredentialsOnCrossOriginRedirect": false,
+                  "followAllRedirects": true,
+                  "timeout": 300000,
+                  "encoding": null,
+                  "json": false,
+                  "useStream": true
+                }
+              },
+              "functionality": "regular",
+              "name": "NodeApiError",
+              "node": {
+                "parameters": {
+                  "curlImport": "",
+                  "method": "POST",
+                  "url": "=https://api.openai.com/v1/{{ $json.api_endpoint }}",
+                  "authentication": "predefinedCredentialType",
+                  "nodeCredentialType": "openAiApi",
+                  "provideSslCertificates": false,
+                  "sendQuery": false,
+                  "sendHeaders": true,
+                  "specifyHeaders": "keypair",
+                  "headerParameters": {
+                    "parameters": [
+                      {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ]
+                  },
+                  "sendBody": true,
+                  "contentType": "json",
+                  "specifyBody": "json",
+                  "jsonBody": "={{ JSON.stringify($json.openai_request) }}",
+                  "options": {},
+                  "infoMessage": ""
+                },
+                "type": "n8n-nodes-base.httpRequest",
+                "typeVersion": 4.4,
+                "position": [
+                  3376,
+                  -16
+                ],
+                "id": "d3a0e212-b6af-4bf1-a998-70b9c1457b82",
+                "name": "Call OpenAI Image API",
+                "executeOnce": false,
+                "credentials": {
+                  "openAiApi": {
+                    "id": "bkm4C85zHfe8HSHa",
+                    "name": "OpenAi account"
+                  }
+                }
+              },
+              "messages": [
+                "400 - \"{\\n  \\\"error\\\": {\\n    \\\"message\\\": \\\"Your request was rejected by the safety system. If you believe this is an error, contact us at help.openai.com and include the request ID req_c1aae5a0e7e44d61af51bcd252ce7cae.\\\",\\n    \\\"type\\\": \\\"image_generation_user_error\\\",\\n    \\\"param\\\": null,\\n    \\\"code\\\": \\\"moderation_blocked\\\"\\n  }\\n}\""
+              ],
+              "httpCode": "400",
+              "message": "Bad request - please check your parameters",
+              "stack": "<stack trace — removed>"
+            },
+            "lastNodeExecuted": "Call OpenAI Image API",
+            "mode": "webhook",
+            "executionContext": {
+              "version": 1,
+              "establishedAt": 1774664318913,
+              "source": "webhook",
+              "redaction": {
+                "version": 1,
+                "policy": "none"
+              },
+              "triggerNode": {
+                "name": "Generate Images",
+                "type": "n8n-nodes-base.webhook"
+              }
+            }
+          },
+          "workflow": {
+            "id": "N0Acec1peIL2JpLY",
+            "name": "2. EverMagic Image Generation"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "3b40e6b5-9cc4-49db-a1f6-b84e1f66fd9f",
+  "activeVersionId": "3b40e6b5-9cc4-49db-a1f6-b84e1f66fd9f",
   "triggerCount": 0,
   "shared": [
     {
@@ -99,9 +835,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-26T05:13:25.000Z",
-    "createdAt": "2026-03-26T05:12:28.465Z",
-    "versionId": "2231e1a7-8d5b-4008-844a-849d49ade586",
+    "updatedAt": "2026-03-29T22:21:20.000Z",
+    "createdAt": "2026-03-29T22:19:35.016Z",
+    "versionId": "3b40e6b5-9cc4-49db-a1f6-b84e1f66fd9f",
     "workflowId": "X8i8vvopGj9AvYk6",
     "nodes": [
       {
@@ -109,23 +845,448 @@
         "type": "n8n-nodes-base.errorTrigger",
         "typeVersion": 1,
         "position": [
-          0,
-          0
+          -4352,
+          2224
         ],
         "id": "b8d41e0c-bce1-4a21-be03-63b447873d88",
         "name": "Error Trigger"
       },
       {
         "parameters": {
-          "jsCode": "// n8n Code node — \"Build Error Email\"\n// Receives error context from the Error Trigger\n// Builds a plain HTML notification email\n\nconst error = $input.first().json;\n\nconst workflowName  = error.workflow?.name   || 'Unknown Workflow';\nconst workflowId    = error.workflow?.id     || '';\nconst executionId   = error.execution?.id    || 'N/A';\nconst errorMessage  = error.execution?.error?.message || 'Unknown error';\nconst lastNode      = error.execution?.lastNodeExecuted || 'N/A';\nconst mode          = error.execution?.mode  || 'unknown';\n\nconst n8nBase      = 'https://evermagic.app.n8n.cloud';\nconst executionUrl = `${n8nBase}/workflow/${workflowId}/executions/${executionId}`;\n\nconst subject = `🚨 EverMagic flow failed: ${workflowName}`;\n\nconst html = `<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\"></head>\n<body style=\"margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f4f4f4;padding:32px 0;\">\n    <tr><td align=\"center\">\n      <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;\">\n\n        <!-- Header -->\n        <tr><td style=\"background:#c0392b;padding:20px 32px;\">\n          <div style=\"font-size:20px;font-weight:bold;color:#ffffff;\">🚨 Workflow Failed</div>\n          <div style=\"font-size:13px;color:#f5b7b1;margin-top:4px;\">${workflowName}</div>\n        </td></tr>\n\n        <!-- Details -->\n        <tr><td style=\"padding:24px 32px;\">\n          <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;width:140px;\">Workflow</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;font-weight:bold;color:#222;\">${workflowName}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Execution ID</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${executionId}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Last Node</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${lastNode}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;color:#888;font-size:13px;\">Mode</td>\n              <td style=\"padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#222;\">${mode}</td>\n            </tr>\n            <tr>\n              <td style=\"padding:12px 0 0;color:#888;font-size:13px;vertical-align:top;\">Error</td>\n              <td style=\"padding:12px 0 0;font-size:13px;color:#c0392b;font-weight:bold;\">${errorMessage}</td>\n            </tr>\n          </table>\n        </td></tr>\n\n        <!-- CTA -->\n        <tr><td style=\"padding:0 32px 28px;\">\n          <a href=\"${executionUrl}\" style=\"display:inline-block;padding:12px 24px;background:#1a1a2e;color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;border-radius:6px;\">View Execution →</a>\n        </td></tr>\n\n        <!-- Footer -->\n        <tr><td style=\"background:#f9f9f9;padding:14px 32px;border-top:1px solid #eee;\">\n          <div style=\"font-size:11px;color:#aaa;letter-spacing:0.08em;text-transform:uppercase;\">EverMagic · Error Notifier</div>\n        </td></tr>\n\n      </table>\n    </td></tr>\n  </table>\n</body>\n</html>`;\n\nreturn [{ json: { subject, html } }];\n"
+          "operation": "getAll",
+          "tableId": "execution_log",
+          "filterType": "string",
+          "filterString": "=execution_id=eq.{{ $json.execution.id.toString().trim() }}"
         },
-        "id": "95065b50-cbf3-4a41-ab21-d0226aaa304d",
-        "name": "Build Error Email",
+        "id": "81c8f209-6806-474a-8d3b-f806abd680da",
+        "name": "Lookup Execution Log",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -4048,
+          2224
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const errorCtx = $('Error Trigger').first().json;\nconst logRow   = $input.first().json;\n\nconst workflowName     = errorCtx.workflow?.name  || 'Unknown Workflow';\nconst executionId      = errorCtx.execution?.id   || '';\nconst executionUrl     = errorCtx.execution?.url  || '';\nconst errorMessage     = errorCtx.execution?.error?.message     || 'Unknown error';\nconst errorDescription = errorCtx.execution?.error?.description || null;\nconst lastNode         = errorCtx.execution?.lastNodeExecuted   || 'N/A';\nconst httpCode         = errorCtx.execution?.error?.httpCode    || null;\n\n// Extract prompt from request context — available when an HTTP node (e.g. OpenAI) failed\nconst reqBody      = errorCtx.execution?.error?.context?.request?.body || null;\nconst requestPrompt = reqBody?.prompt || null;\n\nconst hasOrder = !!(logRow && logRow.order_id);\nconst orderId  = logRow.order_id || null;\nconst stage    = logRow.stage    || 'unknown';\n\nconsole.log(`Execution ${executionId} — order: ${orderId}, found: ${hasOrder}`);\n\nreturn [{\n  json: {\n    has_order:         hasOrder,\n    order_id:          orderId,\n    error_stage:       stage,\n    error_message:     errorMessage,\n    error_description: errorDescription,\n    request_prompt:    requestPrompt,\n    http_code:         httpCode,\n    last_node:         lastNode,\n    workflow_name:     workflowName,\n    execution_id:      executionId,\n    execution_url:     executionUrl,\n  }\n}];"
+        },
+        "id": "6ae1b1a9-b74c-4180-9d38-6c5d2de0074c",
+        "name": "Extract Context",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          224,
-          0
+          -3808,
+          2224
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "envs"
+        },
+        "id": "295ba356-bd19-42c0-9d11-c82c56d9fa44",
+        "name": "Load Envs",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -3568,
+          2224
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = {};\nfor (const item of $input.all()) {\n  raw[item.json.key] = item.json.value;\n}\nconst env = {\n  mode: raw.mode,\n  is_live: raw.mode === 'live',\n  tally_form_url: raw.tally_form_url || '',\n};\nreturn [{ json: { env } }];"
+        },
+        "id": "956a142d-730e-49c6-b4e3-29578a65a241",
+        "name": "Envs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -3328,
+          2224
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "cond-has-order",
+                "leftValue": "={{ $('Extract Context').first().json.has_order }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "d4e12003-545d-4f70-90bb-4070d45866d8",
+        "name": "IF Has Order",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -3088,
+          2224
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "tableId": "orders",
+          "filterType": "string",
+          "filterString": "=order_id=eq.{{ $('Extract Context').first().json.order_id }}"
+        },
+        "id": "360726d9-f1fc-4aa9-ba54-e595c96aa1b0",
+        "name": "Fetch Order",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -2848,
+          2032
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/customer-error-retry.html",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "text"
+              }
+            }
+          }
+        },
+        "id": "960d90bc-d44c-4896-8b53-bbc04c22fc9b",
+        "name": "Fetch Error Email Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -2608,
+          2032
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').first().json.env.is_live ? 'main' : 'develop' }}/emails/customer-error-manual-review.html",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "text"
+              }
+            }
+          }
+        },
+        "id": "e1bb8cb8-5c95-435c-bdc5-0b42a18edfac",
+        "name": "Fetch Manual Review Email Template",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -2352,
+          2032
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code node — \"Build AI Prompt\"\n// ─────────────────────────────────────────────────────────────\n// Placed in \"0. EverMagic Error Notifier\", AFTER:\n//   - 'Fetch Error Email Template'\n//   - 'Fetch Manual Review Email Template'\n// Feeds into: 'Get AI Recommendation' (HTTP POST → OpenAI)\n//\n// Deliberately does NOT send the internal generation prompt to OpenAI —\n// the customer only submitted a photo, name, age, and hobby, so\n// recommendations must stay in those terms only.\n// ─────────────────────────────────────────────────────────────\n\nconst ctx      = $('Extract Context').first().json;\nconst orderRow = $('Fetch Order').first().json;\n\nconst stage       = ctx.error_stage || 'unknown';\nconst description = ctx.error_description || ctx.error_message || 'Unknown error';\nconst childAge    = orderRow.child_age  || '';\nconst childName   = orderRow.child_name || 'the child';\n\nconst stageLabels = {\n    image_generation:   'generating the illustrations',\n    scenario_expansion: 'writing the story',\n    pdf_assembly:       'assembling the book',\n    script_generation:  'writing the story outline',\n};\nconst stageLabel = stageLabels[stage] || stage;\n\nlet userMsg = `An order failed while ${stageLabel} for a ${childAge}-year-old child named ${childName}.\\n\\n`;\nuserMsg += `Error details: ${description}\\n`;\nuserMsg += `\\nGive 2–3 short bullet points (starting with •) advising the customer what to check or change before resubmitting. The customer only provided their child's photo, name, age, and hobby — do NOT reference any technical generation details. Focus only on: photo quality, photo content, and how they described their child. Be specific and friendly. Do not use the words \"moderation\", \"safety system\", or \"content policy\" — say \"our image guidelines\" instead if needed. Output ONLY the bullet points — no intro sentence, no closing sentence, no greeting.`;\n\nreturn [{\n    json: {\n        request_body: {\n            model: 'gpt-4o-mini',\n            messages: [\n                {\n                    role: 'system',\n                    content: 'You are a helpful customer support assistant for EverMagic, an AI-powered personalised storybook service for children. Help customers resolve order issues with practical, friendly advice.',\n                },\n                {\n                    role: 'user',\n                    content: userMsg,\n                },\n            ],\n            max_tokens: 250,\n            temperature: 0.4,\n        },\n    },\n}];\n"
+        },
+        "id": "a9229957-223a-44ee-b974-f1b4dbf17109",
+        "name": "Build AI Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1952,
+          2032
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openAiApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.request_body) }}",
+          "options": {}
+        },
+        "id": "2211956c-426a-4bd4-b7e1-b23e871e0613",
+        "name": "Get AI Recommendation",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1712,
+          2032
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "bkm4C85zHfe8HSHa",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const ctx      = $('Extract Context').first().json;\nconst env      = $('Envs').first().json.env;\nconst orderRow = $('Fetch Order').first().json;\n\nconst orderId          = ctx.order_id;\nconst errorStage       = ctx.error_stage;\nconst errorMessage     = ctx.error_message;\nconst errorDescription = ctx.error_description || errorMessage;\nconst requestPrompt    = ctx.request_prompt;\nconst customerEmail    = orderRow.email      || '';\nconst childName        = orderRow.child_name || 'your child';\n\nconst retryCount = orderRow.retry_count ?? 0;\nconst isRetry    = orderRow.is_retry    ?? false;\n\nconst canRetry = !isRetry && retryCount === 0;\n\n// ── AI recommendation ─────────────────────────────────────────\nlet aiRecommendation = null;\ntry {\n    const aiResponse = $('Get AI Recommendation').first().json;\n    aiRecommendation = aiResponse.choices?.[0]?.message?.content?.trim() || null;\n} catch (_) {}\n\n// ── Token + retry URL ─────────────────────────────────────────\nfunction generateToken() {\n    return 'EVRM-' + Array.from({ length: 8 }, () =>\n        Math.floor(Math.random() * 16).toString(16).toUpperCase()\n    ).join('');\n}\nconst newToken  = canRetry ? generateToken() : null;\nconst tallyBase = env.tally_form_url || '';\nconst retryUrl  = canRetry && tallyBase ? `${tallyBase}?token=${newToken}` : null;\n\n// ── Stage label ───────────────────────────────────────────────\nconst stageLabels = {\n    script_generation:  'writing your story outline',\n    image_generation:   'generating the illustrations',\n    scenario_expansion: 'writing the full story',\n    pdf_assembly:       'assembling the book',\n};\nconst errorStageLabel = stageLabels[errorStage] || 'creating your book';\n\n// ── Retry section HTML ────────────────────────────────────────\nconst contactNote = `<p style=\"margin:16px 0 0; font-size:13px; line-height:1.6; color:#b0b0cc !important;\">If the issue repeats after resubmitting, just reply to this email — we'll take it from there.</p>`;\n\nconst retrySection = canRetry\n    ? `<tr><td style=\"padding:0 40px 28px; background-color:#16213e !important;\"><p style=\"margin:0 0 20px; font-size:16px; line-height:1.6; color:#e8e8f5 !important;\"><strong style=\"color:#ffffff !important;\">Good news — you can try again.</strong> We've prepared a fresh personalisation link just for you. Once you've checked the tips above, click below to resubmit:</p><table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\"><tr><td style=\"border-radius:8px; background-color:#7c3aed !important;\"><a href=\"${retryUrl}\" style=\"display:inline-block; padding:14px 32px; font-size:15px; font-weight:700; color:#ffffff !important; text-decoration:none;\">Try Again &rarr;</a></td></tr></table><p style=\"margin:16px 0 0; font-size:13px; color:#8b8ba3 !important;\">This link is single-use and valid for your resubmission only.</p>${contactNote}</td></tr>`\n    : `<tr><td style=\"padding:0 40px 28px; background-color:#16213e !important;\"><table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#1e2a45 !important; border-radius:12px; border:1px solid #2a3a5c;\"><tr><td style=\"padding:20px 24px;\"><p style=\"margin:0 0 10px; font-size:15px; font-weight:700; color:#ffffff !important;\">Our team is on it</p><p style=\"margin:0; font-size:14px; line-height:1.6; color:#e8e8f5 !important;\">We've flagged your order for manual review. Our team will reach out within 24 hours.</p></td></tr></table></td></tr>`;\n\n// ── AI recommendation section HTML ────────────────────────────\nlet aiRecommendationSection = '';\nif (aiRecommendation) {\n    const bulletHtml = aiRecommendation\n        .split('\\n')\n        .filter(line => line.trim())\n        .map(line => `<p style=\"margin:6px 0; font-size:14px; line-height:1.5; color:#e8e8f5 !important;\">${line.trim()}</p>`)\n        .join('');\n\n    aiRecommendationSection = `\n          <tr>\n            <td style=\"padding:0 40px 28px; background-color:#16213e !important;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0d2218 !important; border-radius:12px; border:1px solid #1a4a2e;\">\n                <tr>\n                  <td style=\"padding:20px 24px;\">\n                    <div style=\"font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:#4ade80 !important; margin-bottom:12px;\">🤖 AI Assistant Tip</div>\n                    <p style=\"margin:0 0 12px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;\">Based on the error details, our AI helper suggests paying attention to:</p>\n                    ${bulletHtml}\n                    <p style=\"margin:14px 0 0; font-size:12px; color:#6b8c7a !important; font-style:italic;\">This is an AI-generated suggestion and may not perfectly apply to your specific case.</p>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>`;\n}\n\n// ── Customer email ────────────────────────────────────────────\nconst emailTpl = canRetry\n    ? $('Fetch Error Email Template').first().json.data\n    : $('Fetch Manual Review Email Template').first().json.data;\nconst branch   = env.is_live ? 'main' : 'develop';\nconst logoUrl  = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\n\nfunction injectVars(html, vars) {\n    let result = html;\n    for (const [key, value] of Object.entries(vars)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value ?? '');\n    }\n    return result;\n}\n\nconst customerEmailHtml = injectVars(emailTpl, {\n    logo_url:                  logoUrl,\n    child_name:                childName,\n    error_stage_label:         errorStageLabel,\n    order_id:                  orderId,\n    retry_section:             retrySection,\n    ai_recommendation_section: aiRecommendationSection,\n});\n\nconst customerEmailSubject = canRetry\n    ? `Action needed — resubmit ${childName}'s story details`\n    : `Update on ${childName}'s EverMagic order`;\n\n// ── Admin email ───────────────────────────────────────────────\nconst newOrderStatus = canRetry ? 'error_retrying' : 'error_admin_review';\n\nconst promptSnippet = requestPrompt\n    ? `<p><strong>Prompt sent:</strong> <em>${requestPrompt.substring(0, 300)}${requestPrompt.length > 300 ? '…' : ''}</em></p>`\n    : '';\n\nconst aiAdminBlock = aiRecommendation\n    ? `<p><strong>AI recommendation:</strong><br>${aiRecommendation.replace(/\\n/g, '<br>')}</p>`\n    : '';\n\nconst adminEmailHtml = `<div style=\"font-family:monospace; padding:20px;\">\n  <h2>${canRetry ? '🔁' : '🚨'} Workflow Error — ${ctx.workflow_name}</h2>\n  <p><strong>Order:</strong> ${orderId}</p>\n  <p><strong>Child:</strong> ${childName}</p>\n  <p><strong>Customer:</strong> ${customerEmail}</p>\n  <p><strong>Stage:</strong> ${errorStage}</p>\n  <p><strong>Last node:</strong> ${ctx.last_node}</p>\n  <p><strong>New status:</strong> ${newOrderStatus}</p>\n  <p><strong>Retry issued:</strong> ${canRetry ? `Yes — token: ${newToken}` : 'No'}</p>\n  <hr>\n  <p><strong>Error message:</strong> ${errorMessage}</p>\n  <p><strong>Error description:</strong> ${errorDescription}</p>\n  ${promptSnippet}\n  ${aiAdminBlock}\n  <hr>\n  <p><a href=\"${ctx.execution_url}\">View execution in n8n →</a></p>\n</div>`;\n\nconst adminEmailSubject = canRetry\n    ? `🔁 Retry issued — ${orderId} — ${childName}`\n    : `🚨 Manual review — ${orderId} — ${childName}`;\n\nreturn [{\n    json: {\n        can_retry:              canRetry,\n        new_token:              newToken,\n        new_order_status:       newOrderStatus,\n        customer_email:         customerEmail,\n        customer_email_html:    customerEmailHtml,\n        customer_email_subject: customerEmailSubject,\n        admin_email_html:       adminEmailHtml,\n        admin_email_subject:    adminEmailSubject,\n        order_id:               orderId,\n        error_stage:            errorStage,\n        error_message:          errorMessage,\n        retry_count:            retryCount,\n    },\n}];"
+        },
+        "id": "eaabe1d9-f3e0-45f0-9b02-619cc8194382",
+        "name": "Build Error Handler",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1472,
+          2032
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "cond-can-retry",
+                "leftValue": "={{ $json.can_retry }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "c9c5299a-762f-494b-90d7-7de432911848",
+        "name": "IF Can Retry",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1232,
+          2032
+        ]
+      },
+      {
+        "parameters": {
+          "tableId": "intake_tokens",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "token",
+                "fieldValue": "={{ $json.new_token }}"
+              },
+              {
+                "fieldId": "status",
+                "fieldValue": "unused"
+              },
+              {
+                "fieldId": "source",
+                "fieldValue": "retry"
+              },
+              {
+                "fieldId": "retry_of",
+                "fieldValue": "={{ $json.order_id }}"
+              },
+              {
+                "fieldId": "retry_count_at_issue",
+                "fieldValue": "={{ $json.retry_count }}"
+              }
+            ]
+          }
+        },
+        "id": "5e805e20-f8af-4532-bd3c-eeaf144f2765",
+        "name": "Insert Retry Token",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -992,
+          1824
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "filterType": "string",
+          "filterString": "=order_id=eq.{{ $('Build Error Handler').first().json.order_id }}",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "error_retrying"
+              },
+              {
+                "fieldId": "retry_count",
+                "fieldValue": "={{ $('Build Error Handler').first().json.retry_count + 1 }}"
+              },
+              {
+                "fieldId": "error_stage",
+                "fieldValue": "={{ $('Build Error Handler').first().json.error_stage }}"
+              },
+              {
+                "fieldId": "error_message",
+                "fieldValue": "={{ $('Build Error Handler').first().json.error_message }}"
+              },
+              {
+                "fieldId": "error_at",
+                "fieldValue": "={{ new Date().toISOString() }}"
+              }
+            ]
+          }
+        },
+        "id": "ebf7657d-eb70-4bc1-bd84-ac9bd0f55b01",
+        "name": "Update Order — Retrying",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -752,
+          1824
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "orders",
+          "filterType": "string",
+          "filterString": "=order_id=eq.{{ $('Build Error Handler').first().json.order_id }}",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "error_admin_review"
+              },
+              {
+                "fieldId": "error_stage",
+                "fieldValue": "={{ $('Build Error Handler').first().json.error_stage }}"
+              },
+              {
+                "fieldId": "error_message",
+                "fieldValue": "={{ $('Build Error Handler').first().json.error_message }}"
+              },
+              {
+                "fieldId": "error_at",
+                "fieldValue": "={{ new Date().toISOString() }}"
+              }
+            ]
+          }
+        },
+        "id": "75287639-6139-4c49-bc8b-783b3f42b6fa",
+        "name": "Update Order — Admin Review",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -992,
+          2128
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "={{ $('Build Error Handler').first().json.customer_email }}",
+          "subject": "={{ $('Build Error Handler').first().json.customer_email_subject }}",
+          "html": "={{ $('Build Error Handler').first().json.customer_email_html }}",
+          "options": {}
+        },
+        "id": "6714abf0-ac88-44ea-961a-6e0fc6b8c66b",
+        "name": "Send Customer Email",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          -512,
+          2032
+        ],
+        "webhookId": "438ec875-4d05-449c-9e6c-1ea1caac3d96",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "taras.evermagic@gmail.com",
+          "toEmail": "taras.evermagic@gmail.com",
+          "subject": "={{ $('Build Error Handler').first().json.admin_email_subject }}",
+          "html": "={{ $('Build Error Handler').first().json.admin_email_html }}",
+          "options": {}
+        },
+        "id": "27d0ad43-ce24-4cc5-a8fc-c5c18cca2c8c",
+        "name": "Send Admin Email — Order",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          -272,
+          2032
+        ],
+        "webhookId": "601d37da-862b-4729-a2e4-1c0748e60d13",
+        "credentials": {
+          "smtp": {
+            "id": "ymjQpdS5fXvpjwjN",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const ctx = $('Extract Context').first().json;\n\nconst subject = `💥 EverMagic flow failed (no order context): ${ctx.workflow_name}`;\n\nconst html = `<div style=\"font-family:monospace; padding:20px;\"><h2>💥 Workflow Failed — No Order Context</h2><p><strong>Workflow:</strong> ${ctx.workflow_name}</p><p><strong>Execution ID:</strong> ${ctx.execution_id}</p><p><strong>Last node:</strong> ${ctx.last_node}</p><p><strong>Error message:</strong> ${ctx.error_message}</p><p><strong>Error description:</strong> ${ctx.error_description || '—'}</p><hr><p><a href=\"${ctx.execution_url}\">View execution in n8n →</a></p><p style=\"color:#888;font-size:12px;\">No row found in execution_log — check that the Log Execution node runs early in the failed workflow.</p></div>`;\n\nreturn [{ json: { subject, html } }];"
+        },
+        "id": "bc58d681-71ce-4b45-96bd-1e4bf5e6e447",
+        "name": "Build Admin Email — No Order",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -2848,
+          2432
         ]
       },
       {
@@ -136,15 +1297,15 @@
           "html": "={{ $json.html }}",
           "options": {}
         },
-        "id": "dc58a863-daea-45a9-8dde-83214d856ef4",
-        "name": "Send Error Email",
+        "id": "fd05e832-0cdf-47b5-bf04-5f30f34f2a10",
+        "name": "Send Admin Email — No Order",
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2.1,
         "position": [
-          448,
-          0
+          -2608,
+          2432
         ],
-        "webhookId": "36b2c7fb-ac16-408b-b6d5-ff42cd3ca8b4",
+        "webhookId": "062479c6-0647-4e62-8b0e-548bd677387e",
         "credentials": {
           "smtp": {
             "id": "ymjQpdS5fXvpjwjN",
@@ -154,22 +1315,212 @@
       }
     ],
     "connections": {
-      "Build Error Email": {
+      "Error Trigger": {
         "main": [
           [
             {
-              "node": "Send Error Email",
+              "node": "Lookup Execution Log",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Error Trigger": {
+      "Lookup Execution Log": {
         "main": [
           [
             {
-              "node": "Build Error Email",
+              "node": "Extract Context",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Context": {
+        "main": [
+          [
+            {
+              "node": "Load Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Envs": {
+        "main": [
+          [
+            {
+              "node": "Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envs": {
+        "main": [
+          [
+            {
+              "node": "IF Has Order",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "IF Has Order": {
+        "main": [
+          [
+            {
+              "node": "Fetch Order",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Build Admin Email — No Order",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Order": {
+        "main": [
+          [
+            {
+              "node": "Fetch Error Email Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Error Email Template": {
+        "main": [
+          [
+            {
+              "node": "Fetch Manual Review Email Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Manual Review Email Template": {
+        "main": [
+          [
+            {
+              "node": "Build AI Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build AI Prompt": {
+        "main": [
+          [
+            {
+              "node": "Get AI Recommendation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get AI Recommendation": {
+        "main": [
+          [
+            {
+              "node": "Build Error Handler",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Error Handler": {
+        "main": [
+          [
+            {
+              "node": "IF Can Retry",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "IF Can Retry": {
+        "main": [
+          [
+            {
+              "node": "Insert Retry Token",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Order — Admin Review",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Insert Retry Token": {
+        "main": [
+          [
+            {
+              "node": "Update Order — Retrying",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Order — Retrying": {
+        "main": [
+          [
+            {
+              "node": "Send Customer Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Order — Admin Review": {
+        "main": [
+          [
+            {
+              "node": "Send Customer Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Customer Email": {
+        "main": [
+          [
+            {
+              "node": "Send Admin Email — Order",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Admin Email — No Order": {
+        "main": [
+          [
+            {
+              "node": "Send Admin Email — No Order",
               "type": "main",
               "index": 0
             }
@@ -178,7 +1529,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 2231e1a7",
+    "name": "Version 3b40e6b5",
     "description": "",
     "autosaved": true
   },

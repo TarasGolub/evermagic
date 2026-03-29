@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-28T22:39:58.012Z",
+  "updatedAt": "2026-03-29T21:14:40.574Z",
   "createdAt": "2026-03-14T17:52:56.850Z",
   "id": "Zwhkv86d2kqVMVhg",
   "name": "3.2 EverMagic PDF Assembly",
@@ -18,7 +18,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -1232,
+        -1504,
         1328
       ],
       "webhookId": "a1b2c3d4-0001-4000-8000-000000000099",
@@ -39,7 +39,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -1008,
+        -1280,
         1328
       ],
       "credentials": {
@@ -58,7 +58,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -768,
+        -1040,
         1328
       ]
     },
@@ -113,7 +113,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -496,
+        -768,
         1328
       ],
       "alwaysOutputData": true,
@@ -739,6 +739,45 @@
       ],
       "id": "2c70d725-202f-44e8-bcdf-8b03974dceb7",
       "name": "Fetch Theme Styles"
+    },
+    {
+      "parameters": {
+        "tableId": "execution_log",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{ $json.order_id }}"
+            },
+            {
+              "fieldId": "execution_id",
+              "fieldValue": "={{ $execution.id }}"
+            },
+            {
+              "fieldId": "workflow_name",
+              "fieldValue": "3.2 EverMagic PDF Assembly"
+            },
+            {
+              "fieldId": "stage",
+              "fieldValue": " PDF Assembly"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        1328
+      ],
+      "id": "7a2064ff-ddb5-4342-83b5-c72c391f7184",
+      "name": "Log Execution",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
   "connections": {
@@ -790,7 +829,7 @@
       "main": [
         [
           {
-            "node": "Fetch Order Payload",
+            "node": "Log Execution",
             "type": "main",
             "index": 0
           }
@@ -1067,6 +1106,17 @@
           }
         ]
       ]
+    },
+    "Log Execution": {
+      "main": [
+        [
+          {
+            "node": "Fetch Order Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1082,8 +1132,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "3fe8d2cd-c978-4a0c-8b91-1d179d24873d",
-  "activeVersionId": "c8f7af04-f126-4a46-9e80-9caef4a52fa0",
+  "versionId": "5741d4df-9b32-41b3-ab3c-67e6a792df6c",
+  "activeVersionId": "5741d4df-9b32-41b3-ab3c-67e6a792df6c",
   "triggerCount": 1,
   "shared": [
     {
@@ -1095,9 +1145,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-27T22:37:02.000Z",
-    "createdAt": "2026-03-27T22:36:51.846Z",
-    "versionId": "c8f7af04-f126-4a46-9e80-9caef4a52fa0",
+    "updatedAt": "2026-03-29T21:14:45.000Z",
+    "createdAt": "2026-03-29T21:14:40.575Z",
+    "versionId": "5741d4df-9b32-41b3-ab3c-67e6a792df6c",
     "workflowId": "Zwhkv86d2kqVMVhg",
     "nodes": [
       {
@@ -1112,7 +1162,7 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2.1,
         "position": [
-          -1232,
+          -1504,
           1328
         ],
         "webhookId": "a1b2c3d4-0001-4000-8000-000000000099",
@@ -1133,7 +1183,7 @@
         "type": "n8n-nodes-base.supabase",
         "typeVersion": 1,
         "position": [
-          -1008,
+          -1280,
           1328
         ],
         "credentials": {
@@ -1152,7 +1202,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          -768,
+          -1040,
           1328
         ]
       },
@@ -1207,7 +1257,7 @@
         "type": "n8n-nodes-base.supabase",
         "typeVersion": 1,
         "position": [
-          -496,
+          -768,
           1328
         ],
         "alwaysOutputData": true,
@@ -1243,7 +1293,7 @@
         "type": "n8n-nodes-base.supabase",
         "typeVersion": 1,
         "position": [
-          256,
+          0,
           1328
         ],
         "alwaysOutputData": true,
@@ -1282,7 +1332,7 @@
         "type": "n8n-nodes-base.supabase",
         "typeVersion": 1,
         "position": [
-          496,
+          208,
           1328
         ],
         "alwaysOutputData": true,
@@ -1303,7 +1353,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.4,
         "position": [
-          736,
+          784,
           1328
         ],
         "alwaysOutputData": true
@@ -1340,7 +1390,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// n8n Code node — \"Build PDF HTML\"\n// Placed AFTER \"Fetch PDF Template\" HTTP Request node\n// Injects order/script/image data into an HTML template string\n// Returns one item per PDF type — feeds into the PDFShift loop\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\n\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst expandedContent = typeof scriptRow.expanded_content === 'string'\n    ? JSON.parse(scriptRow.expanded_content)\n    : scriptRow.expanded_content;\n\n// Images: build a map of image_type → file_url\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) {\n    images[row.json.image_type] = row.json.file_url;\n}\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\nconst logoPdfUrl = 'https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/public/logo/logo_pdf.png';\n\n// ─────────────────────────────────────────────────────────────\n// 2. Build variable map\n// ─────────────────────────────────────────────────────────────\n\n// Per-scene text: use expanded_content if available, fall back to narration\nfunction sceneText(sceneNumber) {\n    if (expandedContent && expandedContent.scenes) {\n        const expanded = expandedContent.scenes.find(s => s.scene_number === sceneNumber);\n        if (expanded && expanded.expanded_narrative) return expanded.expanded_narrative;\n    }\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.narration : '';\n}\n\nfunction sceneTitle(sceneNumber) {\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.scene_title : '';\n}\n\n// Hero trait → capitalised title for certificate\nconst heroTraitTitle = child.hero_trait\n    ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n    : 'Courage';\n\n// Certificate citation — hobby-aware\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — `\n    + `demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, `\n    + `courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} `\n    + `to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n    // Story\n    'story.title': scriptContent.title || '',\n    'story.tagline': scriptContent.tagline || '',\n    'closing_message': scriptContent.closing_message || '',\n    'parent_message': order.parent_message || '',\n\n    // Child\n    'child.name': child.name,\n    'child.age': String(child.age),\n    'child.hero_trait': child.hero_trait || '',\n    'child.hobby': child.hobby || '',\n\n    // Order\n    'order.order_id': order.order_id,\n    'qr_code_url': qrCodeUrl,\n    'logo_pdf_url': logoPdfUrl,\n\n    // Images — scene images\n    'cover.image_url': images['cover'] || '',\n    'scene_1.image_url': images['scene_1'] || '',\n    'scene_2.image_url': images['scene_2'] || '',\n    'scene_3.image_url': images['scene_3'] || '',\n    'scene_4.image_url': images['scene_4'] || '',\n    'scene_5.image_url': images['scene_5'] || '',\n\n    // Images — coloring pages\n    'coloring.image_url': images['coloring'] || '',\n    'coloring_1.image_url': images['coloring_1'] || '',\n    'coloring_2.image_url': images['coloring_2'] || '',\n    'coloring_3.image_url': images['coloring_3'] || '',\n    'coloring_4.image_url': images['coloring_4'] || '',\n    'coloring_5.image_url': images['coloring_5'] || '',\n\n    // Scene titles\n    'scene_1.title': sceneTitle(1),\n    'scene_2.title': sceneTitle(2),\n    'scene_3.title': sceneTitle(3),\n    'scene_4.title': sceneTitle(4),\n    'scene_5.title': sceneTitle(5),\n\n    // Scene text pages — each scene split across two fixed-height pages\n    'scene_1.text_pages': buildTextPages(1),\n    'scene_2.text_pages': buildTextPages(2),\n    'scene_3.text_pages': buildTextPages(3),\n    'scene_4.text_pages': buildTextPages(4),\n    'scene_5.text_pages': buildTextPages(5),\n\n    // Certificate\n    'cert.hero_trait_title': heroTraitTitle,\n    'cert.citation': citation,\n    'cert.date': awardDate,\n};\n\n// ─────────────────────────────────────────────────────────────\n// 3. Build scene text pages — splits narration across two fixed-height pages\n//    Even N paragraphs: N/2 each. Odd N: ceil(N/2) on page 1, floor(N/2) on page 2.\n// ─────────────────────────────────────────────────────────────\n\nfunction buildTextPages(sceneNumber) {\n    const title = sceneTitle(sceneNumber);\n    const text = sceneText(sceneNumber);\n    if (!text) return '';\n\n    // Group sentences into paragraphs of 3\n    const sentences = text.match(/[^.!?]+[.!?]+[\"']?/g) || [text];\n    const paragraphs = [];\n    for (let i = 0; i < sentences.length; i += 3) {\n        const chunk = sentences.slice(i, i + 3).join(' ').trim();\n        if (chunk) paragraphs.push('<p>' + chunk + '</p>');\n    }\n\n    const N = paragraphs.length;\n    const split = Math.ceil(N / 2);\n    const p1Html = paragraphs.slice(0, split).join('\\n');\n    const p2Html = paragraphs.slice(split).join('\\n');\n\n    const page1 =\n        '\\n  <div class=\"page fixed-height scene-text-page\">'\n        + '\\n    <h2 class=\"scene-title\">' + title + '</h2>'\n        + '\\n    <div class=\"gold-rule\"></div>'\n        + '\\n    <div class=\"narration\">' + p1Html + '</div>'\n        + '\\n    <div class=\"page-branding\">EverMagic</div>'\n        + '\\n  </div>';\n\n    if (!p2Html) return page1;\n\n    const page2 =\n        '\\n  <div class=\"page fixed-height scene-text-page\">'\n        + '\\n    <div class=\"narration\">' + p2Html + '</div>'\n        + '\\n    <div class=\"page-branding\">EverMagic</div>'\n        + '\\n  </div>';\n\n    return page1 + '\\n' + page2;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Inject variables into template HTML\n// ─────────────────────────────────────────────────────────────\n\nfunction injectVars(html, variables) {\n    let result = html;\n    for (const [key, value] of Object.entries(variables)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Build one output item per PDF type\n//    Each item feeds into the PDFShift loop\n// ─────────────────────────────────────────────────────────────\n\nconst PDF_TYPES = [\n    {\n        type: 'storybook',\n        template_node: 'Fetch Storybook Template',\n        pdfshift_options: { format: '7inx7in' },\n    },\n    {\n        type: 'coloring_book',\n        template_node: 'Fetch Coloring Book Template',\n        pdfshift_options: { format: 'Letter', landscape: false },\n    },\n    {\n        type: 'certificate',\n        template_node: 'Fetch Certificate Template',\n        pdfshift_options: { format: 'Letter', landscape: true },\n    },\n];\n\nconst results = [];\n\nfor (const pdfType of PDF_TYPES) {\n    const rawHtml = $(`${pdfType.template_node}`).first().json.data;\n    const populatedHtml = injectVars(rawHtml, vars);\n\n    const pdfshiftBody = Object.assign({ source: populatedHtml }, pdfType.pdfshift_options);\n\n    results.push({\n        json: {\n            order_id: order.order_id,\n            pdf_type: pdfType.type,\n            pdfshift_body: pdfshiftBody,\n            file_path: `pdfs/${order.order_id}/${pdfType.type}.pdf`,\n        }\n    });\n}\n\nreturn results;\n"
+          "jsCode": "// n8n Code node — \"Build PDF HTML\"\n// Placed AFTER \"Fetch PDF Template\" HTTP Request node\n// Injects order/script/image data into an HTML template string\n// Returns one item per PDF type — feeds into the PDFShift loop\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\n\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst expandedContent = typeof scriptRow.expanded_content === 'string'\n    ? JSON.parse(scriptRow.expanded_content)\n    : scriptRow.expanded_content;\n\n// Images: build a map of image_type → file_url\nconst imageRows = $('Fetch Images').all();\nconst images = {};\nfor (const row of imageRows) {\n    images[row.json.image_type] = row.json.file_url;\n}\n\nconst env = $('Envs').first().json.env;\nconst qrCodeUrl = env.qr_code_url || '';\nconst logoPdfUrl = 'https://pdrecmrvivbtutmynrbu.supabase.co/storage/v1/object/public/logo/logo_pdf.png';\n\n// Theme styles — fetched from GitHub by 'Fetch Theme Styles' HTTP Request node\nconst themeStyles = $('Fetch Theme Styles').first().json.data || '';\n\n// ─────────────────────────────────────────────────────────────\n// 2. Build variable map\n// ─────────────────────────────────────────────────────────────\n\n// Per-scene text: use expanded_content if available, fall back to narration\nfunction sceneText(sceneNumber) {\n    if (expandedContent && expandedContent.scenes) {\n        const expanded = expandedContent.scenes.find(s => s.scene_number === sceneNumber);\n        if (expanded && expanded.expanded_narrative) return expanded.expanded_narrative;\n    }\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.narration : '';\n}\n\nfunction sceneTitle(sceneNumber) {\n    const scene = scriptContent.scenes.find(s => s.scene_number === sceneNumber);\n    return scene ? scene.scene_title : '';\n}\n\n// Hero trait → capitalised title for certificate\nconst heroTraitTitle = child.hero_trait\n    ? child.hero_trait.charAt(0).toUpperCase() + child.hero_trait.slice(1)\n    : 'Courage';\n\n// Certificate citation — hobby-aware\nconst citation = `In recognition of extraordinary ${child.hero_trait || 'courage'}, curiosity of mind, and strength of heart — `\n    + `demonstrated throughout the Space Hero Mission, where ${child.name} used knowledge, `\n    + `courage, and the remarkable power of ${child.hobby ? child.hobby.toLowerCase() : 'imagination'} `\n    + `to save an entire constellation and bring light back to the universe.`;\n\nconst today = new Date();\nconst awardDate = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });\n\nconst vars = {\n    // Story\n    'story.title': scriptContent.title || '',\n    'story.tagline': scriptContent.tagline || '',\n    'closing_message': scriptContent.closing_message || '',\n    'parent_message': order.parent_message || '',\n\n    // Child\n    'child.name': child.name,\n    'child.age': String(child.age),\n    'child.hero_trait': child.hero_trait || '',\n    'child.hobby': child.hobby || '',\n\n    // Order\n    'order.order_id': order.order_id,\n    'qr_code_url': qrCodeUrl,\n    'logo_pdf_url': logoPdfUrl,\n    'theme_styles': themeStyles,\n\n    // Images — scene images\n    'cover.image_url': images['cover'] || '',\n    'scene_1.image_url': images['scene_1'] || '',\n    'scene_2.image_url': images['scene_2'] || '',\n    'scene_3.image_url': images['scene_3'] || '',\n    'scene_4.image_url': images['scene_4'] || '',\n    'scene_5.image_url': images['scene_5'] || '',\n\n    // Images — coloring pages\n    'coloring.image_url': images['coloring'] || '',\n    'coloring_1.image_url': images['coloring_1'] || '',\n    'coloring_2.image_url': images['coloring_2'] || '',\n    'coloring_3.image_url': images['coloring_3'] || '',\n    'coloring_4.image_url': images['coloring_4'] || '',\n    'coloring_5.image_url': images['coloring_5'] || '',\n\n    // Scene titles\n    'scene_1.title': sceneTitle(1),\n    'scene_2.title': sceneTitle(2),\n    'scene_3.title': sceneTitle(3),\n    'scene_4.title': sceneTitle(4),\n    'scene_5.title': sceneTitle(5),\n\n    // Scene text pages — each scene split across two fixed-height pages\n    'scene_1.text_pages': buildTextPages(1),\n    'scene_2.text_pages': buildTextPages(2),\n    'scene_3.text_pages': buildTextPages(3),\n    'scene_4.text_pages': buildTextPages(4),\n    'scene_5.text_pages': buildTextPages(5),\n\n    // Certificate\n    'cert.hero_trait_title': heroTraitTitle,\n    'cert.citation': citation,\n    'cert.date': awardDate,\n};\n\n// ─────────────────────────────────────────────────────────────\n// 3. Build scene text pages — splits narration across two fixed-height pages\n//    Even N paragraphs: N/2 each. Odd N: ceil(N/2) on page 1, floor(N/2) on page 2.\n// ─────────────────────────────────────────────────────────────\n\nfunction buildTextPages(sceneNumber) {\n    const title = sceneTitle(sceneNumber);\n    const text = sceneText(sceneNumber);\n    if (!text) return '';\n\n    // Group sentences into paragraphs of 3\n    const sentences = text.match(/[^.!?]+[.!?]+[\"']?/g) || [text];\n    const paragraphs = [];\n    for (let i = 0; i < sentences.length; i += 3) {\n        const chunk = sentences.slice(i, i + 3).join(' ').trim();\n        if (chunk) paragraphs.push('<p>' + chunk + '</p>');\n    }\n\n    const N = paragraphs.length;\n    const split = Math.ceil(N / 2);\n    const p1Html = paragraphs.slice(0, split).join('\\n');\n    const p2Html = paragraphs.slice(split).join('\\n');\n\n    const page1 =\n        '\\n  <div class=\"page fixed-height scene-text-page\">'\n        + '\\n    <div class=\"page-content\">'\n        + '\\n      <h2 class=\"scene-title\">' + title + '</h2>'\n        + '\\n      <div class=\"gold-rule\"></div>'\n        + '\\n      <div class=\"narration\">' + p1Html + '</div>'\n        + '\\n    </div>'\n        + '\\n    <div class=\"page-branding\">EverMagic</div>'\n        + '\\n  </div>';\n\n    if (!p2Html) return page1;\n\n    const page2 =\n        '\\n  <div class=\"page fixed-height scene-text-page\">'\n        + '\\n    <div class=\"page-content\">'\n        + '\\n      <div class=\"narration\">' + p2Html + '</div>'\n        + '\\n    </div>'\n        + '\\n    <div class=\"page-branding\">EverMagic</div>'\n        + '\\n  </div>';\n\n    return page1 + '\\n' + page2;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Inject variables into template HTML\n// ─────────────────────────────────────────────────────────────\n\nfunction injectVars(html, variables) {\n    let result = html;\n    for (const [key, value] of Object.entries(variables)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\n// ─────────────────────────────────────────────────────────────\n// 4. Build one output item per PDF type\n//    Each item feeds into the PDFShift loop\n// ─────────────────────────────────────────────────────────────\n\nconst PDF_TYPES = [\n    {\n        type: 'storybook',\n        template_node: 'Fetch Storybook Template',\n        pdfshift_options: { format: '7inx7in' },\n    },\n    {\n        type: 'coloring_book',\n        template_node: 'Fetch Coloring Book Template',\n        pdfshift_options: { format: 'Letter', landscape: false },\n    },\n    {\n        type: 'certificate',\n        template_node: 'Fetch Certificate Template',\n        pdfshift_options: { format: 'Letter', landscape: true },\n    },\n];\n\nconst results = [];\n\nfor (const pdfType of PDF_TYPES) {\n    const rawHtml = $(`${pdfType.template_node}`).first().json.data;\n    const populatedHtml = injectVars(rawHtml, vars);\n\n    const pdfshiftBody = Object.assign({ source: populatedHtml }, pdfType.pdfshift_options);\n\n    results.push({\n        json: {\n            order_id: order.order_id,\n            pdf_type: pdfType.type,\n            pdfshift_body: pdfshiftBody,\n            file_path: `pdfs/${order.order_id}/${pdfType.type}.pdf`,\n        }\n    });\n}\n\nreturn results;\n"
         },
         "id": "7ba48a15-00dc-49a1-872b-65589514e545",
         "name": "Build PDF HTML",
@@ -1572,7 +1622,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// n8n Code node — \"Build Delivery\"\n// Placed AFTER the PDFShift loop (all 3 PDFs assembled and stored in Supabase)\n//\n// Inputs expected (from prior nodes):\n//   - 'Fetch Order Payload'  → order JSON\n//   - 'Fetch Script'         → script row (for story title)\n//   - 'Fetch PDFs'           → rows from pdfs table (or pass pdf URLs directly)\n//   - 'Fetch Delivery Email Template' → raw HTML string (from GitHub fetch)\n//   - 'Envs'                 → env config\n//\n// Outputs (one item):\n//   {\n//     order_id, child_name, child_email,\n//     customer_email_html,  ← send to customer\n//     customer_email_subject,\n//     admin_email_html,     ← send to admin\n//     admin_email_subject,\n//   }\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\n\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst env = $('Envs').first().json.env;\n\n// Supabase public storage base URL — store this in envs table as 'supabase_storage_url'\n// e.g. https://YOURPROJECT.supabase.co/storage/v1/object/public\nconst storageBase = env.supabase_storage_url || '';\nconst bucket = env.storage_bucket || 'pdfs';\n\n// PDF public URLs — constructed from known storage paths\nconst pdfBase = `${storageBase}/${bucket}/pdfs/${order.order_id}`;\nconst storybookUrl    = `${pdfBase}/storybook.pdf`;\nconst coloringBookUrl = `${pdfBase}/coloring_book.pdf`;\nconst certificateUrl  = `${pdfBase}/certificate.pdf`;\n\n// Story title\nconst storyTitle = scriptContent.title || `${child.name}'s Space Adventure`;\n\n// Thank-you message shown on page and in email\nconst thankYouMessage = `Your story is here — all three files are ready to save and treasure. `\n    + `We hope ${child.name} loves every moment of the adventure! 🚀`;\n\n// ─────────────────────────────────────────────────────────────\n// 2. Populate templates\n// ─────────────────────────────────────────────────────────────\n\nconst branch  = env.is_live ? 'main' : 'develop';\nconst logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\n\nconst emailVars = {\n    'logo_url':            logoUrl,\n    'child_name':          child.name,\n    'story_title':         storyTitle,\n    'thank_you_message':   thankYouMessage,\n    'storybook_url':       storybookUrl,\n    'coloring_book_url':   coloringBookUrl,\n    'certificate_url':     certificateUrl,\n};\n\nfunction injectVars(html, vars) {\n    let result = html;\n    for (const [key, value] of Object.entries(vars)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\nconst emailTemplate     = $('Fetch Delivery Email Template').first().json.data;\nconst customerEmailHtml = injectVars(emailTemplate, emailVars);\n\n// ─────────────────────────────────────────────────────────────\n// 3. Admin notification (plain HTML — no separate template needed)\n// ─────────────────────────────────────────────────────────────\n\nconst adminEmailHtml = `\n<div style=\"font-family:monospace; padding:20px;\">\n  <h2>✅ Order Delivered — ${order.order_id}</h2>\n  <p><strong>Child:</strong> ${child.name}, age ${child.age}</p>\n  <p><strong>Story:</strong> ${storyTitle}</p>\n  <p><strong>Customer email:</strong> ${order.delivery.email}</p>\n  <hr>\n  <p>PDFs:<br>\n    📖 <a href=\"${storybookUrl}\">Storybook</a><br>\n    🎨 <a href=\"${coloringBookUrl}\">Coloring Book</a><br>\n    🏅 <a href=\"${certificateUrl}\">Certificate</a>\n  </p>\n</div>\n`.trim();\n\n// ─────────────────────────────────────────────────────────────\n// 4. Return\n// ─────────────────────────────────────────────────────────────\n\nreturn [{\n    json: {\n        order_id:               order.order_id,\n        child_name:             child.name,\n        child_email:            order.delivery.email,\n\n        customer_email_html:    customerEmailHtml,\n        customer_email_subject: `✨ ${child.name}'s magic is ready — download your files!`,\n\n        admin_email_html:       adminEmailHtml,\n        admin_email_subject:    `✅ Delivered — ${order.order_id} — ${child.name}`,\n    }\n}];\n"
+          "jsCode": "// n8n Code node — \"Build Delivery\"\n// Placed AFTER the PDFShift loop (all 3 PDFs assembled and stored in Supabase)\n//\n// Inputs expected (from prior nodes):\n//   - 'Fetch Order Payload'  → order JSON\n//   - 'Fetch Script'         → script row (for story title)\n//   - 'Fetch PDFs'           → rows from pdfs table (or pass pdf URLs directly)\n//   - 'Fetch Delivery Email Template' → raw HTML string (from GitHub fetch)\n//   - 'Envs'                 → env config\n//\n// Outputs (one item):\n//   {\n//     order_id, child_name, child_email,\n//     customer_email_html,  ← send to customer\n//     customer_email_subject,\n//     admin_email_html,     ← send to admin\n//     admin_email_subject,\n//   }\n\n// ─────────────────────────────────────────────────────────────\n// 1. Gather inputs\n// ─────────────────────────────────────────────────────────────\n\nconst order = JSON.parse($('Fetch Order Payload').first().json.payload_json);\nconst child = order.child;\n\nconst scriptRow = $('Fetch Script').first().json;\nconst scriptContent = typeof scriptRow.content === 'string'\n    ? JSON.parse(scriptRow.content)\n    : scriptRow.content;\n\nconst env = $('Envs').first().json.env;\n\n// Supabase public storage base URL — store this in envs table as 'supabase_storage_url'\n// e.g. https://YOURPROJECT.supabase.co/storage/v1/object/public\nconst storageBase = env.supabase_storage_url || '';\nconst bucket = env.storage_bucket || 'pdfs';\n\n// PDF public URLs — constructed from known storage paths\nconst pdfBase = `${storageBase}/${bucket}/pdfs/${order.order_id}`;\nconst storybookUrl = `${pdfBase}/storybook.pdf?download=EverMagic-Storybook.pdf`;\nconst coloringBookUrl = `${pdfBase}/coloring_book.pdf?download=EverMagic-Coloring-Book.pdf`;\nconst certificateUrl = `${pdfBase}/certificate.pdf?download=EverMagic-Certificate.pdf`;\n\n// Story title\nconst storyTitle = scriptContent.title || `${child.name}'s Space Adventure`;\n\n// Thank-you message shown on page and in email\nconst thankYouMessage = `Your story is here — all three files are ready to save and treasure. `\n    + `We hope ${child.name} loves every moment of the adventure! 🚀`;\n\n// ─────────────────────────────────────────────────────────────\n// 2. Populate templates\n// ─────────────────────────────────────────────────────────────\n\nconst branch = env.is_live ? 'main' : 'develop';\nconst logoUrl = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/templates/icons/logo_email.png`;\n\nconst emailVars = {\n    'logo_url': logoUrl,\n    'child_name': child.name,\n    'story_title': storyTitle,\n    'thank_you_message': thankYouMessage,\n    'storybook_url': storybookUrl,\n    'coloring_book_url': coloringBookUrl,\n    'certificate_url': certificateUrl,\n};\n\nfunction injectVars(html, vars) {\n    let result = html;\n    for (const [key, value] of Object.entries(vars)) {\n        const regex = new RegExp(`\\\\{\\\\{${key.replace(/\\./g, '\\\\.')}\\\\}\\\\}`, 'g');\n        result = result.replace(regex, value);\n    }\n    return result;\n}\n\nconst emailTemplate = $('Fetch Delivery Email Template').first().json.data;\nconst customerEmailHtml = injectVars(emailTemplate, emailVars);\n\n// ─────────────────────────────────────────────────────────────\n// 3. Admin notification (plain HTML — no separate template needed)\n// ─────────────────────────────────────────────────────────────\n\nconst adminEmailHtml = `\n<div style=\"font-family:monospace; padding:20px;\">\n  <h2>✅ Order Delivered — ${order.order_id}</h2>\n  <p><strong>Child:</strong> ${child.name}, age ${child.age}</p>\n  <p><strong>Story:</strong> ${storyTitle}</p>\n  <p><strong>Customer email:</strong> ${order.delivery.email}</p>\n  <hr>\n  <p>PDFs:<br>\n    📖 <a href=\"${storybookUrl}\">Storybook</a><br>\n    🎨 <a href=\"${coloringBookUrl}\">Coloring Book</a><br>\n    🏅 <a href=\"${certificateUrl}\">Certificate</a>\n  </p>\n</div>\n`.trim();\n\n// ─────────────────────────────────────────────────────────────\n// 4. Return\n// ─────────────────────────────────────────────────────────────\n\nreturn [{\n    json: {\n        order_id: order.order_id,\n        child_name: child.name,\n        child_email: order.delivery.email,\n\n        customer_email_html: customerEmailHtml,\n        customer_email_subject: `✨ ${child.name}'s magic is ready — download your files!`,\n\n        admin_email_html: adminEmailHtml,\n        admin_email_subject: `✅ Delivered — ${order.order_id} — ${child.name}`,\n    }\n}];\n"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -1794,7 +1844,9 @@
         }
       },
       {
-        "parameters": {},
+        "parameters": {
+          "amount": "={{ $('Envs').item.json.env.is_live ? 600 : 5}}"
+        },
         "id": "f4c017b3-4035-4977-a553-cdb3575f83ed",
         "name": "Wait 5 min",
         "type": "n8n-nodes-base.wait",
@@ -1804,6 +1856,72 @@
           1008
         ],
         "webhookId": "uat-wait-webhook"
+      },
+      {
+        "parameters": {
+          "jsCode": "const payload = JSON.parse($('Fetch Order Payload').first().json.payload_json);\n  const themeFolder = (payload.theme || 'SPACE_HERO').toLowerCase();\n  const branch = $('Envs').first().json.env.is_live ? 'main' : 'develop';\n  const url = `https://raw.githubusercontent.com/TarasGolub/evermagic/${branch}/prompts/${themeFolder}/theme_styles.css`;\n  return [{ json: { url } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          416,
+          1328
+        ],
+        "id": "0c5ca2c0-0e3f-402c-a479-4d65eb672e4b",
+        "name": "Build Theme CSS URL"
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.url }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          560,
+          1328
+        ],
+        "id": "2c70d725-202f-44e8-bcdf-8b03974dceb7",
+        "name": "Fetch Theme Styles"
+      },
+      {
+        "parameters": {
+          "tableId": "execution_log",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $json.order_id }}"
+              },
+              {
+                "fieldId": "execution_id",
+                "fieldValue": "={{ $execution.id }}"
+              },
+              {
+                "fieldId": "workflow_name",
+                "fieldValue": "3.2 EverMagic PDF Assembly"
+              },
+              {
+                "fieldId": "stage",
+                "fieldValue": " PDF Assembly"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -512,
+          1328
+        ],
+        "id": "7a2064ff-ddb5-4342-83b5-c72c391f7184",
+        "name": "Log Execution",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
       }
     ],
     "connections": {
@@ -1855,7 +1973,7 @@
         "main": [
           [
             {
-              "node": "Fetch Order Payload",
+              "node": "Log Execution",
               "type": "main",
               "index": 0
             }
@@ -1877,7 +1995,7 @@
         "main": [
           [
             {
-              "node": "Fetch Storybook Template",
+              "node": "Build Theme CSS URL",
               "type": "main",
               "index": 0
             }
@@ -2110,10 +2228,43 @@
             }
           ]
         ]
+      },
+      "Build Theme CSS URL": {
+        "main": [
+          [
+            {
+              "node": "Fetch Theme Styles",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Theme Styles": {
+        "main": [
+          [
+            {
+              "node": "Fetch Storybook Template",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log Execution": {
+        "main": [
+          [
+            {
+              "node": "Fetch Order Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Taras Holub",
-    "name": "Version c8f7af04",
+    "name": "Version 5741d4df",
     "description": "",
     "autosaved": true
   },

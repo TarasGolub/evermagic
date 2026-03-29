@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>A small delay — EverMagic</title>
+  <style>
+    :root { color-scheme: light only; }
+    body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+    body { background-color:#0f0f1a !important; color:#e8e8f5 !important; }
+    p, span, td, div, h1, h2, h3, strong { color:inherit !important; }
+  </style>
+</head>
+<body style="margin:0 !important; padding:0 !important; background-color:#0f0f1a !important; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0f1a !important;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background-color:#16213e !important; border-radius:16px; overflow:hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="padding:40px 40px 20px; background-color:#16213e !important;">
+              <img src="{{logo_url}}" alt="EverMagic" width="144" style="display:block; margin:0 auto 16px; border:0;">
+              <div style="font-size:48px; line-height:1;">⏳</div>
+              <h1 style="margin:16px 0 0; font-size:26px; font-weight:700; color:#ffffff !important; letter-spacing:-0.5px;">
+                A small delay for {{child_name}}'s story
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:20px 40px 0; background-color:#16213e !important;">
+              <p style="margin:0 0 16px; font-size:16px; line-height:1.6; color:#e8e8f5 !important;">
+                Hi! We ran into a technical hiccup while {{error_stage_label}} for {{child_name}}'s personalised book. We're sorry for the inconvenience!
+              </p>
+              <p style="margin:0 0 24px; font-size:16px; line-height:1.6; color:#e8e8f5 !important;">
+                This sometimes happens when our AI has trouble with the uploaded photo or some of the details provided.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Tips card -->
+          <tr>
+            <td style="padding:0 40px 24px; background-color:#16213e !important;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#1e2a45 !important; border-radius:12px; border:1px solid #2a3a5c;">
+                <tr>
+                  <td style="padding:20px 24px; background-color:#1e2a45 !important; border-radius:12px;">
+                    <div style="font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:#a78bfa !important; margin-bottom:14px;">
+                      Before you try again, please check:
+                    </div>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:6px 0; vertical-align:top; width:24px; font-size:16px;">📸</td>
+                        <td style="padding:6px 0 6px 8px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;">
+                          <strong style="color:#ffffff !important;">Photo quality</strong> — use a clear, well-lit face photo. Avoid sunglasses, hats, or heavy shadows. JPEG or PNG, at least 500×500 px.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; vertical-align:top; width:24px; font-size:16px;">✏️</td>
+                        <td style="padding:6px 0 6px 8px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;">
+                          <strong style="color:#ffffff !important;">Child's details</strong> — double-check the name spelling, age, and hobby. Keep descriptions short and simple (e.g. "loves football", not a long paragraph).
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; vertical-align:top; width:24px; font-size:16px;">🌍</td>
+                        <td style="padding:6px 0 6px 8px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;">
+                          <strong style="color:#ffffff !important;">Special characters</strong> — if the name has accents, try the simplified version first (e.g. "Sofia" instead of "Sofía").
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; vertical-align:top; width:24px; font-size:16px;">⚠️</td>
+                        <td style="padding:6px 0 6px 8px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;">
+                          <strong style="color:#ffffff !important;">Photo and description content</strong> — our AI strictly follows child-safe image guidelines. Please make sure the uploaded photo and any descriptions do not include anything that could be interpreted as violence, weapons, or inappropriate content. This is the most common reason a generation is declined.
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Retry section — injected by Build Error Handler code node -->
+          <!-- Either a "Try Again" button (first failure) or "Our team is on it" card (second failure) -->
+          {{retry_section}}
+
+          <!-- AI recommendation — injected when available, empty string otherwise -->
+          {{ai_recommendation_section}}
+
+          <!-- Order reference -->
+          <tr>
+            <td style="padding:0 40px 28px; background-color:#16213e !important;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0f1a !important; border-radius:8px; border:1px solid #2a3a5c;">
+                <tr>
+                  <td style="padding:14px 20px; border-radius:8px;">
+                    <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:#8b8ba3 !important; margin-bottom:4px;">Order Reference</div>
+                    <div style="font-size:15px; font-weight:700; color:#ffffff !important; font-family:monospace;">{{order_id}}</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Contact -->
+          <tr>
+            <td style="padding:0 40px 32px; background-color:#16213e !important;">
+              <p style="margin:0; font-size:14px; line-height:1.7; color:#b0b0cc !important;">
+                Have questions? Reply to this email or write to
+                <a href="mailto:taras.evermagic@gmail.com" style="color:#a78bfa !important; text-decoration:none;">taras.evermagic@gmail.com</a>
+                — include your order reference and we'll help right away.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding:20px 40px 32px; border-top:1px solid #2a3a5c; background-color:#16213e !important;">
+              <p style="margin:0; font-size:13px; color:#8b8ba3 !important;">
+                Made with ❤️ by <strong style="color:#b0b0cc !important;">EverMagic</strong>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

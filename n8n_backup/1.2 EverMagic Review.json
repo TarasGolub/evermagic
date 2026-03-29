@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-26T05:17:54.287Z",
+  "updatedAt": "2026-03-29T21:14:00.256Z",
   "createdAt": "2026-02-28T04:04:08.656Z",
   "id": "6g62k80v9xljSzY8",
   "name": "1.2 EverMagic Review",
@@ -17,7 +17,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1920,
+        -2208,
         272
       ],
       "webhookId": "8b0e5849-02a3-4f58-9c54-75cc6ad16d75"
@@ -499,6 +499,45 @@
       ],
       "id": "051b2a76-5734-4373-b4a6-0a8314e094d1",
       "name": "Image Generation Webhook"
+    },
+    {
+      "parameters": {
+        "tableId": "execution_log",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{ $json.query.order_id }}"
+            },
+            {
+              "fieldId": "execution_id",
+              "fieldValue": "={{ $execution.id }}"
+            },
+            {
+              "fieldId": "workflow_name",
+              "fieldValue": "1.2 EverMagic Review"
+            },
+            {
+              "fieldId": "stage",
+              "fieldValue": "Review Script"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1952,
+        272
+      ],
+      "id": "ce294571-75ac-4b86-9467-eabc44fb02bc",
+      "name": "Log Execution",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
   "connections": {
@@ -506,7 +545,7 @@
       "main": [
         [
           {
-            "node": "Load Envs",
+            "node": "Log Execution",
             "type": "main",
             "index": 0
           }
@@ -677,6 +716,17 @@
           }
         ]
       ]
+    },
+    "Log Execution": {
+      "main": [
+        [
+          {
+            "node": "Load Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -692,8 +742,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "e925ffdb-0cda-4ca7-a71a-9b3e7dfcc38a",
-  "activeVersionId": "e925ffdb-0cda-4ca7-a71a-9b3e7dfcc38a",
+  "versionId": "c3b85aa4-3a25-4452-8d1e-d16140ab7a3d",
+  "activeVersionId": "c3b85aa4-3a25-4452-8d1e-d16140ab7a3d",
   "triggerCount": 1,
   "shared": [
     {
@@ -705,9 +755,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-26T05:17:59.000Z",
-    "createdAt": "2026-03-26T05:17:46.823Z",
-    "versionId": "e925ffdb-0cda-4ca7-a71a-9b3e7dfcc38a",
+    "updatedAt": "2026-03-29T21:14:04.000Z",
+    "createdAt": "2026-03-29T21:14:00.257Z",
+    "versionId": "c3b85aa4-3a25-4452-8d1e-d16140ab7a3d",
     "workflowId": "6g62k80v9xljSzY8",
     "nodes": [
       {
@@ -721,7 +771,7 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
         "position": [
-          -1920,
+          -2208,
           272
         ],
         "webhookId": "8b0e5849-02a3-4f58-9c54-75cc6ad16d75"
@@ -1203,6 +1253,45 @@
         ],
         "id": "051b2a76-5734-4373-b4a6-0a8314e094d1",
         "name": "Image Generation Webhook"
+      },
+      {
+        "parameters": {
+          "tableId": "execution_log",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $json.query.order_id }}"
+              },
+              {
+                "fieldId": "execution_id",
+                "fieldValue": "={{ $execution.id }}"
+              },
+              {
+                "fieldId": "workflow_name",
+                "fieldValue": "1.2 EverMagic Review"
+              },
+              {
+                "fieldId": "stage",
+                "fieldValue": "Review Script"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -1952,
+          272
+        ],
+        "id": "ce294571-75ac-4b86-9467-eabc44fb02bc",
+        "name": "Log Execution",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
       }
     ],
     "connections": {
@@ -1210,7 +1299,7 @@
         "main": [
           [
             {
-              "node": "Load Envs",
+              "node": "Log Execution",
               "type": "main",
               "index": 0
             }
@@ -1381,10 +1470,21 @@
             }
           ]
         ]
+      },
+      "Log Execution": {
+        "main": [
+          [
+            {
+              "node": "Load Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Taras Holub",
-    "name": "Version e925ffdb",
+    "name": "Version c3b85aa4",
     "description": "",
     "autosaved": true
   },
