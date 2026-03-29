@@ -19,14 +19,14 @@ This story will be **read aloud by a parent** to a young child (age ≤ 5).
 - Use warm, gentle language — like a fairy tale told with love.
 - Shorter sentences. Simple words. Wonder and sparkle in every line.
 - Address the child directly at emotional peaks ("And then something magical happened...").
-- The unicorn speaks softly and warmly.
+- The companion speaks softly and warmly.
 {{else}}
 This story will be **read independently by the child** (age ≥ 6).
 - Write directly to the child — use "you" to pull them into the story.
 {{reading_level_guidance}}
 - Keep the sparkle vivid but accessible — "The sky was pink and gold" not "The celestial canopy shimmered in resplendent hues."
 - Strong agency for the child — she investigates, decides, and acts.
-- The unicorn can have gentle wit and quiet wisdom.
+- The companion can have gentle wit and quiet wisdom.
 {{/if}}
 
 ## Story Context
@@ -37,7 +37,7 @@ This story will be **read independently by the child** (age ≥ 6).
 **Signature look:** {{child.signature_look}}
 **Recent win:** {{child.recent_win}}
 
-**Companion (Unicorn):**
+**Companion:**
 - Name: {{companion.name}}
 - Appearance: {{companion.appearance}}
 - Personality: {{companion.personality}}
@@ -52,7 +52,7 @@ Use the narration and emotional beat of each scene as your backbone. Do not cont
 ## Expansion Rules
 
 - **Scene 3 (The Shadow):** The child's hobby must be the key to restoring the kingdom's color/magic. Make this explicit and satisfying.
-- **Unicorn presence:** The unicorn must speak or act in at least 3 of the 5 scenes. Voice: gentle, encouraging, quietly wise — never bossy.
+- **Companion presence:** The companion must speak or act in at least 3 of the 5 scenes. Voice: gentle, encouraging, quietly wise — never bossy.
 - **Dialogs:** Natural and concise — 2 to 4 exchanges per scene maximum. No monologues. Keep all dialogue brief and childlike — short sentences, natural phrasing, no complex structures.
 - **Personal details — introduced gradually, never listed:**
   - **Signature look:** Keep consistent across all scenes — it anchors the child's identity and connects to the illustrations.
@@ -67,7 +67,7 @@ Use the narration and emotional beat of each scene as your backbone. Do not cont
   - Each detail should feel discovered by the reader, not announced. Make the story feel like it is unfolding, not describing.
 - **Empowerment:** Every scene should reinforce that the child is the source of the magic — not the unicorn, not the kingdom. Her.
 - **Scene 5:** Close with the parent's message woven in naturally as a sparkle in the sky or a rainbow shimmer.
-- **Consistency:** The child's name appears throughout. The unicorn's appearance and personality stay consistent.
+- **Consistency:** The child's name appears throughout. The companion's appearance and personality stay consistent.
 
 - **Scene emotional arc — one layer per scene, do not compress:**
   - Scene 1: curiosity — ordinary world with a first hint of magic

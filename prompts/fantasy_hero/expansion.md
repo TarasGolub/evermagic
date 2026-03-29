@@ -8,7 +8,7 @@ Expand a 5-scene story script into a full child-facing narrative. Each scene sho
 
 ## Theme Context
 
-This is an **epic fantasy adventure**. The world is enchanted — castles, glowing forests, ancient magic. The dragon companion is clumsy and loyal, not scary. The challenge is a puzzle solved by the child's real hobby. Write with the warmth and grandeur of an animated fairy tale.
+This is an **epic fantasy adventure**. The world is enchanted — castles, glowing forests, ancient magic. The companion is loyal and warm — never scary. The challenge is a puzzle solved by the child's real hobby. Write with the warmth and grandeur of an animated fairy tale.
 
 ## Reading Level
 
@@ -19,14 +19,14 @@ This story will be **read aloud by a parent** to a young child (age ≤ 5).
 - Use warm, gentle language — like a bedtime story told by someone who loves this child.
 - Shorter sentences. Simple words. Lots of rhythm and repetition.
 - Address the child directly at emotional peaks ("And do you know what happened next?").
-- The dragon can be playful and soft — no intensity.
+- The companion can be playful and soft — no intensity.
 {{else}}
 This story will be **read independently by the child** (age ≥ 6).
 - Write directly to the child — use "you" to pull them into the story.
 {{reading_level_guidance}}
 - Grand epic feeling, expressed simply — "The castle gates creaked open. Something waited inside."
-- The dragon can have wit and personality. Their clumsiness should get a laugh.
-- The child should feel like the hero of their own epic.
+- The companion can have wit and personality — humor, warmth, and the occasional blunder.
+- The child should feel like the hero of their own epic. The companion supports, never overshadows.
 {{/if}}
 
 ## Story Context
@@ -37,7 +37,7 @@ This story will be **read independently by the child** (age ≥ 6).
 **Signature look:** {{child.signature_look}}
 **Recent win:** {{child.recent_win}}
 
-**Companion (Dragon):**
+**Companion:**
 - Name: {{companion.name}}
 - Appearance: {{companion.appearance}}
 - Personality: {{companion.personality}}
@@ -52,7 +52,7 @@ Use the narration and emotional beat of each scene as your backbone. Do not cont
 ## Expansion Rules
 
 - **Scene 3 (The Challenge):** The child's hobby must be the key to solving the problem. Make this explicit and satisfying — the child uses what they know and love to break the spell.
-- **Dragon presence:** The dragon must speak or act in at least 3 of the 5 scenes. Their dialog should reflect their enthusiastic-but-clumsy personality — never just delivering information.
+- **Companion presence:** The companion must speak or act in at least 3 of the 5 scenes. Their dialog should reflect their personality — never just delivering information.
 - **Dialogs:** Natural and concise — 2 to 4 exchanges per scene maximum. No monologues. Keep all dialogue brief and childlike — short sentences, natural phrasing, no complex structures.
 - **Personal details — introduced gradually, never listed:**
   - **Signature look:** Keep consistent across all scenes — it anchors the child's identity and connects to the illustrations.
@@ -66,7 +66,7 @@ Use the narration and emotional beat of each scene as your backbone. Do not cont
   - Convert facts into story moments: instead of "she had learned to swim", write the feeling — "she still remembered floating on her back, weightless, like a cloud."
   - Each detail should feel discovered by the reader, not announced. Make the story feel like it is unfolding, not describing.
 - **Scene 5:** Close with the parent's message woven in naturally. It should feel like a moment of love, not an announcement.
-- **Consistency:** The child's name appears throughout. The dragon's appearance and personality stay consistent.
+- **Consistency:** The child's name appears throughout. The companion's appearance and personality stay consistent.
 
 - **Scene emotional arc — one layer per scene, do not compress:**
   - Scene 1: curiosity — ordinary world with a first hint of magic

@@ -10,7 +10,7 @@ The story must be written in the **language** specified in the order data.
 
 ## Theme: Fantasy Hero Quest
 
-This is an epic fantasy adventure. The child enters an enchanted kingdom, meets a loyal dragon companion, and uses their real-world hobby and skills to save the realm. The tone is warm, cinematic, and heroic — like an animated fairy tale brought to life.
+This is an epic fantasy adventure. The child enters an enchanted kingdom, meets a magical companion uniquely theirs, and uses their real-world hobby and skills to save the realm. The tone is warm, cinematic, and heroic — like an animated fairy tale brought to life.
 
 ## Creative Guidelines
 
@@ -30,17 +30,22 @@ This is an epic fantasy adventure. The child enters an enchanted kingdom, meets 
 - The child's **hobby must directly enable the solution** in Scene 3 (The Challenge). If they love painting, their art reveals a hidden truth. If they love building, they construct the missing piece of the bridge. If they love music, they play the unlocking note. The hobby is the superpower.
 - The child's **recent win** should appear in Scene 1 — it is the proof they are ready for this quest.
 - The child's **signature look** must appear in every `visual_description` as part of their hero identity.
-- The **dragon companion** must have a visual connection to the child's hobby — a color, a marking, or a small detail that ties them together.
+- The **companion** must have a visual connection to the child's hobby — a color, a marking, or a small detail that ties them together.
 
-## Companion: The Dragon
+## Companion Character
 
-Every story has **one dragon companion** — small (no larger than a dog), loyal, enthusiastic, and occasionally clumsy. The dragon is never scary or menacing.
+Every story has **one magical companion** — a creature that accompanies the child hero throughout the adventure.
 
-- The dragon must be **personalized** to this specific child: their color, markings, or ability should echo the child's hobby or personality.
-- The dragon is loyal, warm, and sometimes gets things humorously wrong — but never steals the spotlight. The child always leads.
-- The dragon appears in at least 3 of the 5 scenes.
-- Define the dragon in the `characters` array in your output.
-- Include the dragon in `visual_description` whenever they appear.
+- The companion must be **invented for this specific child**: its species, appearance, and personality should feel chosen to match their hobby, personality, or hero trait. Do not default to any single creature type — invent what truly fits this child.
+  - A child who loves music → a companion with a melodic ability or musical markings
+  - A child who loves building → a small mechanical or stone creature  
+  - A child who loves art → a creature with paint-splashed fur or color-shifting scales
+  - A child who loves animals → a small mystical forest creature
+- The companion is loyal, warm, and occasionally clumsy or funny — but never scary, never steals the spotlight. The child always leads.
+- The companion must have **one visual detail that connects them to the child's hobby** — a marking, a color, an accessory, or an ability.
+- The companion appears in at least 3 of the 5 scenes.
+- Define the companion in the `characters` array in your output.
+- Include the companion in `visual_description` whenever they appear.
 
 ## Tone
 
@@ -53,10 +58,10 @@ No sarcasm. No parody. No irony. No scary villains — the challenge is a puzzle
 | Scene | Title | Purpose | Duration Guide |
 |-------|-------|---------|----------------|
 | 1 — The Call | "The Enchanted Message" | Child's ordinary world + a magical artifact arrives announcing a kingdom in peril. Recent win referenced. | 45–70 words |
-| 2 — The Journey | "Into the Enchanted Kingdom" | Child steps through a magical door and enters a vast fantasy realm. Meets dragon companion. | 45–70 words |
+| 2 — The Journey | "Into the Enchanted Kingdom" | Child steps through a magical door and enters a vast fantasy realm. Meets their companion. | 45–70 words |
 | 3 — The Challenge | "The Broken Spell" | The central obstacle — solved using the child's hobby as the key | 45–70 words |
 | 4 — The Triumph | "The Kingdom Restored" | The spell breaks. Celebration. Child crowned as hero. | 45–70 words |
-| 5 — The Return | "Home, with a New Secret" | Child returns home. Dragon becomes a bright star. Parent message revealed. | 45–70 words |
+| 5 — The Return | "Home, with a New Secret" | Child returns home. Companion departs, becomes a glowing star in the sky. Parent message revealed. | 45–70 words |
 
 Emotional progression:
 - Scene 1: wonder
@@ -74,7 +79,7 @@ Total story length: approximately **250–350 words**.
   - skin tone
   - signature outfit and accessories
 - The child's appearance must remain **consistent** across all 5 scenes.
-- When the dragon appears in a scene, include their full appearance in `visual_description`.
+- When the companion appears in a scene, include their full appearance in `visual_description`.
 - Each visual description must describe:
   - environment
   - lighting
@@ -101,11 +106,11 @@ Return a valid JSON object — no markdown fences, no commentary, only the JSON:
   "tagline": "One sentence hook for the story",
   "characters": [
     {
-      "name": "dragon's name",
-      "type": "dragon",
-      "appearance": "Detailed visual description — size (dog-sized), color, markings, eyes, any accessories. Must include the visual connection to the child's hobby.",
-      "personality": "One sentence describing how they act — enthusiastic, clumsy, loyal",
-      "connection_to_child": "Why this dragon fits this specific child — what connects them to the child's hobby or trait"
+      "name": "companion's name",
+      "type": "creature type — dragon, griffin, magical bird, small golem, or any creature that fits this child",
+      "appearance": "Detailed visual description — size, shape, colors, markings, eyes, any accessories. Must include the visual detail that connects to the child's hobby.",
+      "personality": "One sentence describing how they act — their energy, humor, and loyalty",
+      "connection_to_child": "Why this companion fits this specific child — what connects them to the child's hobby or trait"
     }
   ],
   "scenes": [
@@ -124,10 +129,10 @@ Return a valid JSON object — no markdown fences, no commentary, only the JSON:
 ## Critical Rules
 
 - EXACTLY 5 scenes.
-- EXACTLY 1 companion (the dragon) in `characters`.
+- EXACTLY 1 companion in `characters`.
 - Every `narration` must be read-aloud ready (no stage directions, no parentheticals).
 - Every `visual_description` must include the child's consistent appearance details.
-- Include dragon in `visual_description` for every scene they appear in.
+- Include the companion in `visual_description` for every scene they appear in.
 - The child's hobby must drive the Scene 3 solution — non-negotiable.
 - JSON only. No explanations before or after. No markdown fences.
 
