@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-27T21:47:24.128Z",
+  "updatedAt": "2026-03-29T21:13:26.344Z",
   "createdAt": "2026-02-22T01:53:38.170Z",
   "id": "BqU3JEiy7Y1LGWgi",
   "name": "1. EverMagic v1.0.1",
@@ -23,7 +23,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -912,
+        -1248,
         416
       ],
       "webhookId": "3400869c-97d1-43b1-bd9e-2ac83351117a",
@@ -88,7 +88,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        704,
+        624,
         400
       ],
       "alwaysOutputData": false,
@@ -341,7 +341,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -688,
+        -1024,
         416
       ],
       "id": "3110c800-7bed-4f31-b05e-88ec34b782c3",
@@ -360,7 +360,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -448,
+        -784,
         416
       ],
       "id": "43c96187-9019-4f4a-8006-8c8d70ade12f",
@@ -432,7 +432,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -192,
+        -528,
         416
       ],
       "id": "ea971d8e-36ba-4a9f-9f13-ef2c90fd6aa8",
@@ -466,7 +466,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        16,
+        -320,
         416
       ],
       "id": "950f619b-2abc-4be8-9f9c-86a0f49f0278",
@@ -490,7 +490,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -688,
+        -1024,
         768
       ],
       "id": "da5ce60b-e5a1-41c1-93cb-8a01b7549443",
@@ -510,7 +510,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -480,
+        -816,
         768
       ],
       "id": "4b3c4785-54bf-4b42-bf7a-7768aad6996d",
@@ -544,7 +544,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -272,
+        -608,
         768
       ],
       "id": "736af25e-be68-49ac-b7b7-2e3285aadff8",
@@ -587,7 +587,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        16,
+        -320,
         752
       ],
       "id": "aabdc001-cd9b-4cf5-8ef6-0594af07adb0",
@@ -606,7 +606,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        16,
+        -320,
         960
       ],
       "id": "1105c066-39c9-4db0-b56e-6b012d6ad39e",
@@ -648,7 +648,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        224,
+        -112,
         960
       ],
       "id": "e1dcc992-c9cf-4df0-aa68-e5daf05e876a",
@@ -661,7 +661,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        432,
+        96,
         960
       ],
       "id": "24982ba4-fac3-4c80-9060-eedbecc9bd6a",
@@ -682,7 +682,7 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        672,
+        336,
         960
       ],
       "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
@@ -702,9 +702,48 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        464,
+        128,
         400
       ]
+    },
+    {
+      "parameters": {
+        "tableId": "execution_log",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{$json.order.order_id}}"
+            },
+            {
+              "fieldId": "execution_id",
+              "fieldValue": "={{ $execution.id }}"
+            },
+            {
+              "fieldId": "workflow_name",
+              "fieldValue": "1. EverMagic v1.0.1"
+            },
+            {
+              "fieldId": "stage",
+              "fieldValue": "Order Intake"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        336,
+        400
+      ],
+      "id": "7669c994-cbdf-4984-a15e-ea7706233124",
+      "name": "Log Execution",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
   "connections": {
@@ -995,6 +1034,17 @@
       "main": [
         [
           {
+            "node": "Log Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Execution": {
+      "main": [
+        [
+          {
             "node": "Save Order to Database",
             "type": "main",
             "index": 0
@@ -1016,8 +1066,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "8d510a84-32b3-410c-a589-087edc654ab0",
-  "activeVersionId": "8d510a84-32b3-410c-a589-087edc654ab0",
+  "versionId": "226d2b08-fc8d-4d51-b3bc-1528a08fa3a1",
+  "activeVersionId": "226d2b08-fc8d-4d51-b3bc-1528a08fa3a1",
   "triggerCount": 1,
   "shared": [
     {
@@ -1029,9 +1079,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-27T21:47:29.000Z",
-    "createdAt": "2026-03-27T21:47:24.129Z",
-    "versionId": "8d510a84-32b3-410c-a589-087edc654ab0",
+    "updatedAt": "2026-03-29T21:13:35.000Z",
+    "createdAt": "2026-03-29T21:13:19.865Z",
+    "versionId": "226d2b08-fc8d-4d51-b3bc-1528a08fa3a1",
     "workflowId": "BqU3JEiy7Y1LGWgi",
     "nodes": [
       {
@@ -1051,7 +1101,7 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2.1,
         "position": [
-          -912,
+          -1248,
           416
         ],
         "webhookId": "3400869c-97d1-43b1-bd9e-2ac83351117a",
@@ -1116,7 +1166,7 @@
         "type": "n8n-nodes-base.supabase",
         "typeVersion": 1,
         "position": [
-          704,
+          624,
           400
         ],
         "alwaysOutputData": false,
@@ -1369,7 +1419,7 @@
         "type": "n8n-nodes-base.supabase",
         "typeVersion": 1,
         "position": [
-          -688,
+          -1024,
           416
         ],
         "id": "3110c800-7bed-4f31-b05e-88ec34b782c3",
@@ -1388,7 +1438,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          -448,
+          -784,
           416
         ],
         "id": "43c96187-9019-4f4a-8006-8c8d70ade12f",
@@ -1460,7 +1510,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          -192,
+          -528,
           416
         ],
         "id": "ea971d8e-36ba-4a9f-9f13-ef2c90fd6aa8",
@@ -1494,7 +1544,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          16,
+          -320,
           416
         ],
         "id": "950f619b-2abc-4be8-9f9c-86a0f49f0278",
@@ -1518,7 +1568,7 @@
         "type": "n8n-nodes-base.supabase",
         "typeVersion": 1,
         "position": [
-          -688,
+          -1024,
           768
         ],
         "id": "da5ce60b-e5a1-41c1-93cb-8a01b7549443",
@@ -1538,7 +1588,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          -480,
+          -816,
           768
         ],
         "id": "4b3c4785-54bf-4b42-bf7a-7768aad6996d",
@@ -1572,7 +1622,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          -272,
+          -608,
           768
         ],
         "id": "736af25e-be68-49ac-b7b7-2e3285aadff8",
@@ -1615,7 +1665,7 @@
         "type": "n8n-nodes-base.supabase",
         "typeVersion": 1,
         "position": [
-          16,
+          -320,
           752
         ],
         "id": "aabdc001-cd9b-4cf5-8ef6-0594af07adb0",
@@ -1634,7 +1684,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          16,
+          -320,
           960
         ],
         "id": "1105c066-39c9-4db0-b56e-6b012d6ad39e",
@@ -1676,7 +1726,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.4,
         "position": [
-          224,
+          -112,
           960
         ],
         "id": "e1dcc992-c9cf-4df0-aa68-e5daf05e876a",
@@ -1689,7 +1739,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          432,
+          96,
           960
         ],
         "id": "24982ba4-fac3-4c80-9060-eedbecc9bd6a",
@@ -1710,7 +1760,7 @@
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2.1,
         "position": [
-          672,
+          336,
           960
         ],
         "webhookId": "ac54d5d3-cbd0-44cd-9965-5025ab854d5e",
@@ -1730,9 +1780,48 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          464,
+          128,
           400
         ]
+      },
+      {
+        "parameters": {
+          "tableId": "execution_log",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{$json.order.order_id}}"
+              },
+              {
+                "fieldId": "execution_id",
+                "fieldValue": "={{ $execution.id }}"
+              },
+              {
+                "fieldId": "workflow_name",
+                "fieldValue": "1. EverMagic v1.0.1"
+              },
+              {
+                "fieldId": "stage",
+                "fieldValue": "Order Intake"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          336,
+          400
+        ],
+        "id": "7669c994-cbdf-4984-a15e-ea7706233124",
+        "name": "Log Execution",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
       }
     ],
     "connections": {
@@ -2023,6 +2112,17 @@
         "main": [
           [
             {
+              "node": "Log Execution",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log Execution": {
+        "main": [
+          [
+            {
               "node": "Save Order to Database",
               "type": "main",
               "index": 0
@@ -2032,7 +2132,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 8d510a84",
+    "name": "Version 226d2b08",
     "description": "",
     "autosaved": true
   },
