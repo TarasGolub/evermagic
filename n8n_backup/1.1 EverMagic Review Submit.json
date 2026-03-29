@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-26T05:16:33.740Z",
+  "updatedAt": "2026-03-29T21:13:46.142Z",
   "createdAt": "2026-02-28T04:04:42.792Z",
   "id": "5tdiaL3r2CwU3D2T",
   "name": "1.1 EverMagic Review Submit",
@@ -18,7 +18,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        -1408,
+        -1744,
         208
       ],
       "webhookId": "b0478527-1df8-4d4c-b58d-35b210d79232"
@@ -654,6 +654,45 @@
           "name": "Supabase account"
         }
       }
+    },
+    {
+      "parameters": {
+        "tableId": "execution_log",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{ $json.body.order_id }}"
+            },
+            {
+              "fieldId": "execution_id",
+              "fieldValue": "={{ $execution.id }}"
+            },
+            {
+              "fieldId": "workflow_name",
+              "fieldValue": "1.1 EverMagic Review Submit"
+            },
+            {
+              "fieldId": "stage",
+              "fieldValue": "Review Script"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        208
+      ],
+      "id": "637d8c26-cf92-45cb-a0a3-0de809c5fab6",
+      "name": "Log Execution",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
     }
   ],
   "connections": {
@@ -661,7 +700,7 @@
       "main": [
         [
           {
-            "node": "Load Envs",
+            "node": "Log Execution",
             "type": "main",
             "index": 0
           }
@@ -889,6 +928,17 @@
           }
         ]
       ]
+    },
+    "Log Execution": {
+      "main": [
+        [
+          {
+            "node": "Load Envs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -904,8 +954,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "21df0c0e-28ed-404d-bb4a-5f810522aed0",
-  "activeVersionId": "21df0c0e-28ed-404d-bb4a-5f810522aed0",
+  "versionId": "f8fd02f1-2947-4588-9b93-a6080c690af0",
+  "activeVersionId": "f8fd02f1-2947-4588-9b93-a6080c690af0",
   "triggerCount": 1,
   "shared": [
     {
@@ -917,9 +967,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-26T05:16:38.000Z",
-    "createdAt": "2026-03-26T05:16:10.223Z",
-    "versionId": "21df0c0e-28ed-404d-bb4a-5f810522aed0",
+    "updatedAt": "2026-03-29T21:13:50.000Z",
+    "createdAt": "2026-03-29T21:13:46.143Z",
+    "versionId": "f8fd02f1-2947-4588-9b93-a6080c690af0",
     "workflowId": "5tdiaL3r2CwU3D2T",
     "nodes": [
       {
@@ -934,7 +984,7 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2,
         "position": [
-          -1408,
+          -1744,
           208
         ],
         "webhookId": "b0478527-1df8-4d4c-b58d-35b210d79232"
@@ -1570,6 +1620,45 @@
             "name": "Supabase account"
           }
         }
+      },
+      {
+        "parameters": {
+          "tableId": "execution_log",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "order_id",
+                "fieldValue": "={{ $json.body.order_id }}"
+              },
+              {
+                "fieldId": "execution_id",
+                "fieldValue": "={{ $execution.id }}"
+              },
+              {
+                "fieldId": "workflow_name",
+                "fieldValue": "1.1 EverMagic Review Submit"
+              },
+              {
+                "fieldId": "stage",
+                "fieldValue": "Review Script"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          -1472,
+          208
+        ],
+        "id": "637d8c26-cf92-45cb-a0a3-0de809c5fab6",
+        "name": "Log Execution",
+        "credentials": {
+          "supabaseApi": {
+            "id": "EYHDNsSv530jAc06",
+            "name": "Supabase account"
+          }
+        }
       }
     ],
     "connections": {
@@ -1577,7 +1666,7 @@
         "main": [
           [
             {
-              "node": "Load Envs",
+              "node": "Log Execution",
               "type": "main",
               "index": 0
             }
@@ -1805,10 +1894,21 @@
             }
           ]
         ]
+      },
+      "Log Execution": {
+        "main": [
+          [
+            {
+              "node": "Load Envs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 21df0c0e",
+    "name": "Version f8fd02f1",
     "description": "",
     "autosaved": true
   },
