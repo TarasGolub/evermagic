@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>We're on it — EverMagic</title>
+  <style>
+    :root { color-scheme: light only; }
+    body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+    body { background-color:#0f0f1a !important; color:#e8e8f5 !important; }
+    p, span, td, div, h1, h2, h3, strong { color:inherit !important; }
+  </style>
+</head>
+<body style="margin:0 !important; padding:0 !important; background-color:#0f0f1a !important; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0f1a !important;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background-color:#16213e !important; border-radius:16px; overflow:hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="padding:40px 40px 20px; background-color:#16213e !important;">
+              <img src="{{logo_url}}" alt="EverMagic" width="144" style="display:block; margin:0 auto 16px; border:0;">
+              <div style="font-size:48px; line-height:1;">🔍</div>
+              <h1 style="margin:16px 0 0; font-size:26px; font-weight:700; color:#ffffff !important; letter-spacing:-0.5px;">
+                We're reviewing {{child_name}}'s order
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:20px 40px 28px; background-color:#16213e !important;">
+              <p style="margin:0 0 16px; font-size:16px; line-height:1.6; color:#e8e8f5 !important;">
+                Hi! We ran into an issue while {{error_stage_label}} for {{child_name}}'s personalised book, and our team is now reviewing your order personally.
+              </p>
+              <p style="margin:0 0 24px; font-size:16px; line-height:1.6; color:#e8e8f5 !important;">
+                We'll get back to you with an update or a solution within <strong style="color:#ffffff !important;">3 business days</strong>. In most cases it's much sooner — we take every order seriously and want {{child_name}}'s story to be perfect.
+              </p>
+
+              <!-- Status card -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#1e2a45 !important; border-radius:12px; border:1px solid #2a3a5c; margin-bottom:24px;">
+                <tr>
+                  <td style="padding:20px 24px; background-color:#1e2a45 !important; border-radius:12px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:4px 0; vertical-align:top; width:24px; font-size:16px;">✅</td>
+                        <td style="padding:4px 0 4px 10px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;">Your order has been received and saved</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0; vertical-align:top; width:24px; font-size:16px;">🔍</td>
+                        <td style="padding:4px 0 4px 10px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;">Our team is reviewing it now</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:4px 0; vertical-align:top; width:24px; font-size:16px;">📬</td>
+                        <td style="padding:4px 0 4px 10px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;">We'll email you within 3 business days</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0; font-size:15px; line-height:1.7; color:#e8e8f5 !important;">
+                Feel free to reach out at any time —
+                <a href="mailto:taras.evermagic@gmail.com" style="color:#a78bfa !important; text-decoration:none;">taras.evermagic@gmail.com</a>.
+                Please include your order reference below so we can find your order instantly.
+              </p>
+            </td>
+          </tr>
+
+          <!-- AI recommendation — injected when available, empty string otherwise -->
+          {{ai_recommendation_section}}
+
+          <!-- Order reference -->
+          <tr>
+            <td style="padding:0 40px 28px; background-color:#16213e !important;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f0f1a !important; border-radius:8px; border:1px solid #2a3a5c;">
+                <tr>
+                  <td style="padding:14px 20px; border-radius:8px;">
+                    <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:#8b8ba3 !important; margin-bottom:4px;">Order Reference</div>
+                    <div style="font-size:15px; font-weight:700; color:#ffffff !important; font-family:monospace;">{{order_id}}</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding:20px 40px 32px; border-top:1px solid #2a3a5c; background-color:#16213e !important;">
+              <p style="margin:0; font-size:13px; color:#8b8ba3 !important;">
+                Made with ❤️ by <strong style="color:#b0b0cc !important;">EverMagic</strong>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
