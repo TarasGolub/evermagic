@@ -23,7 +23,7 @@ This story will be **read aloud by a parent** to a young child (age ≤ 5).
 {{else}}
 This story will be **read independently by the child** (age ≥ 6).
 - Write directly to the child — use "you" to pull them into the story.
-- Clear, simple language — short sentences, everyday words. Aim for grade 2–3 reading level.
+{{reading_level_guidance}}
 - Keep the sparkle vivid but accessible — "The sky was pink and gold" not "The celestial canopy shimmered in resplendent hues."
 - Strong agency for the child — she investigates, decides, and acts.
 - The unicorn can have gentle wit and quiet wisdom.

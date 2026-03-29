@@ -23,7 +23,7 @@ This story will be **read aloud by a parent** to a young child (age ≤ 5).
 {{else}}
 This story will be **read independently by the child** (age ≥ 6).
 - Write directly to the child — use "you" to pull them into the story.
-- Clear, simple language — short sentences, everyday words. Aim for grade 2–3 reading level.
+{{reading_level_guidance}}
 - Grand epic feeling, expressed simply — "The castle gates creaked open. Something waited inside."
 - The dragon can have wit and personality. Their clumsiness should get a laugh.
 - The child should feel like the hero of their own epic.

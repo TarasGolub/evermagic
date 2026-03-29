@@ -23,7 +23,7 @@ This story will be **read aloud by a parent** to a young child (age ≤ 5).
 {{else}}
 This story will be **read independently by the child** (age ≥ 6).
 - Write directly to the child — use "you" to pull them into the story.
-- Clear, simple language — short sentences, everyday words. Aim for grade 2–3 reading level.
+{{reading_level_guidance}}
 - Nature imagery kept vivid but accessible — "The moss felt soft and cool" not "The verdant undergrowth exuded a lush dampness."
 - The child thinks carefully, observes, and acts with kindness.
 - The companion can have expressive moments — a nudge, a glow, a look that says everything.

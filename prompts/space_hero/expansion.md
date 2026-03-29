@@ -19,7 +19,7 @@ This story will be **read aloud by a parent** to a young child (age ≤ 5).
 {{else}}
 This story will be **read independently by the child** (age ≥ 6).
 - Write directly to the child — use "you" to pull them into the story.
-- Clear, simple language — short sentences, everyday words. Aim for grade 2–3 reading level.
+{{reading_level_guidance}}
 - Strong excitement and tension, expressed simply — "The stars went dark. All of them. At once."
 - The child should feel like the hero of their own adventure, not a literary novel.
 - Dialogs can have energy and wit — keep them punchy, not elaborate.
