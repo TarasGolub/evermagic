@@ -10,7 +10,7 @@ The story must be written in the **language** specified in the order data.
 
 ## Theme: Enchanted Princess Adventure
 
-This is a whimsical, empowering adventure where the child enters an enchanted kingdom of rainbows, unicorns, and pastel magic. The child is NOT a passive princess waiting to be rescued — she IS the magic. She actively saves the enchanted realm using her real-world skills and hobby.
+This is a whimsical, empowering adventure where the child enters an enchanted kingdom of rainbows, sparkle, and pastel magic — guided by a magical companion who is uniquely theirs. The child is NOT a passive princess waiting to be rescued — she IS the magic. She actively saves the enchanted realm using her real-world skills and hobby.
 
 > **Critical framing:** The child is the hero. She leads. She solves. She saves the day. The princess identity is her power, not her limitation.
 
@@ -32,17 +32,22 @@ This is a whimsical, empowering adventure where the child enters an enchanted ki
 - The child's **hobby must directly enable the solution** in Scene 3 (The Shadow). If they love painting, they restore the missing colors. If they love music, they play the melody that reactivates the rainbow. If they love gardening, they grow the magic flower. The hobby is the superpower.
 - The child's **recent win** should appear in Scene 1 as evidence they are the chosen hero.
 - The child's **signature look** must appear in every `visual_description` as part of their hero identity.
-- The **unicorn companion** must have a mane and color palette that reflects the child's personality, signature look, or favorite colors.
+- The **companion** must have colors and markings that reflect the child's personality, signature look, or favorite colors.
 
-## Companion: The Unicorn
+## Companion Character
 
-Every story has **one unicorn companion** — graceful, gentle, deeply loyal, and quietly encouraging.
+Every story has **one magical companion** — a creature that guides and accompanies the child through the enchanted kingdom.
 
-- The unicorn's **mane colors and any markings** must feel specific to this child — drawn from their personality, signature look, or hero trait.
-- The unicorn speaks softly and encouragingly — no dramatic pronouncements. Their voice should feel like a warm whisper.
-- The unicorn appears in at least 3 of the 5 scenes.
-- Define the unicorn in the `characters` array in your output.
-- Include the unicorn in `visual_description` whenever they appear.
+- The companion must be **invented for this specific child**: its species, appearance, and magic should feel uniquely theirs. Do not default to unicorn — invent a companion that truly fits this child's personality, hobby, or signature look.
+  - A child who loves dancing → a companion with flowing ribbon-like wings or a swirling aura
+  - A child who loves art → a companion whose coat shimmers with the colors they paint
+  - A child who loves music → a companion whose mane chimes softly like bells
+  - A child who loves nature → a crystal deer, glowing fox, or flower-crowned creature
+- The companion's **colors and markings must feel specific to this child** — drawn from their personality, signature look, or hero trait.
+- The companion speaks softly and encouragingly — no dramatic pronouncements. Their voice feels like a warm whisper.
+- The companion appears in at least 3 of the 5 scenes.
+- Define the companion in the `characters` array in your output.
+- Include the companion in `visual_description` whenever they appear.
 
 ## Tone
 
@@ -55,10 +60,10 @@ No sarcasm. No parody. No passive princess tropes. No scary threats — the chal
 | Scene | Title | Purpose | Duration Guide |
 |-------|-------|---------|----------------|
 | 1 — The Sparkle | "The Magic Begins" | Child's ordinary world + a magical glowing gift opens a hidden door | 45–70 words |
-| 2 — The Kingdom | "Over the Rainbow" | Child steps into a realm of rainbows and pastel magic. Meets unicorn. Something is wrong. | 45–70 words |
+| 2 — The Kingdom | "Over the Rainbow" | Child steps into a realm of rainbows and pastel magic. Meets their companion. Something is wrong. | 45–70 words |
 | 3 — The Shadow | "When the Rainbow Faded" | The kingdom's source of color has dimmed — restored by the child's hobby | 45–70 words |
 | 4 — The Restoration | "Every Color Returns" | Colors burst back. Kingdom celebrates. Child honored. | 45–70 words |
-| 5 — The Return | "Home, with Rainbow Eyes" | Child returns. Unicorn shimmers in the sky. Parent message. | 45–70 words |
+| 5 — The Return | "Home, with Rainbow Eyes" | Child returns. Companion shimmers into the sky. Parent message. | 45–70 words |
 
 Emotional progression:
 - Scene 1: wonder
@@ -76,7 +81,7 @@ Total story length: approximately **250–350 words**.
   - skin tone
   - signature outfit and accessories
 - The child's appearance must remain **consistent** across all 5 scenes.
-- When the unicorn appears in a scene, include their full appearance in `visual_description`.
+- When the companion appears in a scene, include their full appearance in `visual_description`.
 - Each visual description must describe:
   - environment
   - lighting
@@ -103,11 +108,11 @@ Return a valid JSON object — no markdown fences, no commentary, only the JSON:
   "tagline": "One sentence hook for the story",
   "characters": [
     {
-      "name": "unicorn's name",
-      "type": "unicorn",
-      "appearance": "Detailed visual description — size (pony-sized), coat color, mane colors and style, horn, any markings. Must include the visual connection to this child.",
+      "name": "companion's name",
+      "type": "creature type — unicorn, pegasus, crystal fox, fairy deer, or any magical creature that fits this child",
+      "appearance": "Detailed visual description — size, shape, coat or fur color, wing/horn/mane/tail details, any markings. Must include the visual detail that reflects this specific child.",
       "personality": "One sentence describing how they speak and act — gentle, encouraging, quietly wise",
-      "connection_to_child": "Why this unicorn fits this specific child — how the colors or personality reflect them"
+      "connection_to_child": "Why this companion fits this specific child — how their appearance or personality reflects the child"
     }
   ],
   "scenes": [
@@ -126,10 +131,10 @@ Return a valid JSON object — no markdown fences, no commentary, only the JSON:
 ## Critical Rules
 
 - EXACTLY 5 scenes.
-- EXACTLY 1 companion (the unicorn) in `characters`.
+- EXACTLY 1 companion in `characters`.
 - Every `narration` must be read-aloud ready (no stage directions, no parentheticals).
 - Every `visual_description` must include the child's consistent appearance details.
-- Include unicorn in `visual_description` for every scene they appear in.
+- Include the companion in `visual_description` for every scene they appear in.
 - The child's hobby must drive the Scene 3 solution — non-negotiable.
 - JSON only. No explanations before or after. No markdown fences.
 

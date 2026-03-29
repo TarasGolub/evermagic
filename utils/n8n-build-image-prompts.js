@@ -44,12 +44,12 @@ const THEMES = {
   FANTASY_HERO: {
     stylePrefix: '3D CGI animated character, Pixar-style render, enchanted fantasy setting, warm magical lighting, soft subsurface scattering',
     coverBackground: 'Enchanted kingdom with glowing castle spires, twilight sky with floating lanterns and magical stars',
-    coverPose: 'Standing in a heroic pose with one arm raised, dragon companion beside them',
+    coverPose: 'Standing in a heroic pose with one arm raised, magical companion beside them',
     sceneStyle: {
       1: { lighting: 'Warm bedroom glow with mysterious blue-green magical shimmer emanating from a glowing artifact', camera: 'Close-up on child\'s face and magical artifact, warm-cool contrast' },
       2: { lighting: 'Lush enchanted forest with dappled golden-green light, soft magic sparkle particles in the air', camera: 'Wide establishing shot — scale of kingdom revealed, deep background bokeh' },
       3: { lighting: 'Dramatic cool-toned cave or ruined castle, single warm hero spotlight on the child', camera: 'Medium tracking shot with tension in the framing, slight dutch angle' },
-      4: { lighting: 'Epic golden burst — warm amber and gold flooding the scene, dragon silhouette overhead', camera: 'Epic wide panoramic, low angle, sky visible above' },
+      4: { lighting: 'Epic golden burst — warm amber and gold flooding the scene, companion silhouette overhead', camera: 'Epic wide panoramic, low angle, sky visible above' },
       5: { lighting: 'Soft warm evening bedroom light, a single bright star visible through the window', camera: 'Intimate close-up on child\'s face, gentle smile' },
     },
     coloring: {
@@ -62,7 +62,7 @@ const THEMES = {
   ENCHANTED_PRINCESS: {
     stylePrefix: '3D CGI animated character, Pixar-style render, soft pastel fantasy world, warm sparkle and magical light, soft subsurface scattering',
     coverBackground: 'Enchanted meadow with a rainbow arch overhead, glowing flower fields, and a fairy castle glowing in the distance',
-    coverPose: 'Standing gracefully with one hand resting on the unicorn companion\'s mane, looking forward with confidence',
+    coverPose: 'Standing gracefully with confidence, magical companion close beside them',
     sceneStyle: {
       1: { lighting: 'Warm golden bedroom glow with soft magical shimmer and sparkle particles around a glowing object', camera: 'Close-up on child and glowing magical item, warm bokeh background' },
       2: { lighting: 'Soft pastel rainbow sky — pinks, lavenders, and aqua tones, gentle magical light', camera: 'Wide shot — kingdom scale revealed, rainbow arch dominant in background' },
@@ -71,7 +71,7 @@ const THEMES = {
       5: { lighting: 'Soft lavender evening bedroom light, a rainbow shimmer or single star outside the window', camera: 'Intimate close-up on child\'s face, warm and peaceful expression' },
     },
     coloring: {
-      backgroundElements: 'unicorn, rainbow arch, castle towers, flowers, stars, butterfly',
+      backgroundElements: 'magical companion, rainbow arch, castle towers, flowers, stars, butterfly',
       pose: 'graceful pose with arms open wide, looking up joyfully',
     },
     model: { name: 'openai/gpt-image-1.5', quality: 'medium', coloringQuality: 'low', background: 'auto', moderation: 'auto', aspect_ratio: '1:1', output_format: 'jpeg', input_fidelity: 'low', number_of_images: 1, output_compression: 80 },
@@ -215,12 +215,14 @@ for (const payloadItem of allPayloads) {
     status: 'pending',
   };
 
-  // Cover
+  // Cover — companion appearance injected from script for fully dynamic companion support
+  const scriptCompanion = scriptData.characters && scriptData.characters[0];
+  const companionCoverDesc = scriptCompanion ? `Companion present: ${scriptCompanion.appearance}.` : '';
   results.push({
     ...shared,
     image_type: 'cover',
     scene_title: scriptData.title,
-    prompt: `${theme.stylePrefix}. ${characterDesc}${outfitDesc}. ${theme.coverPose}. ${theme.coverBackground}.`,
+    prompt: `${theme.stylePrefix}. ${characterDesc}${outfitDesc}. ${theme.coverPose}. ${companionCoverDesc} ${theme.coverBackground}.`.trim(),
   });
 
   // 5 Scenes + 5 Scene Coloring Pages
@@ -236,23 +238,29 @@ for (const payloadItem of allPayloads) {
       prompt: `${theme.stylePrefix}. ${characterDesc}${outfitDesc}. ${scene.visual_description}. ${style.lighting}. ${style.camera}.`,
     });
 
-    // Scene coloring page (low quality to save cost)
+    // Scene coloring page
+    // - No face photos: switches API to /images/generations, giving model freedom for clean line art
+    // - No scene.visual_description: avoids color words and camera angles that cause cropping
+    // - quality: medium — 'low' produces sketchy pencil-like results
+    const coloringGenParams = { ...genParams, quality: 'medium', face_photos: [] };
     results.push({
       ...shared,
       image_type: `coloring_${num}`,
       scene_title: `Coloring: ${scene.scene_title}`,
-      generation_params: { ...genParams, quality: theme.model.coloringQuality || 'low' },
-      prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc}. ${scene.visual_description}. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+      generation_params: coloringGenParams,
+      prompt: `Children's printable coloring book page. Pure black outlines on pure white background only. No color, no grey, no shading, no gradients, no fills whatsoever — only crisp black lines on white. A ${age}-year-old ${genderWord} in a fun adventure pose related to "${scene.scene_title}". Full body from head to toe fully visible inside the frame — top of head with hat visible, feet and shoes visible at bottom, generous white margin on all four sides, never cropped or cut off at any edge. Bold thick uniform black outlines, published coloring book quality — not sketchy, not pencil-like, not shaded. Simple background elements as clean outlines only: ${theme.coloring.backgroundElements}. Easy for a child to color with crayons.`,
     });
   }
 
-  // Generic coloring page (low quality)
+  // Generic coloring page
+  // - No face photos: switches API to /images/generations for clean line art
+  // - quality: medium — 'low' produces sketchy pencil-like results
   results.push({
     ...shared,
     image_type: 'coloring',
     scene_title: 'Coloring Page',
-    generation_params: { ...genParams, quality: 'low' },
-    prompt: `Black and white line art coloring page, pure black outlines on white background only, absolutely no color, no shading, no gradients, no fills, pen and ink style. ${characterDesc} in ${theme.coloring.pose}. Full body visible from head to toe — hat fully visible at top, feet and shoes fully visible at bottom. Character centered with generous white space margin on all sides, never cropped or cut off. Simple background: outline ${theme.coloring.backgroundElements}. Thick clean lines suitable for children to color with crayons. Coloring book page style, printable.`,
+    generation_params: { ...genParams, quality: 'medium', face_photos: [] },
+    prompt: `Children's printable coloring book page. Pure black outlines on pure white background only. No color, no grey, no shading, no gradients, no fills whatsoever — only crisp black lines on white. A ${age}-year-old ${genderWord} in ${theme.coloring.pose}. Full body from head to toe fully visible inside the frame — top of head fully visible, feet and shoes fully visible at bottom, generous white margin on all four sides, never cropped or cut off at any edge. Bold thick uniform black outlines, published coloring book quality — not sketchy, not pencil-like, not shaded. Simple background elements as clean outlines only: ${theme.coloring.backgroundElements}. Easy for a child to color with crayons.`,
   });
 
   console.log(`✅ ${order.order_id} — ${child.name} — theme:${themeKey} — "${scriptData.title}"`);
