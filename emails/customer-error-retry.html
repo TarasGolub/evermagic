@@ -70,6 +70,12 @@
                           <strong style="color:#ffffff !important;">Special characters</strong> — if the name has accents, try the simplified version first (e.g. "Sofia" instead of "Sofía").
                         </td>
                       </tr>
+                      <tr>
+                        <td style="padding:6px 0; vertical-align:top; width:24px; font-size:16px;">⚠️</td>
+                        <td style="padding:6px 0 6px 8px; font-size:14px; line-height:1.5; color:#e8e8f5 !important;">
+                          <strong style="color:#ffffff !important;">Photo and description content</strong> — our AI strictly follows child-safe image guidelines. Please make sure the uploaded photo and any descriptions do not include anything that could be interpreted as violence, weapons, or inappropriate content. This is the most common reason a generation is declined.
+                        </td>
+                      </tr>
                     </table>
                   </td>
                 </tr>
@@ -80,6 +86,9 @@
           <!-- Retry section — injected by Build Error Handler code node -->
           <!-- Either a "Try Again" button (first failure) or "Our team is on it" card (second failure) -->
           {{retry_section}}
+
+          <!-- AI recommendation — injected when available, empty string otherwise -->
+          {{ai_recommendation_section}}
 
           <!-- Order reference -->
           <tr>
