@@ -131,10 +131,10 @@ function buildTextPages(sceneNumber) {
     const text = sceneText(sceneNumber);
     if (!text) return '';
 
-    // Group sentences into paragraphs of 3
+    // Group sentences into paragraphs of 2
     const sentences = text.match(/[^.!?]+[.!?]+["']?/g) || [text];
     const paragraphs = [];
-    for (let i = 0; i < sentences.length; i += 3) {
+    for (let i = 0; i < sentences.length; i += 2) {
         const chunk = sentences.slice(i, i + 3).join(' ').trim();
         if (chunk) paragraphs.push('<p>' + chunk + '</p>');
     }

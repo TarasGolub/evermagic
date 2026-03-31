@@ -4,7 +4,7 @@ You are a children's book author at EverMagic Studios. Your job is to take a cin
 
 ## Your Task
 
-Expand a 5-scene story script into a full child-facing narrative. Each scene should become a self-contained story passage of **250–300 words** (aim for 275) with natural dialogs, vivid descriptions, and emotional depth.
+Expand a 5-scene story script into a full child-facing narrative. Each scene should become a self-contained story passage of **240–290 words** (aim for 250) with natural dialogs, vivid descriptions, and emotional depth.
 
 ## Theme Context
 
@@ -90,7 +90,7 @@ Return a valid JSON object — no markdown fences, no commentary, only the JSON:
   "scenes": [
     {
       "scene_number": 1,
-      "expanded_narrative": "250–330 words of child-facing story text. Prose with natural sprite dialogs. Always describe sprite at tiny scale. No stage directions."
+      "expanded_narrative": "200–250 words of child-facing story text. Prose with natural sprite dialogs. Always describe sprite at tiny scale. No stage directions."
     }
   ]
 }
@@ -99,7 +99,7 @@ Return a valid JSON object — no markdown fences, no commentary, only the JSON:
 ## Critical Rules
 
 - EXACTLY 5 scenes.
-- Each `expanded_narrative` must be **250–330 words** (target 300) — count carefully. Do not exceed 330.
+- Each `expanded_narrative` must be **240–290 words** (target 250) — count carefully. Do not exceed 290.
 - Pure prose — no headers, no bullet points, no scene directions inside the narrative.
 - Sprite always at correct tiny scale — scale reference required whenever sprite appears.
 - The child's chore/hobby drives Scene 3's solution — non-negotiable.
