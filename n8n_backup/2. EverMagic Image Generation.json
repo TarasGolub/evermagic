@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-29T21:14:13.524Z",
+  "updatedAt": "2026-03-29T22:54:13.974Z",
   "createdAt": "2026-03-05T04:02:09.501Z",
   "id": "N0Acec1peIL2JpLY",
   "name": "2. EverMagic Image Generation",
@@ -46,7 +46,7 @@
             {
               "keyName": "order_id",
               "condition": "eq",
-              "keyValue": "={{ $('Fetch Approved Scripts').item.json.id }}"
+              "keyValue": "={{ $('Fetch Approved Scripts').item.json.order_id }}"
             }
           ]
         }
@@ -1356,8 +1356,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "359fba13-19e1-4072-a10e-281eaad1a43e",
-  "activeVersionId": "359fba13-19e1-4072-a10e-281eaad1a43e",
+  "versionId": "9873f012-8ef3-49cc-bc9d-3d245f7d1c35",
+  "activeVersionId": "9873f012-8ef3-49cc-bc9d-3d245f7d1c35",
   "triggerCount": 1,
   "shared": [
     {
@@ -1369,9 +1369,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-29T21:14:16.000Z",
-    "createdAt": "2026-03-29T21:14:13.525Z",
-    "versionId": "359fba13-19e1-4072-a10e-281eaad1a43e",
+    "updatedAt": "2026-03-29T22:54:17.000Z",
+    "createdAt": "2026-03-29T22:54:13.975Z",
+    "versionId": "9873f012-8ef3-49cc-bc9d-3d245f7d1c35",
     "workflowId": "N0Acec1peIL2JpLY",
     "nodes": [
       {
@@ -1414,7 +1414,7 @@
               {
                 "keyName": "order_id",
                 "condition": "eq",
-                "keyValue": "={{ $('Fetch Approved Scripts').item.json.id }}"
+                "keyValue": "={{ $('Fetch Approved Scripts').item.json.order_id }}"
               }
             ]
           }
@@ -2712,7 +2712,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 359fba13",
+    "name": "Version 9873f012",
     "description": "",
     "autosaved": true
   },
