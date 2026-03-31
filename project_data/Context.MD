@@ -51,7 +51,7 @@ It is:
 | Themes | Space Hero · Fantasy Hero · Enchanted Princess · Animal Guardian · Home Helper |
 | Language | English only (Ukrainian planned) |
 | Packages | Basic · Full Bundle · Party Pack |
-| Status | Phases 1–3 complete — UAT invites sent to first group of friends — next: Etsy launch preparation |
+| Status | Phases 1–3 complete + QA loop added to scenario expansion — UAT in progress — next: Etsy launch preparation |
 
 ---
 
@@ -88,7 +88,7 @@ Tally → n8n Webhook → Parse & Canonicalize → Save to Supabase → Build Pr
 
 | # | Name | Purpose |
 |---|------|---------|
-| 0 | EverMagic Error Notifier | Global error handler — admin email on any workflow failure |
+| 0 | EverMagic Error Notifier | Global error handler — customer + admin email on failure; retry token issued (1 retry allowed); AI-powered tips via GPT-4o-mini |
 | 1 | EverMagic v1.0.1 | Intake + Script Generation: Tally webhook → parse → save → GPT script → emails |
 | 1.1 | EverMagic Review Submit | Processes admin actions: Approve / Retry / Edit |
 | 1.2 | EverMagic Review | Admin review UI served as webhook HTML page |
@@ -202,11 +202,29 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 
 **Pipeline steps:**
 
-#### Step 3.1 — Scenario Expansion ✅ COMPLETE
-- GPT-4o expansion prompt: `prompts/space_hero/expansion.md`
+#### Step 3.1 — Scenario Expansion ✅ COMPLETE + QA Loop added (EVRM-031)
+- GPT-4o expansion prompt: `prompts/{theme}/expansion.md` (theme-dynamic, fetched inside loop)
+- Shared QA evaluator prompt: `prompts/shared/expansion_qa.md` (universal — works for all themes)
 - n8n Code nodes: `utils/n8n-build-expansion-prompt.js`, `utils/n8n-parse-expansion-response.js`
+- QA loop nodes: `utils/n8n-build-qa-prompt.js`, `utils/n8n-parse-qa-response.js`, `utils/n8n-build-retry-prompt.js`, `utils/n8n-accept-story.js`
 - n8n workflow exported: `n8n_backup/3.1 EverMagic Scenario Expansion.json`
-- DB migration: `database/scenario_expansion.sql` (adds `expanded_content` column to `scripts`)
+- DB migration: `database/scenario_expansion.sql` (adds `expanded_content`, `qa_score`, `qa_score_retry` columns to `scripts`)
+
+**QA loop architecture (3.1):**
+```
+Call OpenAI GPT-4o (generate)
+  → Build QA Prompt → QA Check (GPT-4o-mini) → Parse QA Response
+  → IF retry_required
+      TRUE  → Build Retry Prompt → Retry GPT-4o
+               → Build QA Prompt 2 → QA Check 2 → Parse QA Response 2
+               → Parse Expansion Response (picks better of original vs retry by score)
+      FALSE → Accept Story
+  → Save Expanded Content (writes qa_score + qa_score_retry for analysis)
+```
+- Heuristic pre-check (free, JS) runs before QA: catches word count violations, dense sentences
+- Always saves and proceeds — QA scores are observability data, not blockers
+- `qa_score` = first attempt score; `qa_score_retry` = retry score (null if no retry needed)
+- Query `WHERE qa_score < 8 AND qa_score_retry < 8` to find cases where retry didn't help
 
 #### Step 3.2 — PDF Layout Design ✅ COMPLETE
 - HTML/CSS templates for storybook pages, coloring book pages, and certificate
@@ -299,10 +317,12 @@ Etsy = market validation, reviews, proof. KidsTukan = premium experience.
 ### PHASE 6 — Scale & Optimize
 
 - ~~Additional themes beyond Space Hero~~ ✅ Done in v1.4.0 (4 new themes)
+- ~~Story QA feedback loop~~ ✅ Done in EVRM-031 (auto-retry + score tracking)
 - Multi-language support (Ukrainian)
 - Batch processing
-- Quality monitoring dashboard
+- Quality monitoring dashboard (qa_score + qa_score_retry data already being collected)
 - Customer reviews integration
+- Token reservation system (deferred — see `project_data/token_reservation_plan.md`)
 
 ---
 
@@ -340,6 +360,7 @@ Phase 4: approved → audio_generating → audio_generated → video_assembling 
 | Script | OpenAI GPT-4o | ~$0.03 |
 | Images (7) | OpenAI image API | ~$0.28 |
 | Scenario expansion | OpenAI GPT-4o | ~$0.04 |
+| Story QA check (GPT-4o-mini) | OpenAI | ~$0.001 (x2 if retry) |
 | PDF conversion (3 PDFs) | PDFShift | Free (250/mo) |
 | Audiobook (TBD) | ElevenLabs | ~$0.10–0.20 |
 | Voice (Phase 4) | ElevenLabs | ~$0.15 |
@@ -365,7 +386,7 @@ EverMagic is an **AI content production engine.**
 
 ## 📌 WHEN YOU NEED TO RESTORE CONTEXT
 
-> "Continuing EverMagic AI Factory. Phases 1–3 complete and tested in live mode. UAT round in progress — first group of friends invited, feedback being collected. 5 themes active (Space Hero, Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper). Next step: address UAT feedback → Etsy launch preparation."
+> "Continuing EverMagic AI Factory. Phases 1–3 complete and tested in live mode. EVRM-031 complete — AI QA feedback loop added to scenario expansion (auto-retry, best-of-two selection, qa_score/qa_score_retry tracked in DB). Error Notifier complete — customer emails, retry tokens, AI tips (EVRM-030). UAT round in progress — first group of friends invited, feedback being collected. 5 themes active (Space Hero, Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper). Shared prompts at prompts/shared/. Next: address UAT feedback → Etsy launch preparation."
 
 ## OPTIMIZATION IDEAS
 

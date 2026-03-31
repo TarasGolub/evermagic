@@ -2,24 +2,21 @@
 // Placed AFTER the OpenAI node in the Scenario Expansion workflow
 // Extracts and validates the expanded scenario JSON from GPT-4o output
 
-const aiOutput = $input.first().json;
+// ─────────────────────────────────────────────────────────────
+// 1. Pick the better story — original vs retry
+// ─────────────────────────────────────────────────────────────
 
-// ─────────────────────────────────────────────────────────────
-// 1. Extract raw text — handle multiple n8n OpenAI node formats
-// ─────────────────────────────────────────────────────────────
+const firstScore = $('Parse QA Response').first().json.score  ?? 0;
+const retryScore = $('Parse QA Response 2').first().json.score ?? 0;
+const useRetry   = retryScore > firstScore;
 
 let rawText;
-
-if (aiOutput.output?.[0]?.content?.[0]?.text) {
-    rawText = aiOutput.output[0].content[0].text;
-} else if (aiOutput.message?.content) {
-    rawText = aiOutput.message.content;
-} else if (aiOutput.text) {
-    rawText = aiOutput.text;
-} else if (typeof aiOutput === 'string') {
-    rawText = aiOutput;
+if (useRetry) {
+    // Retry scored higher — use it
+    rawText = $('Retry GPT-4o').first().json.choices[0].message.content;
 } else {
-    throw new Error('Unexpected AI output shape: ' + JSON.stringify(Object.keys(aiOutput)));
+    // Original was equal or better — use it
+    rawText = $('Parse QA Response').first().json.raw_story;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -48,10 +45,19 @@ for (const scene of expanded.scenes) {
 
 const context = $('Build Expansion Prompt').first().json;
 
+// qa_score = first attempt score (from Build Retry Prompt context)
+// qa_score_retry = second attempt score (from Parse QA Response 2, after retry)
+let qaScore = null;
+let qaScoreRetry = null;
+try { qaScore      = $('Build Retry Prompt').first().json.qa_score         ?? null; } catch (_) {}
+try { qaScoreRetry = $('Parse QA Response 2').first().json.score           ?? null; } catch (_) {}
+
 return [{
     json: {
-        order_id: context.order_id,
-        script_version: context.script_version,
-        expanded_content: expanded
+        order_id:         context.order_id,
+        script_version:   context.script_version,
+        expanded_content: expanded,
+        qa_score:         qaScore,
+        qa_score_retry:   qaScoreRetry,
     }
 }];
