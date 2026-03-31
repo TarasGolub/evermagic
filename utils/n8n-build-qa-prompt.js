@@ -11,8 +11,8 @@
 // ─────────────────────────────────────────────────────────────
 
 // ── Thresholds (tune here without touching logic) ─────────────
-const MIN_SCENE_WORDS    = 200;   // scenes shorter than this are flagged
-const MAX_SCENE_WORDS    = 340;   // scenes longer than this are flagged
+const MIN_SCENE_WORDS    = 180;   // scenes shorter than this are flagged
+const MAX_SCENE_WORDS    = 260;   // scenes longer than this are flagged
 const MAX_SENTENCE_WORDS = 30;    // sentences over this many words are flagged as dense
 
 // ── Context ───────────────────────────────────────────────────
