@@ -1,9 +1,9 @@
 # 📚 EverMagic — Project Documentation
 
-> **Last updated:** March 27, 2026
-> **Current Phase:** UAT round in progress — first group of friends invited, awaiting feedback — next: Etsy launch preparation
-> **Completed:** Phases 1–3 (Intake + Script + Images + PDF Engine + 5 Themes + Per-Theme Styling + Live Testing + UAT flow)
-> **Latest tags:** v1.4.0 (4 new themes) · v1.4.1 (per-theme PDF styles) · v1.5.0 (UAT flow)
+> **Last updated:** March 29, 2026
+> **Current Phase:** UAT round in progress — QA loop added to scenario expansion — next: Etsy launch preparation
+> **Completed:** Phases 1–3 (Intake + Script + Images + PDF Engine + 5 Themes + Per-Theme Styling + Live Testing + UAT flow + AI QA loop for scenario expansion)
+> **Latest tags:** v1.4.0 (4 new themes) · v1.4.1 (per-theme PDF styles) · v1.5.0 (UAT flow) · v2.0.0 (AI QA feedback loop)
 
 ---
 
@@ -79,8 +79,9 @@ EverMagic is an **AI-first content production engine** that creates personalized
 | **File Storage** | Supabase Storage | ✅ Active |
 | **AI — Script Generation** | OpenAI GPT-4o / GPT-5-nano | ✅ Active |
 | **AI — Image Generation** | OpenAI gpt-image-1 | ✅ Active |
-| **AI — Scenario Expansion** | OpenAI GPT-4o | 📋 Phase 3 |
-| **PDF Generation** | PDFShift API | 📋 Phase 3 |
+| **AI — Scenario Expansion** | OpenAI GPT-4o | ✅ Active |
+| **AI — QA Evaluation** | OpenAI GPT-4o-mini | ✅ Active |
+| **PDF Generation** | PDFShift API | ✅ Active |
 | **Audio / Audiobook** | ElevenLabs | 📋 Phase 3–4 |
 | **Video Rendering** | TBD (Remotion / FFmpeg / Creatomate) | 📋 Phase 4 |
 | **Email Delivery** | SMTP via n8n | ✅ Active |
@@ -234,6 +235,70 @@ Webhook → Envs
 
 ---
 
+### Workflow 3.1: `EverMagic Scenario Expansion` — AI Story Writing + QA Loop
+
+**Trigger:** Manual trigger (run after images_generated)
+
+**Node chain (25 nodes):**
+
+```
+Manual Trigger
+    → Fetch Order Payload (status = "images_generated")
+    → Fetch Scripts to Expand (current approved script for order)
+    → Fetch Expansion Prompt (GitHub — theme-dynamic URL)
+    → Fetch QA Prompt (GitHub — prompts/shared/expansion_qa.md)
+    → Build Expansion Prompt (combine system + child context)
+    → Call OpenAI GPT-4o (expand 5 scenes → full narratives)
+    → Build QA Prompt (heuristic checks + hard structural validation)
+    → QA Check (HTTP POST → OpenAI GPT-4o-mini — structured QA assessment)
+    → Parse QA Response
+    → IF: retry_required?
+        → TRUE: Build Retry Prompt (append QA feedback to system prompt)
+                → Retry GPT-4o (regenerate with corrections)
+                → Build QA Prompt 2 (second QA pass on retry output)
+                → QA Check 2
+                → Parse QA Response 2
+                → Parse Expansion Response (best-of-two selection)
+        → FALSE: Accept Story (pass through original)
+    → Save Expanded Content (scripts table: expanded_content + qa_score + qa_score_retry)
+    → Update Order Status → scenario_expanded
+    → PDF Generate Webhook (trigger Workflow 3.2)
+```
+
+**QA loop architecture:**
+
+The QA system has two layers:
+
+1. **Heuristic pre-check (free JS — no API call):**
+   - Scene word count (min 200, max 340)
+   - Sentence density in Scene 1 (>30 words/sentence flagged)
+   - Child name in <3 scenes → flag
+   - Companion name in <3 scenes → flag
+   - 2+ heuristic flags → effective score capped at 7 (forces retry)
+
+2. **AI QA evaluation (GPT-4o-mini, ~$0.001/call):**
+   - 8 rules assessed: scene 1 opening, personal detail front-loading, adjective summaries, show-don't-tell, recent win placement, hobby drives Scene 3, companion engagement, narrative flow
+   - Scoring: start at 10, deduct per failed rule (craft rules −1, structural rules −2)
+   - Score <8 → `retry_required = true`
+
+3. **Hard structural failure shortcut:**
+   - If story JSON is malformed or doesn't have 5 scenes with `expanded_narrative`: `hard_fail = true`
+   - `Build QA Prompt` sends a dummy 10-token request (cost ~$0.00001)
+   - `Parse QA Response` intercepts via `hard_fail` flag, returns `score: 0, retry_required: true` immediately
+
+4. **Best-of-two selection:**
+   - After retry, a second full QA pass scores the retry output
+   - `Parse Expansion Response` compares `qa_score` vs `qa_score_retry`, uses whichever story scored higher
+   - Both scores stored in DB for retrospective analysis
+
+**Key behaviors:**
+- `Fetch Expansion Prompt` runs inside the loop, URL interpolates theme dynamically
+- `Fetch QA Prompt` uses a fixed path (`prompts/shared/expansion_qa.md`) — QA rules are theme-independent
+- QA prompt: static system message (rules only), dynamic user message (child context + story + heuristic flags)
+- `qa_score` and `qa_score_retry` written to `scripts` table for quality monitoring
+
+---
+
 ### Workflow `99_1`: `EverMagic UAT Invite` — Send Personalised Invites
 
 **Trigger:** Manual trigger (run once per invite batch)
@@ -378,6 +443,8 @@ Manual Trigger
 | `tagline` | TEXT | Story tagline |
 | `content` | JSONB | Full script JSON with scenes |
 | `approved_at` | TIMESTAMPTZ | When approved |
+| `qa_score` | INT | QA score for first expansion attempt (0–10) |
+| `qa_score_retry` | INT | QA score for retry attempt, if triggered (0–10) |
 
 #### `images`
 
@@ -559,9 +626,15 @@ This replaces n8n's built-in global variables (unavailable on the basic plan).
 
 ## 🎨 AI Prompts & Themes
 
-### Prompt File Structure (per theme)
+### Prompt File Structure
 
-Each theme lives in `prompts/{theme_id}/` and contains 6 files:
+**Shared prompts** (`prompts/shared/`) — theme-agnostic, used across all themes:
+
+| File | Purpose |
+|------|---------|
+| `expansion_qa.md` | GPT-4o-mini system prompt — 8 quality rules + scoring for story QA |
+
+**Per-theme prompts** (`prompts/{theme_id}/`) — each theme contains 6 files:
 
 | File | Purpose |
 |------|---------|
@@ -639,6 +712,8 @@ evermagic/
 │   ├── 99_1 EverMagic UAT Invite.json      # Workflow: send personalised invites to uat_participants
 │   └── 99_2 EverMagic UAT Feedback.json    # Workflow: feedback form (GET) + submission handler (POST)
 ├── prompts/
+│   ├── shared/
+│   │   └── expansion_qa.md     # Universal QA rules for scenario expansion (theme-agnostic)
 │   ├── space_hero/             # 6 files: system.md, expansion.md, image_prompts.md,
 │   ├── fantasy_hero/           #          style.md, theme.json, theme_styles.css
 │   ├── enchanted_princess/
@@ -653,6 +728,7 @@ evermagic/
 ├── database/
 │   ├── images_table.sql
 │   ├── intake_tokens.sql
+│   ├── scenario_expansion.sql      # scripts table: qa_score, qa_score_retry columns
 │   └── uat_tables.sql              # uat_participants + uat_feedback + UAT token seeding
 ├── emails/
 │   ├── admin-script-review.html
@@ -668,7 +744,11 @@ evermagic/
 │   ├── n8n-build-script-prompt.js
 │   ├── n8n-build-image-prompts.js
 │   ├── n8n-build-expansion-prompt.js
-│   ├── n8n-parse-expansion-response.js
+│   ├── n8n-build-qa-prompt.js       # Heuristic checks + hard fail + QA request builder
+│   ├── n8n-parse-qa-response.js     # Parse GPT-4o-mini QA result, apply effective score
+│   ├── n8n-build-retry-prompt.js    # Append QA feedback to system prompt for retry
+│   ├── n8n-accept-story.js          # Pass-through when retry not needed
+│   ├── n8n-parse-expansion-response.js  # Best-of-two selection + final validation
 │   ├── n8n-generate-images.js
 │   ├── n8n-process-image-response.js
 │   ├── n8n-reconcile-images.js
@@ -739,8 +819,9 @@ evermagic/
 | 3.6 — New Themes (v1.4.0) | 4 new themes: Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper | ✅ Complete |
 | 3.7 — Per-Theme PDF Styling (v1.4.1) | CSS variables in storybook.html + theme_styles.css per theme | ✅ Complete |
 | 3.8 — Live Mode Testing | All 3 PDFs + email delivery verified end-to-end in live mode | ✅ Complete |
+| 3.9 — AI QA Loop (v2.0.0) | GPT-4o-mini QA evaluator + retry loop + best-of-two selection added to Workflow 3.1 | ✅ Complete |
 
-**Current:** Full pipeline tested in live mode. UAT round in progress — first group of friends invited.
+**Current:** Full pipeline tested in live mode. QA loop added to scenario expansion. UAT round in progress.
 
 #### UAT Flow (v1.5.0) ✅ BUILT — 🔄 IN PROGRESS
 
@@ -820,11 +901,12 @@ Tools: ElevenLabs (voice), Remotion / FFmpeg / Creatomate (video — TBD).
 | Script generation | OpenAI GPT-4o | ~$0.03 |
 | Images (12) | OpenAI gpt-image-1 | ~$0.28 |
 | Scenario expansion | OpenAI GPT-4o | ~$0.04 |
+| QA evaluation (GPT-4o-mini, up to 2 calls) | OpenAI | ~$0.002 |
 | PDF conversion (3) | PDFShift | Free (250/mo) |
 | Audiobook (TBD) | ElevenLabs | ~$0.10–0.20 |
 | Voice (Phase 4) | ElevenLabs | ~$0.15 |
 | Video (Phase 4) | TBD | ~$0.00–0.50 |
-| **PDF bundle total** | | **~$0.35/order** |
+| **PDF bundle total** | | **~$0.35/order** (QA adds ~$0.002) |
 | **Full bundle total** | | **~$1.00/order** |
 
 **Revenue targets:**
