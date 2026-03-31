@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-29T21:13:46.142Z",
+  "updatedAt": "2026-03-31T01:28:11.554Z",
   "createdAt": "2026-02-28T04:04:42.792Z",
   "id": "5tdiaL3r2CwU3D2T",
   "name": "1.1 EverMagic Review Submit",
@@ -164,6 +164,7 @@
         224,
         0
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -194,6 +195,7 @@
         640,
         0
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -229,6 +231,7 @@
         432,
         0
       ],
+      "alwaysOutputData": true,
       "credentials": {
         "supabaseApi": {
           "id": "EYHDNsSv530jAc06",
@@ -238,7 +241,7 @@
     },
     {
       "parameters": {
-        "url": "https://raw.githubusercontent.com/TarasGolub/evermagic/main/prompts/space_hero/system.md",
+        "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').item.json.env.is_live ? 'main' : 'develop' }}/prompts/{{ $('Fetch Order').first().json.theme.toLowerCase(); }}/system.md",
         "options": {
           "response": {
             "response": {
@@ -954,8 +957,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "f8fd02f1-2947-4588-9b93-a6080c690af0",
-  "activeVersionId": "f8fd02f1-2947-4588-9b93-a6080c690af0",
+  "versionId": "99b46f16-5026-4e3c-860c-0142b80934f8",
+  "activeVersionId": "99b46f16-5026-4e3c-860c-0142b80934f8",
   "triggerCount": 1,
   "shared": [
     {
@@ -967,9 +970,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-29T21:13:50.000Z",
-    "createdAt": "2026-03-29T21:13:46.143Z",
-    "versionId": "f8fd02f1-2947-4588-9b93-a6080c690af0",
+    "updatedAt": "2026-03-31T01:31:21.000Z",
+    "createdAt": "2026-03-31T01:28:11.555Z",
+    "versionId": "99b46f16-5026-4e3c-860c-0142b80934f8",
     "workflowId": "5tdiaL3r2CwU3D2T",
     "nodes": [
       {
@@ -1130,6 +1133,7 @@
           224,
           0
         ],
+        "alwaysOutputData": true,
         "credentials": {
           "supabaseApi": {
             "id": "EYHDNsSv530jAc06",
@@ -1160,6 +1164,7 @@
           640,
           0
         ],
+        "alwaysOutputData": true,
         "credentials": {
           "supabaseApi": {
             "id": "EYHDNsSv530jAc06",
@@ -1195,6 +1200,7 @@
           432,
           0
         ],
+        "alwaysOutputData": true,
         "credentials": {
           "supabaseApi": {
             "id": "EYHDNsSv530jAc06",
@@ -1204,7 +1210,7 @@
       },
       {
         "parameters": {
-          "url": "https://raw.githubusercontent.com/TarasGolub/evermagic/main/prompts/space_hero/system.md",
+          "url": "=https://raw.githubusercontent.com/TarasGolub/evermagic/{{ $('Envs').item.json.env.is_live ? 'main' : 'develop' }}/prompts/{{ $('Fetch Order').first().json.theme.toLowerCase(); }}/system.md",
           "options": {
             "response": {
               "response": {
@@ -1908,7 +1914,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version f8fd02f1",
+    "name": "Version 99b46f16",
     "description": "",
     "autosaved": true
   },
