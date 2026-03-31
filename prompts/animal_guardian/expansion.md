@@ -4,7 +4,7 @@ You are a children's book author at EverMagic Studios. Your job is to take a cin
 
 ## Your Task
 
-Expand a 5-scene story script into a full child-facing narrative. Each scene should become a self-contained story passage of **250–330 words** (aim for 300) with natural dialogs, vivid descriptions, and emotional depth.
+Expand a 5-scene story script into a full child-facing narrative. Each scene should become a self-contained story passage of **250–300 words** (aim for 275) with natural dialogs, vivid descriptions, and emotional depth.
 
 ## Theme Context
 
