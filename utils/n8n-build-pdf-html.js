@@ -123,7 +123,7 @@ const vars = {
 
 // ─────────────────────────────────────────────────────────────
 // 3. Build scene text pages — splits narration across two fixed-height pages
-//    Even N paragraphs: N/2 each. Odd N: ceil(N/2) on page 1, floor(N/2) on page 2.
+//    Paragraphs grouped by word count; pages balanced by word count.
 // ─────────────────────────────────────────────────────────────
 
 function buildTextPages(sceneNumber) {
@@ -131,16 +131,77 @@ function buildTextPages(sceneNumber) {
     const text = sceneText(sceneNumber);
     if (!text) return '';
 
-    // Group sentences into paragraphs of 2
-    const sentences = text.match(/[^.!?]+[.!?]+["']?/g) || [text];
+    // ── Step 1: Protect quoted dialogue from mid-quote splits ──────
+    // "Wow! Where did you come from?" must never be split at the !
+    const quotes = [];
+    const safeText = text.replace(/"[^"]+"/g, (match) => {
+        quotes.push(match);
+        return `__Q${quotes.length - 1}__`;
+    });
+
+    // ── Step 2: Split into sentences ───────────────────────────────
+    // Only split at . ! ? when followed by whitespace + capital letter.
+    // Mid-quote punctuation is protected by placeholders above.
+    const rawSentences = safeText
+        .split(/(?<=[.!?])\s+(?=[A-Z])/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+    // ── Step 3: Restore quoted dialogue ────────────────────────────
+    const sentences = rawSentences.map(s =>
+        s.replace(/__Q(\d+)__/g, (_, i) => quotes[parseInt(i)])
+    );
+
+    // ── Step 4: Group into paragraphs by word count ────────────────
+    // Target ~25 words per paragraph. Short sentences (≤5 words) always
+    // attach to the following group rather than stand alone.
+    const TARGET_WORDS = 25;
+    const SHORT_SENTENCE = 5;
+
     const paragraphs = [];
-    for (let i = 0; i < sentences.length; i += 2) {
-        const chunk = sentences.slice(i, i + 2).join(' ').trim();
-        if (chunk) paragraphs.push('<p>' + chunk + '</p>');
+    let buf = [];
+    let bufWords = 0;
+
+    for (let i = 0; i < sentences.length; i++) {
+        const wc = sentences[i].split(/\s+/).filter(Boolean).length;
+        buf.push(sentences[i]);
+        bufWords += wc;
+
+        const isLast = i === sentences.length - 1;
+        const nextIsShort = !isLast &&
+            sentences[i + 1].split(/\s+/).filter(Boolean).length <= SHORT_SENTENCE;
+
+        if (bufWords >= TARGET_WORDS && !nextIsShort && !isLast) {
+            paragraphs.push('<p>' + buf.join(' ').trim() + '</p>');
+            buf = [];
+            bufWords = 0;
+        }
     }
 
-    const N = paragraphs.length;
-    const split = Math.ceil(N / 2);
+    // Flush remainder — merge into last paragraph if very short (<8 words)
+    if (buf.length > 0) {
+        const tail = buf.join(' ').trim();
+        if (paragraphs.length > 0 && bufWords < 8) {
+            paragraphs[paragraphs.length - 1] =
+                paragraphs[paragraphs.length - 1].replace('</p>', ' ' + tail + '</p>');
+        } else {
+            paragraphs.push('<p>' + tail + '</p>');
+        }
+    }
+
+    // ── Step 5: Balance pages by word count (not paragraph count) ──
+    const paraWords = paragraphs.map(p =>
+        p.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length
+    );
+    const half = paraWords.reduce((a, b) => a + b, 0) / 2;
+    let cumWords = 0;
+    let split = 1;
+    for (let i = 0; i < paraWords.length - 1; i++) {
+        cumWords += paraWords[i];
+        split = i + 1;
+        if (cumWords >= half) break;
+    }
+
     const p1Html = paragraphs.slice(0, split).join('\n');
     const p2Html = paragraphs.slice(split).join('\n');
 
@@ -168,7 +229,7 @@ function buildTextPages(sceneNumber) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 4. Inject variables into template HTML
+// 5. Inject variables into template HTML
 // ─────────────────────────────────────────────────────────────
 
 function injectVars(html, variables) {
