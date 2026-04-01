@@ -135,7 +135,7 @@ function buildTextPages(sceneNumber) {
     const sentences = text.match(/[^.!?]+[.!?]+["']?/g) || [text];
     const paragraphs = [];
     for (let i = 0; i < sentences.length; i += 2) {
-        const chunk = sentences.slice(i, i + 3).join(' ').trim();
+        const chunk = sentences.slice(i, i + 2).join(' ').trim();
         if (chunk) paragraphs.push('<p>' + chunk + '</p>');
     }
 
