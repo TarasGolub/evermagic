@@ -190,16 +190,24 @@ function buildTextPages(sceneNumber) {
     }
 
     // ── Step 5: Balance pages by word count (not paragraph count) ──
+    // Page 1 carries the scene title + gold rule — target slightly less than
+    // half (45 %) so both pages fill roughly the same visual space.
     const paraWords = paragraphs.map(p =>
         p.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length
     );
-    const half = paraWords.reduce((a, b) => a + b, 0) / 2;
+    const total  = paraWords.reduce((a, b) => a + b, 0);
+    const target = total * 0.45;   // page 1 target (< half to offset title)
     let cumWords = 0;
     let split = 1;
     for (let i = 0; i < paraWords.length - 1; i++) {
-        cumWords += paraWords[i];
-        split = i + 1;
-        if (cumWords >= half) break;
+        const next = cumWords + paraWords[i];
+        // Keep adding paragraphs while getting closer to target
+        if (Math.abs(next - target) <= Math.abs(cumWords - target)) {
+            cumWords = next;
+            split = i + 1;
+        } else {
+            break;
+        }
     }
 
     const p1Html = paragraphs.slice(0, split).join('\n');
