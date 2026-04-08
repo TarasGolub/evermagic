@@ -326,6 +326,34 @@ Call OpenAI GPT-4o (generate)
 
 ---
 
+### PHASE 7 — Amazon KDP Print Edition (Future)
+
+**Goal:** Sell EverMagic as a physical print-on-demand book on Amazon via KDP (Kindle Direct Publishing).
+
+**Why it matters:** KDP gives access to Amazon's marketplace and enables a premium physical product — a real printed book delivered to the customer's door, still fully personalized.
+
+**Current product is NOT KDP ready.** Gap assessment (assessed 2026-04-07):
+
+| Requirement | KDP Spec | Current State | Gap |
+|---|---|---|---|
+| Trim size | 8.5×8.5" (nearest square) | 7×7" (non-standard) | Resize all templates |
+| Image resolution | 300 DPI minimum | ~146 DPI (1024px at 7") | 2× resolution needed |
+| Bleed | 0.125" all edges | None | Add bleed to templates |
+| Minimum pages | 24 pages | ~14–17 pages | Add ~7–10 pages of content |
+| Color mode | CMYK (interior) | RGB | Output pipeline change |
+| Font embedding | Required | Google Fonts via URL (uncertain) | Configure PDFShift to embed |
+| Cover file | Separate PDF | Same file as interior | Split cover/interior |
+| PDF standard | PDF/X-1a preferred | Standard PDF | Configure PDFShift |
+
+**Key blockers:**
+1. **Image resolution** — OpenAI gpt-image-1 outputs 1024px max. At 8.5" print = ~120 DPI. Needs upscaling pipeline (e.g. Real-ESRGAN / Magnific) or higher-res source
+2. **Page count** — Need to add ~7–10 pages: dedication, author note, activity pages, illustrated endpapers
+3. **CMYK + PDF/X-1a** — requires PDFShift config changes and color-managed CSS
+
+**This is a Phase 7 initiative — not blocking Etsy launch. Etsy digital PDF path is the right first step.**
+
+---
+
 ## 🧠 ARCHITECTURE PRINCIPLES
 
 - Deterministic workflows (n8n)

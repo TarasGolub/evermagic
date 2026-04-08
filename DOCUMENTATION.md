@@ -894,6 +894,56 @@ Tools: ElevenLabs (voice), Remotion / FFmpeg / Creatomate (video — TBD).
 
 ---
 
+### Phase 7 — Amazon KDP Print Edition (Future)
+
+Sell EverMagic as a physical print-on-demand book on Amazon via KDP (Kindle Direct Publishing). Every order still fully personalized — printed and shipped by Amazon automatically.
+
+#### Current Gap Assessment (assessed 2026-04-07)
+
+The current PDF product is **not KDP ready**. Full gap breakdown:
+
+| Requirement | KDP Spec | Current State | Work Required |
+|---|---|---|---|
+| Trim size | 8.5×8.5" (nearest square KDP option) | 7×7" (non-standard) | Resize all PDF templates |
+| Image resolution | 300 DPI minimum | ~146 DPI (1024px image at 7") | Upscaling pipeline or higher-res source |
+| Bleed | 0.125" on all edges (for full-bleed pages) | None | Add bleed to storybook template + PDFShift config |
+| Minimum pages | 24 pages | ~14–17 pages | Add dedication, activity pages, illustrated endpapers |
+| Color mode | CMYK for color interior | RGB throughout | PDFShift color profile config |
+| Font embedding | All fonts must be embedded | Google Fonts via URL (embedding uncertain) | Force font embedding in PDFShift |
+| Cover file | Separate PDF from interior | Cover is page 1 of main PDF | Split into two PDFs; add spine calculation |
+| PDF standard | PDF/X-1a:2001 preferred | Standard PDF | PDFShift output config |
+
+#### Critical Blockers
+
+**1. Image resolution (hardest)**
+OpenAI gpt-image-1 outputs 1024px maximum. At 8.5" KDP trim = ~120 DPI — half the 300 DPI minimum. Options:
+- AI upscaling: Real-ESRGAN, Magnific, or similar (adds pipeline step + cost)
+- Alternative image source with higher native resolution
+
+**2. Page count**
+KDP minimum is 24 pages. Current storybook has ~14–17. Need to add:
+- Dedication page
+- Author/parent note page
+- 1–2 activity pages (word search, draw-your-hero)
+- Illustrated endpapers (front + back)
+
+**3. Cover as separate file with spine**
+KDP requires a separate cover PDF sized to: `(trim width × 2) + spine width + bleed`. Spine width depends on page count and paper type — must be calculated per order.
+
+#### Implementation Scope
+
+This is a significant new phase, not a config change. Estimated work:
+- New PDFShift configuration for CMYK + PDF/X-1a + font embedding
+- Image upscaling node added to image generation workflow
+- Storybook template resize to 8.5×8.5" + bleed
+- New page templates (dedication, activity, endpapers)
+- Cover split + spine width calculator
+- KDP submission automation (or manual per order initially)
+
+**Not blocking Etsy digital launch. Revisit after Etsy validates demand.**
+
+---
+
 ## 💰 Cost Structure
 
 | Step | Tool | Cost per Order |

@@ -26,26 +26,26 @@
 ## 0. Pre-Launch Checklist
 
 ### Legal & Business
-- [ ] Confirm business name to use on Etsy (EverMagic or variant)
-- [ ] SIN ready for Etsy tax reporting (required in Canada — not optional)
-- [ ] Bank account linked to Etsy Payments (Canadian bank, CAD account)
-- [ ] GST/HST number — not required below $30K CAD/yr; skip for now
+- [x] Confirm business name to use on Etsy (EverMagic or variant)
+- [x] SIN ready for Etsy tax reporting (required in Canada — not optional)
+- [x] Bank account linked to Etsy Payments (Canadian bank, CAD account)
+- [x] GST/HST number — not required below $30K CAD/yr; skip for now
 
 ### Product Readiness
-- [ ] UAT feedback fully addressed — product quality confirmed
-- [ ] EVRM-033 fixes deployed and tested (coloring book character match + paragraph length)
+- [x] UAT feedback fully addressed — product quality confirmed
+- [x] EVRM-033 fixes deployed and tested (coloring book character match + paragraph length)
 - [ ] Generate 3–5 polished demo orders across different themes (for listing photos)
-- [ ] PDF quality pass on all three deliverables: storybook, coloring book, certificate
+- [x] PDF quality pass on all three deliverables: storybook, coloring book, certificate
 
 ### Tally Form Branding
-- [ ] Apply light theme + gold button colors to Tally form (5 color fields on free plan)
-- [ ] Do NOT change field names or structure (avoid retesting intake flow) — ongoing rule
+- [x] Apply light theme + gold button colors to Tally form (5 color fields on free plan)
+- [x] Do NOT change field names or structure (avoid retesting intake flow) — ongoing rule
 
 ### Shop Assets Needed
-- [ ] Shop logo — square, 500×500px minimum (use EverMagic brand mark)
-- [ ] Shop banner — 3360×840px (can be landscape book mockup with tagline)
-- [ ] "What's included" infographic per theme (for listing photo slot 10)
-- [ ] "How it works" visual (3-step: buy → fill form → receive book)
+- [x] Shop logo — square, 500×500px minimum (use EverMagic brand mark)
+- [x] Shop banner — 3360×840px (can be landscape book mockup with tagline)
+- [x] "What's included" infographic per theme (for listing photo slot 10)
+- [x] "How it works" visual (3-step: buy → fill form → receive book)
 - [ ] At least 5 real PDF pages exported as images for mockups (one per theme)
 
 ### Mockup Tools
