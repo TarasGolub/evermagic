@@ -6,6 +6,9 @@
 
 Personalized Space Hero Story for Kids, Custom Story from Child's Hobbies & Personality, Unique Birthday Gift, Printable Storybook
 
+**D — Emotional angle (recommended):**
+Your Child is the SPACE HERO — A Personalized Story Made Just for Them, Custom Storybook from Real Hobbies, Unique Birthday Gift
+
 ---
 
 ## DESCRIPTION

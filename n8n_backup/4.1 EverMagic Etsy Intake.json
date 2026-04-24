@@ -1,0 +1,232 @@
+{
+  "updatedAt": "2026-04-09T01:54:39.152Z",
+  "createdAt": "2026-04-09T01:54:39.152Z",
+  "id": "hVtx1ke5wAH2firJ",
+  "name": "4.1 EverMagic Etsy Intake",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evermagic/etsy-intake",
+        "options": {}
+      },
+      "id": "b1beb523-f34f-4cd2-b4e0-0088ffefb49a",
+      "name": "Receive Etsy Order",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "a1b2c3d4-0001-0001-0001-000000000099"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─────────────────────────────────────────────────────────────\n// MOCK: Etsy Receipt\n// ─────────────────────────────────────────────────────────────\n// This node is a placeholder until the Etsy developer app is approved.\n// Replace the entire contents of this node with the real implementation below.\n//\n// REAL IMPLEMENTATION (3 steps to replace this node):\n//\n// STEP 1 — Fetch stored refresh token from Supabase:\n//   GET envs table, key = 'etsy_refresh_token'\n//\n// STEP 2 — Exchange refresh token for access token:\n//   POST https://api.etsy.com/v3/public/oauth/token\n//   Body: { grant_type: 'refresh_token', client_id: '<your_keystring>', refresh_token: '<from_envs>' }\n//   → Save new refresh_token back to envs table (resets 90-day expiry)\n//   → Use access_token for step 3\n//\n// STEP 3 — Fetch full receipt:\n//   GET resource_url (from webhook payload)\n//   Header: Authorization: Bearer <access_token>\n//   → Returns full receipt with buyer_email, transactions[].listing_id, receipt_id\n// ─────────────────────────────────────────────────────────────\n\n// Etsy webhook payload (real shape when live)\nconst payload = $input.first().json.body || $input.first().json;\n\n// MOCK receipt — replace with real Etsy API response when app is approved\nconst receipt = {\n  receipt_id: 'MOCK-RECEIPT-001',\n  buyer_email: 'test@example.com',\n  buyer_name: 'Test Buyer',\n  transactions: [\n    {\n      listing_id: 'LISTING_ID_HERE', // ← replace with your real Etsy listing ID\n      title: 'Personalized Space Hero Mission Storybook'\n    }\n  ]\n};\n\nreturn [{ json: { receipt, resource_url: payload.resource_url || 'MOCK' } }];\n"
+      },
+      "id": "541709a9-6044-430e-ad86-a45c7b5d2267",
+      "name": "Mock Etsy Receipt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─────────────────────────────────────────────────────────────\n// Map Etsy listing ID → theme\n// Fill in your real listing IDs after the Etsy shop is live.\n// You can find listing IDs in Etsy Shop Manager → Listings (in the URL).\n// ─────────────────────────────────────────────────────────────\n\nconst LISTING_MAP = {\n  'LISTING_ID_SPACE':    { theme: 'SPACE_HERO',          theme_label: 'Space Hero Mission' },\n  'LISTING_ID_FANTASY':  { theme: 'FANTASY_HERO',        theme_label: 'Fantasy Hero Quest' },\n  'LISTING_ID_PRINCESS': { theme: 'ENCHANTED_PRINCESS',  theme_label: 'Enchanted Princess Adventure' },\n  'LISTING_ID_ANIMAL':   { theme: 'ANIMAL_GUARDIAN',     theme_label: 'Animal Guardian Hero' },\n  'LISTING_ID_HOME':     { theme: 'HOME_HELPER',         theme_label: 'Home Helper Hero' },\n};\n\nconst receipt = $input.first().json.receipt;\nconst listingId = String(receipt.transactions?.[0]?.listing_id || '');\nconst mapping = LISTING_MAP[listingId] || { theme: 'SPACE_HERO', theme_label: 'Space Hero Mission' };\n\nreturn [{\n  json: {\n    receipt_id:    receipt.receipt_id,\n    buyer_email:   receipt.buyer_email,\n    buyer_name:    receipt.buyer_name,\n    theme:         mapping.theme,\n    theme_label:   mapping.theme_label,\n    package_label: 'Basic (Storybook + Coloring + Certificate)',\n  }\n}];\n"
+      },
+      "id": "3b010c4c-ed57-4e54-aab9-46022f639bc6",
+      "name": "Map Listing to Theme",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate a fresh intake token: EVRM-XXXXXXXX\nconst chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';\nlet token = 'EVRM-';\nfor (let i = 0; i < 8; i++) {\n  token += chars[Math.floor(Math.random() * chars.length)];\n}\n\nconst data = $input.first().json;\n\nreturn [{\n  json: {\n    ...data,\n    intake_token: token,\n  }\n}];\n"
+      },
+      "id": "f33207b5-d365-4236-be6a-c04c8c53a785",
+      "name": "Generate Intake Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "intake_tokens",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "token",
+              "fieldValue": "={{ $json.intake_token }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "active"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "etsy"
+            },
+            {
+              "fieldId": "etsy_order_id",
+              "fieldValue": "={{ $json.receipt_id }}"
+            }
+          ]
+        }
+      },
+      "id": "eff1628a-7cde-4300-b7a2-cba2a7570ca1",
+      "name": "Insert Intake Token",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "EYHDNsSv530jAc06",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─────────────────────────────────────────────────────────────\n// Build Tally pre-fill URL and email HTML\n// ─────────────────────────────────────────────────────────────\n\nconst prev = $('Generate Intake Token').first().json;\n\nconst TALLY_FORM_ID = 'rj6gMX';\n\nconst params = new URLSearchParams({\n  token:     prev.intake_token,\n  source:    'etsy',\n  orderNo:   prev.receipt_id,\n  p_email:   prev.buyer_email,\n  p_theme:   prev.theme_label,\n  p_package: prev.package_label,\n});\n\nconst tallyUrl = `https://tally.so/r/${TALLY_FORM_ID}?${params.toString()}`;\n\nconst logoUrl = 'https://raw.githubusercontent.com/TarasGolub/evermagic/main/templates/icons/logo_email.png';\n\nconst html = `<!DOCTYPE html>\n<html>\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"></head>\n<body style=\"margin:0;padding:0;background:#F5F5F5;font-family:Inter,Arial,sans-serif;\">\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#F5F5F5;padding:40px 16px;\">\n    <tr><td align=\"center\">\n      <table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0B1628;border-radius:16px;overflow:hidden;max-width:600px;width:100%;\">\n\n        <!-- Header -->\n        <tr><td style=\"padding:32px 40px;text-align:center;border-bottom:1px solid #1a2a44;\">\n          <img src=\"${logoUrl}\" alt=\"EverMagic\" height=\"48\" style=\"display:block;margin:0 auto 8px;\">\n          <div style=\"color:#F5A623;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:600;\">Personalized Storybooks</div>\n        </td></tr>\n\n        <!-- Body -->\n        <tr><td style=\"padding:40px 40px 32px;\">\n          <h1 style=\"margin:0 0 16px;font-size:26px;color:#ffffff;font-weight:700;\">Your book is almost ready! 🌟</h1>\n          <p style=\"margin:0 0 16px;font-size:16px;color:#94a3b8;line-height:1.6;\">\n            Thank you for your order! To create your child's personalized storybook, we just need a few details about them.\n          </p>\n          <p style=\"margin:0 0 32px;font-size:16px;color:#94a3b8;line-height:1.6;\">\n            It takes about <strong style=\"color:#ffffff;\">3 minutes</strong> — your email and theme are already filled in.\n          </p>\n\n          <!-- CTA -->\n          <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0 auto;\">\n            <tr><td style=\"border-radius:8px;background:#F5A623;\">\n              <a href=\"${tallyUrl}\" style=\"display:inline-block;padding:16px 40px;font-size:16px;font-weight:700;color:#0B1628;text-decoration:none;border-radius:8px;\">\n                Personalize My Book &rarr;\n              </a>\n            </td></tr>\n          </table>\n        </td></tr>\n\n        <!-- What happens next -->\n        <tr><td style=\"padding:0 40px 32px;\">\n          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0d1f3c;border-radius:12px;margin-top:24px;\">\n            <tr><td style=\"padding:24px;\">\n              <div style=\"font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#F5A623;font-weight:600;margin-bottom:16px;\">What happens next</div>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                <tr>\n                  <td style=\"padding:4px 0;font-size:14px;color:#94a3b8;\">1 &nbsp;</td>\n                  <td style=\"padding:4px 0;font-size:14px;color:#94a3b8;\">Fill in your child's details (3 min)</td>\n                </tr>\n                <tr>\n                  <td style=\"padding:4px 0;font-size:14px;color:#94a3b8;\">2 &nbsp;</td>\n                  <td style=\"padding:4px 0;font-size:14px;color:#94a3b8;\">We create your personalized book</td>\n                </tr>\n                <tr>\n                  <td style=\"padding:4px 0;font-size:14px;color:#94a3b8;\">3 &nbsp;</td>\n                  <td style=\"padding:4px 0;font-size:14px;color:#94a3b8;\">Delivered to your email within 24–48h</td>\n                </tr>\n              </table>\n            </td></tr>\n          </table>\n        </td></tr>\n\n        <!-- Footer -->\n        <tr><td style=\"padding:24px 40px;border-top:1px solid #1a2a44;text-align:center;\">\n          <p style=\"margin:0;font-size:12px;color:#475569;line-height:1.8;\">\n            Questions? Reply to this email — we're here to help.<br>\n            <span style=\"color:#1a2a44;\">Order ref: ${prev.receipt_id}</span>\n          </p>\n        </td></tr>\n\n      </table>\n    </td></tr>\n  </table>\n</body>\n</html>`;\n\nreturn [{\n  json: {\n    to:           prev.buyer_email,\n    subject:      '\\u2728 One step left \\u2014 personalize your child\\'s storybook!',\n    html,\n    tally_url:    tallyUrl,\n    intake_token: prev.intake_token,\n  }\n}];\n"
+      },
+      "id": "32f0ad37-9faa-47ae-b07e-c568e42bdf3b",
+      "name": "Build Tally URL and Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "taras.evermagic@gmail.com",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "html": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "94475262-9e1e-467d-b8a4-353ddcf57dd6",
+      "name": "Send Personalization Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1808,
+        0
+      ],
+      "webhookId": "525375a8-afb1-421a-8f33-b991f1974d92",
+      "credentials": {
+        "smtp": {
+          "id": "ymjQpdS5fXvpjwjN",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Receive Etsy Order": {
+      "main": [
+        [
+          {
+            "node": "Mock Etsy Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mock Etsy Receipt": {
+      "main": [
+        [
+          {
+            "node": "Map Listing to Theme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Listing to Theme": {
+      "main": [
+        [
+          {
+            "node": "Generate Intake Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Intake Token": {
+      "main": [
+        [
+          {
+            "node": "Insert Intake Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Intake Token": {
+      "main": [
+        [
+          {
+            "node": "Build Tally URL and Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Tally URL and Email": {
+      "main": [
+        [
+          {
+            "node": "Send Personalization Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "b1736ea7-2d19-413f-98da-45cdae283c73",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-04-09T01:54:39.155Z",
+      "createdAt": "2026-04-09T01:54:39.155Z",
+      "role": "workflow:owner",
+      "workflowId": "hVtx1ke5wAH2firJ",
+      "projectId": "Ez9yaDRraIYPeCTc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

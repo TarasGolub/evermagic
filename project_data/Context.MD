@@ -49,9 +49,10 @@ It is:
 | Dimension | Value |
 |-----------|-------|
 | Themes | Space Hero · Fantasy Hero · Enchanted Princess · Animal Guardian · Home Helper |
+| Target age | **3–7 years** — sweet spot for Etsy gifters; 8–10 skews too old for the product |
 | Language | English only (Ukrainian planned) |
 | Packages | Basic · Full Bundle · Party Pack |
-| Status | Phases 1–3 complete + QA loop added to scenario expansion — UAT in progress — next: Etsy launch preparation |
+| Status | Phases 1–3 complete · UAT done · Etsy shop open · listings in progress · Etsy→n8n integration built (pending Etsy app approval) · POD research done (Gelato selected) |
 
 ---
 
@@ -326,31 +327,36 @@ Call OpenAI GPT-4o (generate)
 
 ---
 
-### PHASE 7 — Amazon KDP Print Edition (Future)
+### PHASE 7 — Physical Book via Print-on-Demand (Post-Etsy Launch)
 
-**Goal:** Sell EverMagic as a physical print-on-demand book on Amazon via KDP (Kindle Direct Publishing).
+**Goal:** Sell EverMagic as a real printed book — delivered to the customer's door, still fully personalized and automated.
 
-**Why it matters:** KDP gives access to Amazon's marketplace and enables a premium physical product — a real printed book delivered to the customer's door, still fully personalized.
+**Recommended partner: Gelato** (researched 2026-04-09)
+- Native Etsy integration — orders fulfilled automatically when listed on Etsy
+- Children's book printing supported
+- Local production in Canada (fast shipping, lower cost)
+- Free plan available; API available for automation
+- Backup option: **Lulu xPress** (free API, good quality, no native Etsy integration — requires custom n8n workflow)
+- Skip: Printify — not suited for children's books
 
-**Current product is NOT KDP ready.** Gap assessment (assessed 2026-04-07):
+**Gaps to close before POD launch:**
 
-| Requirement | KDP Spec | Current State | Gap |
-|---|---|---|---|
-| Trim size | 8.5×8.5" (nearest square) | 7×7" (non-standard) | Resize all templates |
-| Image resolution | 300 DPI minimum | ~146 DPI (1024px at 7") | 2× resolution needed |
-| Bleed | 0.125" all edges | None | Add bleed to templates |
-| Minimum pages | 24 pages | ~14–17 pages | Add ~7–10 pages of content |
-| Color mode | CMYK (interior) | RGB | Output pipeline change |
-| Font embedding | Required | Google Fonts via URL (uncertain) | Configure PDFShift to embed |
-| Cover file | Separate PDF | Same file as interior | Split cover/interior |
-| PDF standard | PDF/X-1a preferred | Standard PDF | Configure PDFShift |
+| Gap | Blocker? | Fix |
+|-----|----------|-----|
+| Image resolution — gpt-image-1 outputs ~120 DPI at print size, need 300 DPI min | ✅ Yes | Add **Claid API** (`digital_art` model) as upscaling step in Image Generation workflow (~$9/mo) |
+| PDF template size — current 7×7" non-standard, Gelato requires standard trim (e.g. 8.5×8.5") | ✅ Yes | Refactor HTML/CSS templates + add 0.125" bleeds |
+| Page count — current ~14–17 pages, some POD requires 24+ min | Partial | Add dedication + activity pages (already planned); Gelato is more flexible |
+| Gelato API fulfillment n8n workflow | ✅ Yes | New workflow: after `pdf_generated` → POST print-ready PDF to Gelato API → store Gelato order ID → update status → notify customer with tracking |
+| Separate Etsy listing | Required | "Printed Storybook" listing at $35–45 CAD; needs sample copy photo + Gelato partner disclosure |
 
-**Key blockers:**
-1. **Image resolution** — OpenAI gpt-image-1 outputs 1024px max. At 8.5" print = ~120 DPI. Needs upscaling pipeline (e.g. Real-ESRGAN / Magnific) or higher-res source
-2. **Page count** — Need to add ~7–10 pages: dedication, author note, activity pages, illustrated endpapers
-3. **CMYK + PDF/X-1a** — requires PDFShift config changes and color-managed CSS
+**Action order (after Etsy digital listing is live):**
+1. Sign up for Gelato (free) → upload current PDF → order a sample copy to assess real print quality
+2. Add Claid API upscaling to Image Generation workflow
+3. Refactor PDF templates to Gelato specs (8.5×8.5" + bleeds)
+4. Build n8n Workflow 4 — Gelato POD Fulfillment
+5. Publish Etsy "Printed Book" listing at $35–45 CAD
 
-**This is a Phase 7 initiative — not blocking Etsy launch. Etsy digital PDF path is the right first step.**
+**Note on Amazon KDP:** KDP remains a future option for Amazon marketplace reach but has stricter requirements (CMYK, PDF/X-1a, font embedding). Gelato is the right first step for physical — KDP can follow once the print pipeline is mature.
 
 ---
 
@@ -414,7 +420,7 @@ EverMagic is an **AI content production engine.**
 
 ## 📌 WHEN YOU NEED TO RESTORE CONTEXT
 
-> "Continuing EverMagic AI Factory. Phases 1–3 complete and tested in live mode. EVRM-031 complete — AI QA feedback loop added to scenario expansion (auto-retry, best-of-two selection, qa_score/qa_score_retry tracked in DB). Error Notifier complete — customer emails, retry tokens, AI tips (EVRM-030). UAT round in progress — first group of friends invited, feedback being collected. 5 themes active (Space Hero, Fantasy Hero, Enchanted Princess, Animal Guardian, Home Helper). Shared prompts at prompts/shared/. Next: address UAT feedback → Etsy launch preparation."
+> "Continuing EverMagic AI Factory. Phases 1–3 complete and tested in live mode. UAT complete. Etsy shop open — publishing 5 theme listings (Space Hero first). Etsy→n8n integration built (workflow 4.1): order.paid webhook → pre-filled Tally link emailed to buyer; pending Etsy developer app approval to go live. Tally pre-fill working: p_email, p_theme, p_package hidden fields. POD research done — Gelato selected as print partner; blocked on image resolution (Claid API upscaling needed) + PDF template resize to 8.5×8.5\". Next steps: (1) publish all 5 Etsy listings, (2) finalize Etsy→n8n once app approved, (3) Gelato sample copy + upscaling pipeline."
 
 ## OPTIMIZATION IDEAS
 

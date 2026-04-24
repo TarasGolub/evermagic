@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-29T22:19:35.015Z",
+  "updatedAt": "2026-04-09T17:42:57.558Z",
   "createdAt": "2026-03-26T05:02:03.914Z",
   "id": "X8i8vvopGj9AvYk6",
   "name": "0. EverMagic Error Notifier",
@@ -216,7 +216,8 @@
           "id": "bkm4C85zHfe8HSHa",
           "name": "OpenAi account"
         }
-      }
+      },
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -822,8 +823,8 @@
       }
     ]
   },
-  "versionId": "3b40e6b5-9cc4-49db-a1f6-b84e1f66fd9f",
-  "activeVersionId": "3b40e6b5-9cc4-49db-a1f6-b84e1f66fd9f",
+  "versionId": "a60782b8-b892-480f-8df6-7de7a7a6d294",
+  "activeVersionId": "a60782b8-b892-480f-8df6-7de7a7a6d294",
   "triggerCount": 0,
   "shared": [
     {
@@ -835,9 +836,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-29T22:21:20.000Z",
-    "createdAt": "2026-03-29T22:19:35.016Z",
-    "versionId": "3b40e6b5-9cc4-49db-a1f6-b84e1f66fd9f",
+    "updatedAt": "2026-04-09T17:43:24.000Z",
+    "createdAt": "2026-04-09T17:42:57.559Z",
+    "versionId": "a60782b8-b892-480f-8df6-7de7a7a6d294",
     "workflowId": "X8i8vvopGj9AvYk6",
     "nodes": [
       {
@@ -1050,7 +1051,8 @@
             "id": "bkm4C85zHfe8HSHa",
             "name": "OpenAi account"
           }
-        }
+        },
+        "onError": "continueRegularOutput"
       },
       {
         "parameters": {
@@ -1529,7 +1531,7 @@
       }
     },
     "authors": "Taras Holub",
-    "name": "Version 3b40e6b5",
+    "name": "Version a60782b8",
     "description": "",
     "autosaved": true
   },
