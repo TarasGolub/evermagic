@@ -49,6 +49,7 @@ It is:
 | Dimension | Value |
 |-----------|-------|
 | Themes | Space Hero · Fantasy Hero · Enchanted Princess · Animal Guardian · Home Helper |
+| Target age | **3–7 years** — sweet spot for Etsy gifters; 8–10 skews too old for the product |
 | Language | English only (Ukrainian planned) |
 | Packages | Basic · Full Bundle · Party Pack |
 | Status | Phases 1–3 complete · UAT done · Etsy shop open · listings in progress · Etsy→n8n integration built (pending Etsy app approval) · POD research done (Gelato selected) |
